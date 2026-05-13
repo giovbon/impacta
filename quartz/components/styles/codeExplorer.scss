@@ -1,0 +1,242 @@
+.code-explorer {
+  display: flex;
+  height: 500px;
+  --code-font-size: 14px;
+  border: 1px solid var(--lightgray);
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 20px 0;
+  background: var(--light);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  position: relative; // For action buttons
+  transition: all 0.3s ease;
+
+  &.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10000;
+    margin: 0;
+    border-radius: 0;
+  }
+
+  &:hover .explorer-actions {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .explorer-actions {
+    position: absolute;
+    bottom: 25px;
+    right: 25px;
+    display: flex;
+    gap: 10px;
+    z-index: 1001;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+
+    .action-btn {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(var(--secondary-rgb), 0.1);
+      backdrop-filter: blur(5px);
+      border: 1px solid var(--lightgray);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.1em;
+      color: var(--secondary);
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: var(--secondary);
+        color: var(--light);
+        transform: translateY(-2px);
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .tree-panel {
+    width: 250px;
+    border-right: 1px solid var(--lightgray);
+    overflow-y: auto;
+    background: var(--light);
+    padding: 10px 0;
+    flex-shrink: 0;
+
+    ul {
+      list-style: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+
+    .tree-title {
+      padding: 0 15px 10px;
+      font-size: 0.8em;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--gray);
+      border-bottom: 1px solid var(--lightgray);
+      margin-bottom: 10px;
+      max-width: 150px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .viewer-panel {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #0d1117; // Dark theme for code
+
+    .viewer-header {
+      padding: 12px 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .current-filename {
+        font-family: var(--codeFont);
+        font-size: 0.9em;
+        color: #8b949e;
+      }
+    }
+
+    .code-content {
+      flex-grow: 1;
+      overflow: auto;
+      padding: 0;
+      margin: 0;
+      min-height: 0; // Fix for flexbox overflow issues
+      display: flex;
+      flex-direction: column;
+
+      // Hide default Quartz clipboard button
+      .clipboard-button {
+        display: none !important;
+      }
+
+      pre {
+        margin: 0;
+        padding: 20px;
+        background: transparent !important;
+        border: none !important;
+        flex-grow: 1; // Force pre to fill container height
+        display: block;
+        width: max-content;
+        min-width: 100%;
+      }
+
+      code {
+        font-size: var(--code-font-size) !important;
+        line-height: 1.5;
+        background: transparent !important;
+        font-family: var(--codeFont) !important;
+        color: #ddd; 
+        display: block;
+        
+        .hljs-keyword, .hljs-selector-tag, .hljs-literal, .hljs-section, .hljs-link { color: #f92672; }
+        .hljs-function, .hljs-title { color: #a6e22e; }
+        .hljs-string, .hljs-bullet, .hljs-subst, .hljs-attr { color: #e6db74; }
+        .hljs-comment, .hljs-quote { color: #75715e; }
+        .hljs-number, .hljs-params { color: #ae81ff; }
+      }
+    }
+  }
+}
+
+.tree-item {
+  padding: 8px 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9em;
+  transition: all 0.2s ease;
+  user-select: none;
+
+  &:hover {
+    background: var(--highlight);
+  }
+
+  &.active {
+    background: var(--secondary);
+    color: var(--light) !important;
+    border-left: 3px solid var(--tertiary);
+
+    .item-name, .item-icon, .folder-icon {
+      color: var(--light) !important;
+    }
+  }
+
+  .item-icon {
+    width: 16px;
+    text-align: center;
+    font-size: 1.1em;
+  }
+
+  &.folder {
+    font-weight: 600;
+    
+    .folder-icon {
+      font-size: 0.7em;
+      width: 12px;
+    }
+  }
+}
+
+.folder-content {
+  display: none;
+  padding-left: 15px;
+
+  &.open {
+    display: block;
+  }
+}
+
+.tree-item.folder.open {
+  background: rgba(var(--secondary-rgb), 0.05);
+}
+
+// Minimalist Scrollbar "on the margin"
+.tree-panel,
+.code-content {
+  scrollbar-width: thin;
+  scrollbar-color: var(--gray) transparent;
+}
+
+.tree-panel::-webkit-scrollbar,
+.code-content::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.tree-panel::-webkit-scrollbar-thumb,
+.code-content::-webkit-scrollbar-thumb {
+  background: rgba(var(--gray-rgb), 0.3);
+  border-radius: 10px;
+  
+  &:hover {
+    background: var(--gray);
+  }
+}
+
+.tree-panel::-webkit-scrollbar-track,
+.code-content::-webkit-scrollbar-track {
+  background: transparent;
+}
