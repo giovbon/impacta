@@ -35,7 +35,9 @@ Testar é uma maneira organizada de *passar informações* para um software e *d
 Aqui estão os **principais motivos** para fazer testes:
 
 • O foco principal é descobrir problemas pra *corrigir tudo antes de entregar o produto* pro usuário.
+
 • Detectar problemas no começo do desenvolvimento é *muito mais barato* do que consertar depois.
+
 • **Confiança e Sanidade do Desenvolvedor**: Sem uma bateria de testes, o código pode se tornar um "emaranhado ininteligível", gerando *medo de realizar alterações* (como refatorações) *por não saber o que pode ser quebrado acidentalmente* (regressões).
 • Fazer testes ajuda a evitar que o *cliente perca a confiança na equipe* ao esbarrar em bugs que poderiam ter sido pegos antes.
 
