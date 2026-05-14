@@ -30,8 +30,21 @@ const defaultOptions: Options = {
     return node
   },
   sortFn: (a, b) => {
-    // Sort order: folders first, then files. Sort folders and files alphabeticall
+    // Sort order: folders first, then files. Sort folders and files alphabetically
     if ((!a.isFolder && !b.isFolder) || (a.isFolder && b.isFolder)) {
+      // Use frontmatter `order` field when available
+      const aOrder = (a.data as { order?: number } | null)?.order
+      const bOrder = (b.data as { order?: number } | null)?.order
+
+      if (aOrder !== undefined && bOrder !== undefined) {
+        return aOrder - bOrder
+      } else if (aOrder !== undefined) {
+        return -1
+      } else if (bOrder !== undefined) {
+        return 1
+      }
+
+      // Fallback: alphabetical with numeric collation
       // numeric: true: Whether numeric collation should be used, such that "1" < "2" < "10"
       // sensitivity: "base": Only strings that differ in base letters compare as unequal. Examples: a ≠ b, a = á, a = A
       return a.displayName.localeCompare(b.displayName, undefined, {

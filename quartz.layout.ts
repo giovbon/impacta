@@ -32,7 +32,7 @@ export const defaultContentPageLayout: PageLayout = {
   ],
   afterBody: [
     Component.SubmissionForm(),
-    Component.Graph(),
+   // Component.Graph(),
     Component.DesktopOnly(Component.TableOfContents()),
     Component.Backlinks(),
   ],

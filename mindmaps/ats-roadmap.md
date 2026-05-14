@@ -5,7 +5,7 @@
 - Pirâmide de testes
 - Tipos de testes (funcional - não funcional)
 - Abordagens (white, gray, black box)
-## UnitTest
+## UnitTest <!-- Pq se não é mais usado durante o resto do curso? -->
 ## PyTest
 - Fixtures
 ## TDD (Test-Driven Development)
