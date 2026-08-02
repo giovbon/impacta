@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# se for projeto novo, rode antes: npm install
+
 PORT=${1:-8081}
 WS_PORT=${2:-3001}
 
