@@ -1,6 +1,9 @@
 <!-- .slide: data-background-image="https://images.squarespace-cdn.com/content/v1/5fb4ea8933ae6c208c3dac41/1656395530398-NQT3HSOMM2GVD84P8FXM/car2car" data-background-size="cover" data-background-opacity="0.4" -->
 
-# Introdução aos Testes de Software
+<div class="glass-box">
+    <h1>Introdução aos Testes de Software</h1>
+</div>
+
 
 ---
 
@@ -8,42 +11,53 @@
 
 Testar é uma maneira organizada de *passar informações* para um software e *decidir* se o que ele devolve está certo de acordo com o que foi prometido nas especificações.
 
-### Principais Pontos
-
-**Revelar Defeitos**: O objetivo do teste não é provar que um programa está perfeito, mas *mostrar que existem erros*. Um teste é considerado bom se ele descobrir um erro que ainda não foi encontrado.
+Objetivo: **Revelar Defeitos**. O objetivo do teste não é provar que um programa está perfeito, mas *mostrar que existem erros*. Um teste é considerado bom se ele descobrir um erro que ainda não foi encontrado.
 
 **Como Funciona**: O processo envolve *três etapas*: 
 1. montar um cenário de teste
 2. executar a ação que você quer testar
 3. verificar se o resultado que você obteve está de acordo com o que esperava
 
+Se o *resultado obtido não bate com o esperado*, isso significa que um *defeito* foi encontrado. Isso pode mostrar que há *algo errado* que faz o programa funcionar de maneira diferente do que deveria.
+
+---
+
+## Tipos de Teste
+
+### Teste Funcional (*O quê?*)
+
+Avalia se as *funcionalidades do sistema estão operando de acordo com os requisitos e regras de negócio especificados*. Ele garante que o *software entregue o resultado esperado* quando o usuário realiza uma ação.
+
+* **Foco:** Comportamento, entradas, saídas e regras de negócio.
+* **Exemplo prático:** Verificar se, ao digitar o e-mail e a senha corretos e clicar em "Entrar", o usuário consegue fazer login no aplicativo.
+* **Tipos comuns:** Testes unitários, testes de integração, testes de sistema, testes de regressão, testes de aceitação (UAT).
+
 --
 
-**Identificação de Erros e Falhas**: Se o *resultado obtido não bate com o esperado*, isso significa que um *defeito* foi encontrado. Isso pode mostrar que há *algo errado* que faz o programa funcionar de maneira diferente do que deveria.
+### Teste Não Funcional (*Como?*)
 
-**Perspectivas de Teste**:
+Avalia o desempenho, a usabilidade, a segurança e a infraestrutura do sistema. Ele mede a *qualidade, estabilidade e a experiência geral do usuário durante o uso do software*.
 
-- **Teste Funcional**: Olha para o software como um *usuário final*, verificando como ele deve reagir a determinadas funções.
-- **Teste de Unidade**: Se concentra nos *detalhes internos*, checando como as partes do código (como funções) estão funcionando.
+* **Foco:** Desempenho, escalabilidade, segurança, facilidade de uso e compatibilidade.
+* **Exemplo prático:** Verificar se a página de login carrega em menos de 2 segundos quando 10.000 usuários tentam acessar ao mesmo tempo (teste de carga/estresse).
+* **Tipos comuns:** Testes de carga e estresse (performance), testes de segurança (penetração), testes de usabilidade, testes de compatibilidade (diferentes navegadores/dispositivos) e testes de acessibilidade.
 
 ---
 
 ## Por que é necessário testar?
 
-É necessário testar o software porque sua construção é uma *tarefa complexa e sujeita a erros humanos* em todas as fases do desenvolvimento. Como o *software tá presente em quase tudo* hoje em dia, garantir que ele funcione como prometido é essencial pra manter a *qualidade e a confiança* no produto.
+É necessário testar o software porque sua construção é uma *tarefa complexa e sujeita a erros humanos* em todas as fases do desenvolvimento. Como o *software está presente em quase tudo* hoje em dia, garantir que ele funcione como prometido é essencial pra manter a *qualidade e a confiança* no produto.
+
+--
 
 Aqui estão os **principais motivos** para fazer testes:
 
-• O foco principal é descobrir problemas pra *corrigir tudo antes de entregar o produto* pro usuário.
+- O foco principal é descobrir problemas pra *corrigir tudo antes de entregar o produto* pro usuário.
+- Detectar problemas no começo do desenvolvimento é *muito mais barato* do que consertar depois.
+- **Confiança e Sanidade do Desenvolvedor**: Sem uma bateria de testes, o código pode se tornar um "emaranhado ininteligível", gerando *medo de realizar alterações* (como refatorações) *por não saber o que pode ser quebrado acidentalmente* (regressões).
+- Fazer testes ajuda a evitar que o *cliente perca a confiança na equipe* ao esbarrar em bugs que poderiam ter sido pegos antes.
 
-• Detectar problemas no começo do desenvolvimento é *muito mais barato* do que consertar depois.
-
-• **Confiança e Sanidade do Desenvolvedor**: Sem uma bateria de testes, o código pode se tornar um "emaranhado ininteligível", gerando *medo de realizar alterações* (como refatorações) *por não saber o que pode ser quebrado acidentalmente* (regressões).
-• Fazer testes ajuda a evitar que o *cliente perca a confiança na equipe* ao esbarrar em bugs que poderiam ter sido pegos antes.
-
----
-
-### Exemplos reais
+<!-- ### Exemplos reais
 
 As piores coisas (consequências) aconteceram em **sistemas críticos**:
 
@@ -55,7 +69,7 @@ O **Therac-25** era uma *máquina de radioterapia* computadorizada. O problema c
 
 --
 
-A **sonda** foi enviada para *estudar o clima de Marte*, mas nunca conseguiu completar a missão. O problema começou com uma *falha na conversão de unidades*: uma equipe da Lockheed Martin usou o sistema Imperial (libras-força), enquanto a equipe da NASA utilizou o sistema Métrico (Newtons). Isso gerou um caos, já que o software de navegação recebeu dados errados, *fazendo com que a sonda se aproximasse demais da atmosfera de Marte*. O resultado foi a *destruição da sonda* devido ao calor e pressão atmosférica, com um custo total da missão em torno de *125 milhões de dólares*.
+A **sonda** foi enviada para *estudar o clima de Marte*, mas nunca conseguiu completar a missão. O problema começou com uma *falha na conversão de unidades*: uma equipe da Lockheed Martin usou o sistema Imperial (libras-força), enquanto a equipe da NASA utilizou o sistema Métrico (Newtons). Isso gerou um caos, já que o software de navegação recebeu dados errados, *fazendo com que a sonda se aproximasse demais da atmosfera de Marte*. O resultado foi a *destruição da sonda* devido ao calor e pressão atmosférica, com um custo total da missão em torno de *125 milhões de dólares*. -->
 
 ---
 
@@ -83,7 +97,7 @@ Um **engano** cometido por uma pessoa resulta em um **defeito (bug)** no softwar
 --
 
 <div style="text-align: center;">
-    <img src="../zSLIDES/img/image.png" width="60%">
+    <img src="./img/engano bug erro falha.png" width="60%">
 </div>
 
 ---

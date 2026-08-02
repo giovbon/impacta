@@ -1,12 +1,14 @@
 <!-- .slide: data-background-image="https://images.squarespace-cdn.com/content/v1/5fb4ea8933ae6c208c3dac41/1656395530398-NQT3HSOMM2GVD84P8FXM/car2car" data-background-size="cover" data-background-opacity="0.4" -->
 
-# Apresentação da Disciplina
 
-## Automação de Testes de Software
+<div class="glass-box">
+    <h1>Apresentação da Disciplina</h1>
+</div>
 
 ---
 
-⚠️ Ver planos de aula e de ensino no classroom.
+## Automação de Testes de Software
+> ⚠️ Ver planos de aula e de ensino no classroom.
 
 ---
 
@@ -53,4 +55,4 @@ SE (Nota Final >= 6,0 e Frequência >= 75%)
 
 ## Calendário acadêmico
 
-![](calendario-academico-2-2026.png)
+<img src="https://raw.githubusercontent.com/giovbon/impacta/refs/heads/main/content/ATS/calendario-academico-2-2026.png" data-preview-image>
