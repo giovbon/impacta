@@ -57,20 +57,6 @@ Aqui estão os **principais motivos** para fazer testes:
 - **Confiança e Sanidade do Desenvolvedor**: Sem uma bateria de testes, o código pode se tornar um "emaranhado ininteligível", gerando *medo de realizar alterações* (como refatorações) *por não saber o que pode ser quebrado acidentalmente* (regressões).
 - Fazer testes ajuda a evitar que o *cliente perca a confiança na equipe* ao esbarrar em bugs que poderiam ter sido pegos antes.
 
-<!-- ### Exemplos reais
-
-As piores coisas (consequências) aconteceram em **sistemas críticos**:
-
-Em 2012, a **Knight Capital**, uma das maiores *corretoras de ações* dos EUA, instalou um novo software de negociação. O problema surgiu quando um *código antigo e "morto"*, que estava desativado há anos nos servidores, foi acidentalmente reativado devido a uma configuração errada durante o deploy. *O sistema começou a comprar e vender milhões de ações de forma frenética, perdendo dinheiro em cada transação.* Em apenas 45 minutos, a empresa enfrentou um prejuízo de *440 milhões de dólares*. Eles *quase faliram* e precisaram da ajuda de um grupo de investidores para se manter à tona.
-
---
-
-O **Therac-25** era uma *máquina de radioterapia* computadorizada. O problema começou com um bug conhecido como "condição de corrida" (race condition). Se o *operador digitasse os comandos muito rapidamente*, o software ativava o feixe de elétrons de alta energia sem que o escudo protetor fosse colocado no lugar. O resultado foi alarmante: a máquina liberava *doses de radiação até 100 vezes mais altas* do que o planejado, mas mostrava uma mensagem de erro genérica ("Malfunction 54") que não informava sobre o perigo real. Pelo menos seis pacientes receberam overdoses massivas de radiação, o que levou a *mortes e ferimentos gravíssimos*.
-
---
-
-A **sonda** foi enviada para *estudar o clima de Marte*, mas nunca conseguiu completar a missão. O problema começou com uma *falha na conversão de unidades*: uma equipe da Lockheed Martin usou o sistema Imperial (libras-força), enquanto a equipe da NASA utilizou o sistema Métrico (Newtons). Isso gerou um caos, já que o software de navegação recebeu dados errados, *fazendo com que a sonda se aproximasse demais da atmosfera de Marte*. O resultado foi a *destruição da sonda* devido ao calor e pressão atmosférica, com um custo total da missão em torno de *125 milhões de dólares*. -->
-
 ---
 
 ## Fatores que causam falhas
@@ -97,7 +83,7 @@ Um **engano** cometido por uma pessoa resulta em um **defeito (bug)** no softwar
 --
 
 <div style="text-align: center;">
-    <img src="/ATS/img/engano-bug-erro-falha.png" width="60%">
+    <img src="/ATS/img/engano-bug-erro-falha.png" width="60%" data-preview-image>
 </div>
 
 ---
@@ -121,7 +107,7 @@ Um *alto nível de confiabilidade* é crucial em *sistemas críticos*, como os d
 # O que deve ser testado?
 ## Já que os testes são tão importantes para garantir a qualidade do software, isso significa que devemos testar absolutamente tudo?
 
----
+--
 
 ## Resposta: Não, você não deve, e nem consegue, testar tudo.
 
@@ -131,82 +117,19 @@ O teste exaustivo *é impossível*. Tentar cobrir todas as combinações possív
 
 ---
 
-## Etapas
-Existem etapas bem definidas para a execução da atividade de teste:
-
-### 1. Planejamento
-
-Definimos o que vamos testar:
-
-* **Objetivo:** Verificar se o campo aceita apenas senhas entre **8 e 12 caracteres**.
-* **Escopo:** Vamos focar na validação do tamanho da senha, não na forma como ela é salva (no banco de dados).
-* **Critério:** Utilizaremos **Análise do Valor Limite**, onde erros costumam aparecer.
-
---
-
-### 2. Projeto de Casos de Teste
-
-Criamos os cenários de teste com base em **Classes de Equivalência** e **Limites**:
-
-### Classes de Equivalência
-Esse conceito é usado para *reduzir o número de casos de teste* que precisam ser realizados. A ideia é *agrupar entradas que devem ter o mesmo resultado*. Por exemplo, se a regra diz que a senha deve ter entre 8 e 12 caracteres:
-
-- **Classe Válida**: Senhas com 8, 9, 10, 11 e 12 caracteres.
-- **Classe Inválida**: Senhas com menos de 8 ou mais de 12 caracteres.
-
-Assim, em vez de testar cada uma das senhas possíveis, você testa apenas uma de cada classe.
-
---
-
-### Limites
-
-Esse conceito envolve *testar os valores nas bordas das classes*, onde os erros são mais frequentes. No exemplo da senha, você testaria:
-
-- A menor quantidade aceitável: 8 caracteres.
-- A maior quantidade aceitável: 12 caracteres.
-- Um abaixo do mínimo: 7 caracteres.
-- Um acima do máximo: 13 caracteres.
-
-Esses testes de limites ajudam a garantir que o software se comporte corretamente em torno dos critérios estabelecidos.
-
---
-
-| Caso de Teste | Dado de Entrada (Senha) | Técnica | Resultado Esperado |
-| --- | --- | --- | --- |
-| CT01 | `1234567` (7) | Limite (mínimo - 1) | **Erro:** "Senha muito curta" |
-| CT02 | `12345678` (8) | Limite (mínimo) | **Sucesso:** Senha aceita |
-| CT03 | `123456789012` (12) | Limite (máximo) | **Sucesso:** Senha aceita |
-| CT04 | `1234567890123` (13) | Limite (máximo + 1) | **Erro:** "Senha muito longa" |
-| CT05 | `ABC123` (6) | Classe de Equivalência (Inválida) | **Erro:** "Senha muito curta" |
-
---
-
-### 3. Execução
-
-O testador ou um script automatizado insere cada senha criada:
-
-* **Ação:** Digitar `1234567890123`.
-* **Observação:** O sistema exibiu uma mensagem de erro?
-
-### 4. Análise
-
-Aqui, comparamos os resultados com o que esperávamos:
-
-* **Cenário A:** Para 13 caracteres, o sistema deu erro. **Resultado:** Teste bem-sucedido.
-* **Cenário B:** Se aceitou, é um **DEFEITO** a ser corrigido.
-
----
-
-
 ## Modelo em V 
 
 A imagem apresenta o Modelo em V, uma representação clássica que demonstra a *relação direta entre cada fase do desenvolvimento de software e seu respectivo nível de teste*:
 
 <div style="text-align: center;">
-    <img src="../zSLIDES/img/image-1.png" width="60%">
+    <img src="/ATS/img/modelo-v.png" width="60%" data-preview-image>
 </div>
 
 --
+
+<div style="text-align: center;">
+    <img src="/ATS/img/modelo-v.png" width="40%" data-preview-image>
+</div>
 
 ### Fases do Desenvolvimento
 Representa a decomposição do projeto, indo do macro (negócio) para o micro (código):
@@ -216,7 +139,11 @@ Representa a decomposição do projeto, indo do macro (negócio) para o micro (c
 - **Esp. Técnica**: Definição da arquitetura, banco de dados e como os componentes se comunicarão.
 - **Construção**: O momento da codificação propriamente dita pelos desenvolvedores.
 
----
+--
+
+<div style="text-align: center;">
+    <img src="/ATS/img/modelo-v.png" width="40%" data-preview-image>
+</div>
 
 ### Níveis do Teste
 Representa a integração e verificação do software, subindo do micro para o macro:
@@ -225,3 +152,41 @@ Representa a integração e verificação do software, subindo do micro para o m
 - **Teste de Integração**: Verifica se os componentes técnicos conversam entre si conforme a *Esp. Técnica*.
 - **Teste de Sistema**: Valida o software como um todo, garantindo que ele execute as funções descritas na *Esp. Funcional*.
 - **Teste de Aceitação**: Realizado geralmente pelo usuário final para confirmar se os *Requisitos* originais foram atendidos.
+
+---
+
+## Pirâmide de Testes
+
+<div style="text-align: center;">
+    <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn-wcsm.alura.com.br%2F2025%2F04%2Fimagem1-99.png&f=1&nofb=1&ipt=4a50b145c15936bdbecf38f764362ad0eecffd8e528451a19ce5cc949fd6e469" width="70%" data-preview-image>
+</div>
+
+
+--
+
+<div style="text-align: center;">
+    <img src="https://engsoftmoderna.info/figs/cap8/piramide-testes.svg" width="70%" data-preview-image>
+</div>
+
+---
+
+## Nível de acesso ao código-fonte 
+
+Quanto ao nível de acesso ao código-fonte da aplicação durante os testes:
+
+### Teste de Caixa Preta (Black-Box Testing)
+
+No teste de caixa preta, o testador *não visualiza o código interno nem a estrutura da aplicação*. O sistema é tratado como uma *"caixa fechada"*: você envia uma entrada (input) e verifica se a saída (output) e o comportamento correspondem ao esperado.
+- **Foco**: Requisitos funcionais, regras de negócio e experiência do usuário.
+- **Quem executa:** Profissionais de QA (Garantia de Qualidade), analistas de teste e usuários finais (em testes de aceitação).
+- **Exemplo:** Acessar a tela de cadastro de um site, preencher o formulário, clicar em "Cadastrar" e checar se a mensagem de sucesso aparece na tela, sem saber como o backend processou essa requisição.
+
+--
+
+### Teste de Caixa Branca (White-Box Testing)
+
+Também chamado de teste de caixa transparente ou estrutural. O testador tem *acesso total ao código-fonte* e testa os caminhos lógicos internos, algoritmos, rotas de exceção, estruturas de dados e integrações internas do software.
+
+- **Foco**: Qualidade do código, cobertura de testes (code coverage), fluxo de controle, segurança e eficiência lógica.
+- **Quem executa**: Desenvolvedores de software e engenheiros de automação.
+- **Exemplo**: Escrever um teste unitário em Python ou Java para validar se uma função específica aciona o tratamento correto de erro caso receba um valor nulo.

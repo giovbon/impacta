@@ -4,7 +4,6 @@
 ## Introdução
 - Pirâmide de testes
 - Tipos de testes (funcional - não funcional)
-- Abordagens (white, gray, black box)
 ## UnitTest
 - Primeiro caso de teste e métodos de asserção
 - Execução e análise de exceções
