@@ -97,7 +97,7 @@ Um **engano** cometido por uma pessoa resulta em um **defeito (bug)** no softwar
 --
 
 <div style="text-align: center;">
-    <img src="./img/engano bug erro falha.png" width="60%">
+    <img src="/ATS/img/engano-bug-erro-falha.png" width="60%">
 </div>
 
 ---
