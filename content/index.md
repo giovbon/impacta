@@ -1,8 +1,7 @@
 ---
-title: Welcome
+title: Index
 ---
 
+Página para postagem de conteúdos relacionados às disciplinas da faculdade Impacta.
 
-[[demonstracao]]
 
-npx quartz build --serve --port 8081 --ws-port 3002
