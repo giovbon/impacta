@@ -271,6 +271,8 @@ async function initSubmission() {
       confirmedNameDisplay.textContent = ""
       raValidationStatus.className = "ra-validation-status"
       raValidationStatus.textContent = ""
+      submitBtn.style.display = ""
+      submitBtn.disabled = false
 
       // Busca prazo (assíncrono, não bloqueia)
       exibirInfoPrazo(form, activity)
@@ -463,6 +465,9 @@ async function initSubmission() {
         statusMsg.className = "status-message success"
         statusMsg.innerHTML = `✨ Entrega confirmada! Aluno: <strong>${nomeAluno}</strong> (${statusTexto})`
 
+        // Oculta APENAS o botão de confirmar entrega após a conclusão com sucesso
+        submitBtn.style.display = "none"
+
         const protocol = result.id || result.row || Date.now()
         createReceiptButton(receiptContainer, {
           protocol,
@@ -477,7 +482,9 @@ async function initSubmission() {
         statusMsg.className = "status-message error"
         statusMsg.innerHTML = `❌ ${err.message}`
       } finally {
-        submitBtn.disabled = false
+        if (submitBtn.style.display !== "none") {
+          submitBtn.disabled = false
+        }
       }
     })
   }
