@@ -24,6 +24,7 @@ export const defaultContentPageLayout: PageLayout = {
     Component.ArticleTitle(),
     Component.ContentMeta(),
     Component.TagList(),
+    Component.TableOfContents(),
     Component.Presentation(),
     Component.CodeExplorer(),
     Component.Asciinema(),
@@ -33,7 +34,6 @@ export const defaultContentPageLayout: PageLayout = {
   afterBody: [
     Component.SubmissionForm(),
    // Component.Graph(),
-    Component.DesktopOnly(Component.TableOfContents()),
     Component.Backlinks(),
   ],
   left: [

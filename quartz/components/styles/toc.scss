@@ -38,6 +38,12 @@ button.toc-header {
   }
 }
 
+ul.toc-content {
+  &.collapsed {
+    display: none !important;
+  }
+}
+
 ul.toc-content.overflow {
   list-style: none;
   position: relative;
