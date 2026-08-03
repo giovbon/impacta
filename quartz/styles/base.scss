@@ -186,6 +186,13 @@ a {
     p > strong {
       color: var(--dark);
     }
+
+    @media all and ($mobile) {
+      & ul,
+      & ol {
+        padding-left: 1.25rem;
+      }
+    }
   }
 
   & > #quartz-body {
@@ -216,6 +223,7 @@ a {
     }
     @media all and ($mobile) {
       margin: 0 auto;
+      padding: 0 1rem;
     }
 
     & .sidebar {
@@ -249,6 +257,9 @@ a {
     }
     & .center {
       padding: 0 2rem;
+      @media all and ($mobile) {
+        padding: 0 0.5rem;
+      }
     }
 
     & .page-header,
@@ -505,8 +516,8 @@ p {
   overflow-x: auto;
 
   & > table {
-    margin: 1rem;
-    padding: 1.5rem;
+    margin: 1rem 0;
+    padding: 0.5rem;
     border-collapse: collapse;
 
     th,
