@@ -45,7 +45,7 @@ O aluno tem direito a uma Prova Substitutiva sobre todo o conteúdo da disciplin
 Nota Final = 30% MAC + 40% Prova + 30% MPAI
 
 SE (Nota Final >= 6,0 e Frequência >= 75%)
-    ENTÃO   
+    ENTAsO   
         APROVADO
     SENAO
         REPROVADO
@@ -55,4 +55,4 @@ SE (Nota Final >= 6,0 e Frequência >= 75%)
 
 ## Calendário acadêmico
 
-<img src="https://raw.githubusercontent.com/giovbon/impacta/refs/heads/main/content/ATS/calendario-academico-2-2026.png" data-preview-image>
+<img src="https://i.ibb.co/8DQCpG47/calendario-academico-2-2026.png" data-preview-image>

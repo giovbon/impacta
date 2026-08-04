@@ -1,6 +1,6 @@
 ---
-title: Introdução a testes de software
-presentation: "slides/ATS/01SL-intro-testes-software.md"
+title: Introdução
+presentation: "slides/ATS/01ATS-SL-intro-testes-software.md"
 order: 2
 ---
 

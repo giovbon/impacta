@@ -157,16 +157,21 @@ Representa a integração e verificação do software, subindo do micro para o m
 
 ## Pirâmide de Testes
 
+A Pirâmide de Testes é um conceito que serve para *guiar a estratégia de automação de testes* em um projeto de software que ajuda os desenvolvedores a decidirem *quantos e quais tipos de testes devem ser criados*.
+
 <div style="text-align: center;">
     <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn-wcsm.alura.com.br%2F2025%2F04%2Fimagem1-99.png&f=1&nofb=1&ipt=4a50b145c15936bdbecf38f764362ad0eecffd8e528451a19ce5cc949fd6e469" width="70%" data-preview-image>
 </div>
 
-
 --
 
-<div style="text-align: center;">
-    <img src="https://engsoftmoderna.info/figs/cap8/piramide-testes.svg" width="70%" data-preview-image>
-</div>
+Uma pirâmide padrão geralmente é dividida em três níveis:
+
+| Tipo de Teste                      | O que são                                                                                   | Quantidade                 | Vantagens                                                 | Desvantagens                                                   |
+|------------------------------------|-------------------------------------------------------------------------------------------|----------------------------|-----------------------------------------------------------|--------------------------------------------------------------|
+| **Testes de Unidade**              | Testam pequenas partes isoladas (funções ou métodos).                                    | Deve ser a maior parte.    | Extremamente rápidos e baixo custo de manutenção.         | Não aplicável.                                               |
+| **Testes de Integração**           | Verificam se diferentes partes do sistema funcionam bem juntas (ex: aplicação e banco). | Em quantidade moderada.    | Garantem que a "cola" entre os módulos não falhe.         | Não aplicável.                                               |
+| **Testes de Ponta a Ponta (E2E)**  | Simulam o comportamento do usuário final (ex: abrir o navegador, fazer login).           | O mínimo possível.        | Validam o sistema como um todo.                           | Muito lentos, frágeis (quebram por mudanças visuais) e caros. |
 
 ---
 
