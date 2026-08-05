@@ -32,14 +32,14 @@ async function initTypst() {
 
       try {
         if (!typstCompiler) {
-          // Load compiler using detected base path
-          const bundlePath = `${baseUrl}/static/lib/typst/snippet.bundle.mjs`.replace(/\/+/g, "/")
+          const container = btn.closest(".typst-container")
+          const bundlePath = container?.getAttribute("data-bundle") || `${baseUrl}/static/lib/typst/snippet.bundle.mjs`.replace(/\/+/g, "/")
+          const wasmPath = container?.getAttribute("data-wasm") || `${baseUrl}/static/lib/typst/typst_ts_web_compiler_bg.wasm`.replace(/\/+/g, "/")
+
           // @ts-ignore
-          const typstModule = await import(bundlePath)
+          const typstModule = await import(/* @vite-ignore */ bundlePath)
           typstCompiler = typstModule.$typst
 
-          // Fetch uncompressed WASM (28MB) for maximum compatibility on GitHub Pages
-          const wasmPath = `${baseUrl}/static/lib/typst/typst_ts_web_compiler_bg.wasm`.replace(/\/+/g, "/")
           const responseWasm = await fetch(wasmPath)
           if (!responseWasm.ok) throw new Error("Falha ao carregar WASM do Typst")
 

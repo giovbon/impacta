@@ -3,8 +3,8 @@ title: Introdução
 presentation: "slides/ATS/01ATS-SL-intro-testes-software.md"
 order: 2
 typst: 
-- path: "typs/ATS01.typ"
-  name: "Meu primeiro typst"
+- path: "typs/ATS/ATS01.typ"
+  name: "Exercício ATS01"
 ---
 
 ## Etapas

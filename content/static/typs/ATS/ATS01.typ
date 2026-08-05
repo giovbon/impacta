@@ -1,5 +1,5 @@
 #set page(paper: "a4", margin: (x: 2cm, y: 2.5cm))
-#set text(font: "Liberation Serif", size: 10.5pt)
+#set text(size: 10.5pt)
 
 = Atividade Prática: Carrinho de Compras de um E-commerce
 == Contexto
@@ -7,12 +7,12 @@ Você faz parte da equipe de qualidade de uma loja online e foi encarregado de t
 == Regras de Negócio
 O sistema deve seguir as seguintes regras para o cálculo do valor final da compra:
 1. Valor do Pedido: O valor total dos produtos no carrinho.
-2. Frete Grátis: Pedidos com valor igual ou superior a R$ 200,00 recebem frete grátis.
-3. Custo do Frete: Para pedidos com valor inferior a R$ 200,00, o frete tem um custo fixo de R$ 25,00.
+2. Frete Grátis: Pedidos com valor igual ou superior a R\$ 200,00 recebem frete grátis.
+3. Custo do Frete: Para pedidos com valor inferior a R\$ 200,00, o frete tem um custo fixo de R\$ 25,00.
 4. Cupom de Desconto PROMO10: Este cupom oferece 10% de desconto sobre o valor total dos produtos.
-    - Condição: Só pode ser aplicado se o valor total dos produtos for igual ou superior a R$ 100,00.
+    - Condição: Só pode ser aplicado se o valor total dos produtos for igual ou superior a R\$ 100,00.
     - Regra de Precedência: O desconto do cupom deve ser aplicado antes do sistema verificar se o cliente tem direito ao frete grátis.
-5. Cupom de Desconto PRIMEIRACOMPRA: Este cupom oferece R$ 30,00 de desconto fixo sobre o valor total dos produtos. Ele pode ser aplicado em pedidos de qualquer valor.
+5. Cupom de Desconto PRIMEIRACOMPRA: Este cupom oferece R\$ 30,00 de desconto fixo sobre o valor total dos produtos. Ele pode ser aplicado em pedidos de qualquer valor.
 6. Restrição de Cupons: O cliente não pode aplicar mais de um cupom na mesma compra.
 == Sua Tarefa
 Com base nas regras de negócio acima, você deve projetar um conjunto de casos de teste para validar o comportamento do sistema. Para isso, você deve:
@@ -22,7 +22,7 @@ Com base nas regras de negócio acima, você deve projetar um conjunto de casos 
     - Cenários que testem os limites de frete grátis.
     - Cenários que testem os limites para a aplicação do cupom PROMO10.
     - Cenários que combinem o uso de cupons com as regras de frete.
-    - Cenários que tentem aplicar cupons de forma inválida (ex: PROMO10 em um pedido de R$ 50,00).
+    - Cenários que tentem aplicar cupons de forma inválida (ex: PROMO10 em um pedido de R\$ 50,00).
     - Um cenário que tente aplicar os dois cupons ao mesmo tempo.
 
 == Modelo de Entrega

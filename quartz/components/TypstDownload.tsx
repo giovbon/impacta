@@ -22,7 +22,7 @@ const TypstDownload: QuartzComponent = ({ displayClass, fileData }: QuartzCompon
 
   const baseDir = pathToRoot(fileData.slug!)
   const bundlePath = joinSegments(baseDir, "static/lib/typst/snippet.bundle.mjs")
-  const wasmPath = joinSegments(baseDir, "static/lib/typst/typst_ts_web_compiler_bg.wasm.gz")
+  const wasmPath = joinSegments(baseDir, "static/lib/typst/typst_ts_web_compiler_bg.wasm")
 
   return (
     <div 
