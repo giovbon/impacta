@@ -25,7 +25,7 @@
 const SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbwauFvnfDsrpl_ACYeZ46NxwKAp2BR9b-3Z0Nz9uTelTaRIYsdQwWYYTYO4GvNBmw4/exec"
 
-const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024 // 10 MB
+const MAX_FILE_SIZE_BYTES = 20 * 1024 * 1024 // 20 MB
 
 /**
  * Converte um File (ZIP) para base64
@@ -312,7 +312,7 @@ async function initSubmission() {
       if (fileInput.files && fileInput.files.length > 0) {
         const file = fileInput.files[0]
         if (file.size > MAX_FILE_SIZE_BYTES) {
-          fileNameDisplay.textContent = "❌ Arquivo muito grande (máx. 10MB)"
+          fileNameDisplay.textContent = "❌ Arquivo muito grande (máx. 20MB)"
           fileNameDisplay.style.color = "#ef4444"
           clearFileBtn.style.display = "flex"
           fileInput.value = ""
@@ -402,7 +402,7 @@ async function initSubmission() {
       }
 
       if (hasFile && zipFile!.size > MAX_FILE_SIZE_BYTES) {
-        showStatus(statusMsg, "error", "Arquivo muito grande. O limite é de 10MB.")
+        showStatus(statusMsg, "error", "Arquivo muito grande. O limite é de 20MB.")
         return
       }
 
