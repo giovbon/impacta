@@ -93,6 +93,7 @@ TypstDownload.css = `
 }
 `
 
+// @ts-ignore
 TypstDownload.afterDOMLoaded = typstScript
 
 export default (() => TypstDownload) satisfies QuartzComponentConstructor

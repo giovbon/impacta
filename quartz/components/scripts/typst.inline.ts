@@ -1,21 +1,37 @@
 let typstCompiler: any = null
 
+function getSiteRoot(): string {
+  const base = (window as any).QUARTZ_BASE_URL || ""
+  if (base && location.pathname.startsWith(base)) {
+    return base
+  }
+  return ""
+}
+
+function resolveStaticUrl(rawPath: string): string {
+  if (rawPath.startsWith("http://") || rawPath.startsWith("https://")) {
+    return rawPath
+  }
+
+  let clean = rawPath
+  const staticIdx = clean.indexOf("static/")
+  if (staticIdx !== -1) {
+    clean = clean.substring(staticIdx)
+  } else {
+    clean = clean.replace(/^(\.\.\/|\.\/|\/)+/, "")
+    if (!clean.startsWith("static/")) {
+      clean = "static/" + clean
+    }
+  }
+
+  const root = getSiteRoot()
+  const fullPath = (root + "/" + clean).replace(/\/+/g, "/")
+  return new URL(fullPath, location.origin).href
+}
+
 async function initTypst() {
   const downloadBtns = document.querySelectorAll(".typst-download-btn")
   if (downloadBtns.length === 0) return
-
-  // Bulletproof base URL detection for GitHub Pages
-  const getBaseUrl = () => {
-    if ((window as any).QUARTZ_BASE_URL) return (window as any).QUARTZ_BASE_URL
-    const postScript = document.querySelector('script[src*="postscript.js"]') as HTMLScriptElement
-    if (postScript) {
-      const url = new URL(postScript.src)
-      return url.pathname.replace("/postscript.js", "")
-    }
-    return ""
-  }
-
-  const baseUrl = getBaseUrl()
 
   downloadBtns.forEach((btn) => {
     if ((btn as any)._initialized) return
@@ -23,8 +39,8 @@ async function initTypst() {
 
     btn.addEventListener("click", async (e) => {
       e.preventDefault()
-      const typPath = btn.getAttribute("data-typ")
-      if (!typPath) return
+      const rawTypPath = btn.getAttribute("data-typ")
+      if (!rawTypPath) return
 
       const originalText = btn.innerHTML
       btn.classList.add("loading")
@@ -33,15 +49,18 @@ async function initTypst() {
       try {
         if (!typstCompiler) {
           const container = btn.closest(".typst-container")
-          const bundlePath = container?.getAttribute("data-bundle") || `${baseUrl}/static/lib/typst/snippet.bundle.mjs`.replace(/\/+/g, "/")
-          const wasmPath = container?.getAttribute("data-wasm") || `${baseUrl}/static/lib/typst/typst_ts_web_compiler_bg.wasm`.replace(/\/+/g, "/")
+          const rawBundlePath = container?.getAttribute("data-bundle") || "static/lib/typst/snippet.bundle.mjs"
+          const rawWasmPath = container?.getAttribute("data-wasm") || "static/lib/typst/typst_ts_web_compiler_bg.wasm"
+
+          const bundleUrl = resolveStaticUrl(rawBundlePath)
+          const wasmUrl = resolveStaticUrl(rawWasmPath)
 
           // @ts-ignore
-          const typstModule = await import(/* @vite-ignore */ bundlePath)
+          const typstModule = await import(/* @vite-ignore */ bundleUrl)
           typstCompiler = typstModule.$typst
 
-          const responseWasm = await fetch(wasmPath)
-          if (!responseWasm.ok) throw new Error("Falha ao carregar WASM do Typst")
+          const responseWasm = await fetch(wasmUrl)
+          if (!responseWasm.ok) throw new Error(`Falha ao carregar WASM do Typst: ${wasmUrl} (status: ${responseWasm.status})`)
 
           const buffer = await responseWasm.arrayBuffer()
           typstCompiler.setCompilerInitOptions({
@@ -49,9 +68,9 @@ async function initTypst() {
           })
         }
 
-        // Fetch .typ file (typPath is already resolved by component)
-        const res = await fetch(typPath)
-        if (!res.ok) throw new Error(`Arquivo .typ não encontrado: ${typPath}`)
+        const typUrl = resolveStaticUrl(rawTypPath)
+        const res = await fetch(typUrl)
+        if (!res.ok) throw new Error(`Arquivo .typ não encontrado: ${typUrl} (status: ${res.status})`)
         const typstCode = await res.text()
 
         // Generate PDF
@@ -65,7 +84,7 @@ async function initTypst() {
         const customName = btn.getAttribute("data-name")
         const filename = customName 
           ? `${customName}.pdf` 
-          : typPath.split("/").pop()?.replace(".typ", ".pdf") || "documento.pdf"
+          : rawTypPath.split("/").pop()?.replace(".typ", ".pdf") || "documento.pdf"
         a.download = filename
         a.click()
         URL.revokeObjectURL(url)
@@ -88,3 +107,4 @@ document.addEventListener("nav", initTypst)
 initTypst()
 
 export default initTypst
+
