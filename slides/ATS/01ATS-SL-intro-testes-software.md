@@ -61,7 +61,7 @@ Um **engano** cometido por uma pessoa resulta em um **defeito (bug)** no softwar
 --
 
 <div style="text-align: center;">
-    <img src="/ATS/img/engano-bug-erro-falha.png" width="60%" data-preview-image>
+    <img src="https://i.ibb.co/99kh38xP/engano-bug-erro-falha.png" width="60%" data-preview-image>
 </div>
 
 ---
@@ -100,13 +100,13 @@ O teste exaustivo *é impossível*. Tentar cobrir todas as combinações possív
 A imagem apresenta o Modelo em V, uma representação clássica que demonstra a *relação direta entre cada fase do desenvolvimento de software e seu respectivo nível de teste*:
 
 <div style="text-align: center;">
-    <img src="/ATS/img/modelo-v.png" width="60%" data-preview-image>
+    <img src="https://i.ibb.co/B2DHsHM5/modelo-v.png" width="60%" data-preview-image>
 </div>
 
 --
 
 <div style="text-align: center;">
-    <img src="/ATS/img/modelo-v.png" width="40%" data-preview-image>
+    <img src="https://i.ibb.co/B2DHsHM5/modelo-v.png" width="40%" data-preview-image>
 </div>
 
 ### Fases do Desenvolvimento
@@ -120,7 +120,7 @@ Representa a decomposição do projeto, indo do macro (negócio) para o micro (c
 --
 
 <div style="text-align: center;">
-    <img src="/ATS/img/modelo-v.png" width="40%" data-preview-image>
+    <img src="https://i.ibb.co/B2DHsHM5/modelo-v.png" width="40%" data-preview-image>
 </div>
 
 ### Níveis do Teste
