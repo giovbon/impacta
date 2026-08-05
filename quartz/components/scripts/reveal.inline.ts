@@ -1,3 +1,16 @@
+function fixRevealImagePaths(container: HTMLElement) {
+  const base = (window as any).QUARTZ_BASE_URL || ""
+  if (!base || !location.pathname.startsWith(base)) return
+
+  container.querySelectorAll("img").forEach((img) => {
+    const rawSrc = img.getAttribute("src")
+    if (rawSrc && rawSrc.startsWith("/") && !rawSrc.startsWith(base + "/")) {
+      const fixed = (base + "/" + rawSrc).replace(/\/+/g, "/")
+      img.setAttribute("src", fixed)
+    }
+  })
+}
+
 async function initReveal() {
   const containers = document.querySelectorAll<HTMLElement>(".reveal")
   if (containers.length === 0) return
@@ -26,6 +39,8 @@ async function initReveal() {
       })
 
       await deck.initialize()
+      fixRevealImagePaths(container)
+      deck.on("slidechanged", () => fixRevealImagePaths(container))
 
       if (!container.querySelector(".reveal-fullscreen-btn")) {
         const btn = document.createElement("button")
@@ -56,3 +71,4 @@ async function initReveal() {
 document.addEventListener("nav", initReveal)
 
 export default initReveal
+
