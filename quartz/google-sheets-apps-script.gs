@@ -137,7 +137,13 @@ function jsonResponse(obj) {
  */
 function doGet(e) {
   try {
-    var action = e.parameter.action || ""
+    var action = (e && e.parameter) ? (e.parameter.action || "") : ""
+
+    // Se a requisição for uma entrega (action=submit ou se contiver RA e atividade), repassa para doPost
+    if (action === "submit" || (e && e.parameter && e.parameter.ra && e.parameter.atividade)) {
+      return doPost(e)
+    }
+
     var doc = SpreadsheetApp.openById(scriptProp.getProperty(SCRIPT_PROP_KEY))
 
     if (action === "buscarAluno") {
