@@ -5,6 +5,8 @@ order: 2
 typst: 
 - path: "typs/ATS/ATS01.typ"
   name: "Exercício ATS01"
+submission: 
+  - "ATS01"
 ---
 
 ## Etapas

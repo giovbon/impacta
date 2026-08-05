@@ -22,28 +22,6 @@ Se o *resultado obtido não bate com o esperado*, isso significa que um *defeito
 
 ---
 
-## Tipos de Teste
-
-### Teste Funcional (*O quê?*)
-
-Avalia se as *funcionalidades do sistema estão operando de acordo com os requisitos e regras de negócio especificados*. Ele garante que o *software entregue o resultado esperado* quando o usuário realiza uma ação.
-
-* **Foco:** Comportamento, entradas, saídas e regras de negócio.
-* **Exemplo prático:** Verificar se, ao digitar o e-mail e a senha corretos e clicar em "Entrar", o usuário consegue fazer login no aplicativo.
-* **Tipos comuns:** Testes unitários, testes de integração, testes de sistema, testes de regressão, testes de aceitação (UAT).
-
---
-
-### Teste Não Funcional (*Como?*)
-
-Avalia o desempenho, a usabilidade, a segurança e a infraestrutura do sistema. Ele mede a *qualidade, estabilidade e a experiência geral do usuário durante o uso do software*.
-
-* **Foco:** Desempenho, escalabilidade, segurança, facilidade de uso e compatibilidade.
-* **Exemplo prático:** Verificar se a página de login carrega em menos de 2 segundos quando 10.000 usuários tentam acessar ao mesmo tempo (teste de carga/estresse).
-* **Tipos comuns:** Testes de carga e estresse (performance), testes de segurança (penetração), testes de usabilidade, testes de compatibilidade (diferentes navegadores/dispositivos) e testes de acessibilidade.
-
----
-
 ## Por que é necessário testar?
 
 É necessário testar o software porque sua construção é uma *tarefa complexa e sujeita a erros humanos* em todas as fases do desenvolvimento. Como o *software está presente em quase tudo* hoje em dia, garantir que ele funcione como prometido é essencial pra manter a *qualidade e a confiança* no produto.
@@ -135,8 +113,8 @@ A imagem apresenta o Modelo em V, uma representação clássica que demonstra a 
 Representa a decomposição do projeto, indo do macro (negócio) para o micro (código):
 
 - **Requisitos**: Definição do que o software deve fazer para o negócio.
-- **Esp. Funcional**: Detalhamento das funcionalidades e comportamento do sistema.
-- **Esp. Técnica**: Definição da arquitetura, banco de dados e como os componentes se comunicarão.
+- **Especificação Funcional**: Detalhamento das funcionalidades e comportamento do sistema.
+- **Especificação Técnica**: Definição da arquitetura, banco de dados e como os componentes se comunicarão.
 - **Construção**: O momento da codificação propriamente dita pelos desenvolvedores.
 
 --
@@ -149,8 +127,8 @@ Representa a decomposição do projeto, indo do macro (negócio) para o micro (c
 Representa a integração e verificação do software, subindo do micro para o macro:
 
 - **Testes Unitários**: Validam a *menor unidade de código* (funções / métodos) gerada na fase de *Construção*.
-- **Teste de Integração**: Verifica se os componentes técnicos conversam entre si conforme a *Esp. Técnica*.
-- **Teste de Sistema**: Valida o software como um todo, garantindo que ele execute as funções descritas na *Esp. Funcional*.
+- **Teste de Integração**: Verifica se os componentes técnicos conversam entre si conforme a *Especificação Técnica*.
+- **Teste de Sistema**: Valida o software como um todo, garantindo que ele execute as funções descritas na *Especificação Funcional*.
 - **Teste de Aceitação**: Realizado geralmente pelo usuário final para confirmar se os *Requisitos* originais foram atendidos.
 
 ---
@@ -175,23 +153,22 @@ Uma pirâmide padrão geralmente é dividida em três níveis:
 
 ---
 
-## Nível de acesso ao código-fonte 
+## Tipos de Teste
 
-Quanto ao nível de acesso ao código-fonte da aplicação durante os testes:
+### Teste Funcional
 
-### Teste de Caixa Preta (Black-Box Testing)
+Avalia se as *funcionalidades do sistema estão operando de acordo com os requisitos e regras de negócio especificados*. Ele garante que o *software entregue o resultado esperado* quando o usuário realiza uma ação.
 
-No teste de caixa preta, o testador *não visualiza o código interno nem a estrutura da aplicação*. O sistema é tratado como uma *"caixa fechada"*: você envia uma entrada (input) e verifica se a saída (output) e o comportamento correspondem ao esperado.
-- **Foco**: Requisitos funcionais, regras de negócio e experiência do usuário.
-- **Quem executa:** Profissionais de QA (Garantia de Qualidade), analistas de teste e usuários finais (em testes de aceitação).
-- **Exemplo:** Acessar a tela de cadastro de um site, preencher o formulário, clicar em "Cadastrar" e checar se a mensagem de sucesso aparece na tela, sem saber como o backend processou essa requisição.
+* **Foco:** Comportamento, entradas, saídas e regras de negócio.
+* **Exemplo prático:** Verificar se, ao digitar o e-mail e a senha corretos e clicar em "Entrar", o usuário consegue fazer login no aplicativo.
+* **Tipos comuns:** Testes unitários, testes de integração, testes de sistema, testes de regressão, testes de aceitação (UAT).
 
 --
 
-### Teste de Caixa Branca (White-Box Testing)
+### Teste Não Funcional
 
-Também chamado de teste de caixa transparente ou estrutural. O testador tem *acesso total ao código-fonte* e testa os caminhos lógicos internos, algoritmos, rotas de exceção, estruturas de dados e integrações internas do software.
+Avalia o desempenho, a usabilidade, a segurança e a infraestrutura do sistema. Ele mede a *qualidade, estabilidade e a experiência geral do usuário durante o uso do software*.
 
-- **Foco**: Qualidade do código, cobertura de testes (code coverage), fluxo de controle, segurança e eficiência lógica.
-- **Quem executa**: Desenvolvedores de software e engenheiros de automação.
-- **Exemplo**: Escrever um teste unitário em Python ou Java para validar se uma função específica aciona o tratamento correto de erro caso receba um valor nulo.
+* **Foco:** Desempenho, escalabilidade, segurança, facilidade de uso e compatibilidade.
+* **Exemplo prático:** Verificar se a página de login carrega em menos de 2 segundos quando 10.000 usuários tentam acessar ao mesmo tempo (teste de carga/estresse).
+* **Tipos comuns:** Testes de carga e estresse (performance), testes de segurança (penetração), testes de usabilidade, testes de compatibilidade (diferentes navegadores/dispositivos) e testes de acessibilidade.
