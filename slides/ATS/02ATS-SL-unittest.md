@@ -6,7 +6,7 @@
 
 ---
 
-O **unittest é focado primordialmente em Testes de Unidade** (ou Testes Unitários), como o próprio nome sugere. O unittest é focado primordialmente em **Testes de Unidade**. Eles servem para *verificar se as menores partes de um sistema* (as "unidades") estão funcionando exatamente como deveriam, de forma *isolada*.
+O **unittest é focado primordialmente em Testes de Unidade** (ou Testes Unitários), como o próprio nome sugere. Eles servem para *verificar se as menores partes de um sistema* (as "unidades") estão funcionando exatamente como deveriam, de forma *isolada*.
 
 Uma **unidade** é geralmente:
 
@@ -18,7 +18,7 @@ Pense neles como o *controle de qualidade* de uma fábrica de carros: antes de t
 
 ---
 
-### 3 Características de um bom Teste de Unidade
+## 3 Características de um bom Teste de Unidade
 
 - **Isolamento**: O teste *não deve depender de nada externo* (banco de dados, internet, arquivos no disco). Se a função que você está testando precisa de um banco de dados, você usa um "dublê" (chamado de Mock).
 - **Velocidade**: Eles devem ser *executados muito rapidamente*. Um projeto grande pode ter *milhares de testes de unidade* e eles precisam rodar rápido para que o desenvolvedor os execute o tempo todo.
@@ -36,7 +36,7 @@ Quase todo teste de unidade segue uma estrutura lógica dividida em três etapas
 
 ---
 
-### Por que fazer testes de unidade?
+## Por que fazer testes de unidade?
 
 - **Facilita o Refactoring**: Você pode *mudar todo o código interno de uma função para torná-la mais rápida*; se o teste de unidade *continuar passando*, você tem certeza de que não quebrou a lógica.
 - **Documentação Viva**: O teste serve como um exemplo de *como aquela função deve ser usada*.
@@ -51,11 +51,11 @@ O **unittest** é o framework de testes *padrão* do Python. Ele *já vem instal
 
 Ele é fortemente inspirado no JUnit (do Java), o que significa que ele é *baseado em Programação Orientada a Objetos*. Para criar um teste, você precisa *obrigatoriamente* criar uma classe que herda de `unittest.TestCase`.
 
----
+--
 
 Exemplo simples:
 
-```py [data-line-numbers]
+```py
 import unittest
 
 def soma(a, b):
@@ -75,18 +75,19 @@ if __name__ == '__main__':
 
 Rode com `python3 unittest01.py`
 
----
+--
 
 Tendo como resultado isso:
 
 ```
 [giobon@giovani-a320mh UNITTEST]$ python3 unittest01.py 
 .
-----------------------------------------------------------------------
+
 Ran 1 test in 0.000s
 
 OK
 ```
+
 
 Exibirá um ponto (`.`) para cada teste com sucesso ou um `F` para cada falha.
 
@@ -96,10 +97,11 @@ Exibirá um ponto (`.`) para cada teste com sucesso ou um `F` para cada falha.
 
 Quando você cria uma classe que herda de `unittest.TestCase`, essa classe *ganha acesso aos Assert Methods* (ou métodos de afirmação) através do `self`. A grande vantagem deles sobre o `assert` comum do Python é que, se o teste falhar, eles explicam *por que* falhou.
 
-Os **Assert Methods** no módulo unittest do Python são utilizados para *verificar se os resultados obtidos em testes de unidade correspondem aos resultados esperados*. Ao validar condições específicas, como a igualdade de valores, a presença de elementos em estruturas de dados ou a identidade de objetos, esses métodos ajudam a garantir que o *código funcione corretamente e atenda aos requisitos especificados*. Quando uma condição falha, um `AssertionError` é levantado, indicando imediatamente a *existência de um problema*, o que facilita a *identificação e correção de bugs* no desenvolvimento.
+Os **Assert Methods** no módulo unittest do Python são utilizados para *verificar se os resultados obtidos em testes de unidade correspondem aos resultados esperados*. 
 
----
+Quando uma condição falha, um `AssertionError` é levantado, indicando imediatamente a *existência de um problema*, o que facilita a *identificação e correção de bugs* no desenvolvimento.
 
+--
 
 Os mais usados são: 
 
@@ -114,7 +116,7 @@ Os mais usados são:
 | `assertIsNone(x)` | `x é None` | Verifica se `x` é `None`. |
 | `assertIsNotNone(x)` | `x não é None` | Verifica se `x` não é `None`. |
 
----
+--
 
 
 | Método | Checa que | Descrição |
@@ -132,11 +134,11 @@ Os mais usados são:
 
 Muitas vezes, queremos *testar se o código falha* corretamente quando recebe dados inválidos. 
 
-O `assertRaises` é um método do módulo unittest que *verifica se uma função específica levanta uma exceção esperada quando é executada*. Ao usar esse método, o desenvolvedor pode garantir que o *código se comporta corretamente em situações de erro*, validando se a exceção correta é gerada em resposta a condições inesperadas.
+O `assertRaises` é um método do módulo unittest que *verifica se uma função específica levanta uma EXCEÇÃO ESPERADA quando é executada*. Ao usar esse método, o desenvolvedor pode garantir que o *código se comporta corretamente em SITUAÇÕES DE ERRO*, validando se a exceção correta é gerada em resposta a condições inesperadas.
 
 **Por que usar isso?** Serve para garantir que as suas *travas de segurança* estão funcionando. Se você criou uma *função* que só aceita números inteiros, você precisa de um teste com `assertRaises(TypeError)` para garantir que, *se alguém tentar passar uma letra*, o sistema vai barrar isso corretamente em vez de tentar processar e causar um estrago maior depois.
 
----
+--
 
 Imagine uma função simples de divisão. O Python não consegue dividir por zero e lança um `ZeroDivisionError`. Podemos testar se isso realmente acontece:
 
@@ -157,22 +159,42 @@ if __name__ == '__main__':
     unittest.main()
 ```
 
----
+--
 
 Quando você usa `with self.assertRaises(ZeroDivisionError):`, você está criando uma **zona de monitoramento** (Context Manager).
 
 1. O `unittest` começa a observar cada linha de código dentro do bloco indentado.
 2. O código lá dentro roda.
 3. Se um erro aconteceu: o `with` captura o erro e verifica se é do tipo que você esperava (`ZeroDivisionError`). Se for, ele "engole" o erro e deixa o teste seguir como **Sucesso**.
-    * Se nenhum erro aconteceu: o `with` entende que algo está errado (já que você esperava um erro) e interrompe o teste como **Falha**.
+    - Se nenhum erro aconteceu: o `with` entende que algo está errado (já que você esperava um erro) e interrompe o teste como **Falha**.
 
----
+--
 
 Resultados:
 
-Se você chamar `dividir(10, 0)`, o erro ocorre, o `unittest` captura ele e diz: **OK (Sucesso)**.
+- Se você chamar `dividir(10, 0)`, o erro ocorre, o `unittest` captura ele e diz: **OK (Sucesso)**.
 
-Se você chamasse `dividir(10, 2)`, a função retornaria `5` (não daria erro). O `unittest` acharia estranho (já que você prometeu um erro que não veio) e marcaria o teste como **Falha**.
+- Se você chamasse `dividir(10, 2)`, a função retornaria `5` (não daria erro). O `unittest` acharia estranho (já que você prometeu um erro que não veio) e marcaria o teste como **Falha**.
+
+--
+
+#### Exceções embutidas (built-in exceptions) comuns
+
+| Exceção | Quando usar no `assertRaises` | Exemplo Prático |
+| --- | --- | --- |
+| `ValueError` | Quando o tipo do dado está certo, mas o valor recebido é inválido para a lógica da função. | Passar uma idade negativa `-5` em uma função de cadastro. |
+| `TypeError` | Quando o tipo do dado é incompatível com a operação. | Enviar uma string `"5"` para uma função de cálculo que só aceita números `int`/`float`. |
+| `IndexError` | Quando o código tenta acessar uma posição inexistente de uma sequência (lista, tupla). | Buscar o elemento na posição `[10]` em uma lista de apenas 3 itens. |
+| `KeyError` | Quando se tenta acessar uma chave que não existe em um dicionário. | Buscar a chave `dicionario["email"]` quando o usuário só possui `"nome"`. |
+| `ZeroDivisionError` | Ao tentar dividir qualquer número por zero. | Executar cálculos matemáticos ou médias onde o divisor pode ser `0`. |
+
+--
+
+| `AttributeError` | Ao tentar chamar um método ou atributo que o objeto não possui. | Tentar usar `.upper()` em uma variável que é um número inteiro. |
+| `FileNotFoundError` | Ao tentar manipular um arquivo cujo caminho não existe no sistema. | Executar um leitor de dados apontando para um arquivo `.csv` deletado. |
+| `PermissionError` | Ao tentar realizar operações de arquivo sem o nível de acesso necessário. | Tentar salvar um log em uma pasta restrita do sistema operacional. |
+| `KeyBoardInterrupt` / `TimeoutError` | Para testar resiliência a interrupções de tempo limite ou execuções externas. | Requições de API que demoram mais que o tempo limite configurado. |
+| `Exception` | Captura genérica de qualquer erro padrão (use apenas se não souber o erro exato). | Validações amplas onde qualquer falha deve interromper o fluxo do teste. |
 
 ---
 
