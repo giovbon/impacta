@@ -25,7 +25,7 @@
 const SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbwauFvnfDsrpl_ACYeZ46NxwKAp2BR9b-3Z0Nz9uTelTaRIYsdQwWYYTYO4GvNBmw4/exec"
 
-const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024 // 10 MB
+const MAX_FILE_SIZE_BYTES = 20 * 1024 * 1024 // 20 MB
 
 /**
  * Converte um File (ZIP) para base64
@@ -75,13 +75,23 @@ function getFromGAS(url: string, params: Record<string, string>): Promise<any> {
 
 /**
  * Envia FormData para o Google Apps Script via POST
- * Usa XMLHttpRequest em vez de fetch porque o GAS faz redirect
- * e o fetch pode mudar o método para GET durante o redirect (erro 405).
+ * Inclui os parâmetros essenciais na query string para evitar perdas
+ * caso o navegador converta o POST em GET durante o redirecionamento 302 do GAS.
  */
 function postToGAS(url: string, formData: FormData): Promise<string> {
+  const queryParams: string[] = ["action=submit"]
+  for (const [key, value] of (formData as any).entries()) {
+    if (typeof value === "string" && key !== "arquivo_zip_base64" && key !== "mensagem") {
+      queryParams.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+    }
+  }
+  const fullUrl = url.includes("?")
+    ? `${url}&${queryParams.join("&")}`
+    : `${url}?${queryParams.join("&")}`
+
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
-    xhr.open("POST", url)
+    xhr.open("POST", fullUrl)
     xhr.onload = () => {
       if (xhr.status >= 200 && xhr.status < 300) {
         resolve(xhr.responseText)
@@ -302,7 +312,7 @@ async function initSubmission() {
       if (fileInput.files && fileInput.files.length > 0) {
         const file = fileInput.files[0]
         if (file.size > MAX_FILE_SIZE_BYTES) {
-          fileNameDisplay.textContent = "❌ Arquivo muito grande (máx. 10MB)"
+          fileNameDisplay.textContent = "❌ Arquivo muito grande (máx. 20MB)"
           fileNameDisplay.style.color = "#ef4444"
           clearFileBtn.style.display = "flex"
           fileInput.value = ""
@@ -392,7 +402,7 @@ async function initSubmission() {
       }
 
       if (hasFile && zipFile!.size > MAX_FILE_SIZE_BYTES) {
-        showStatus(statusMsg, "error", "Arquivo muito grande. O limite é de 10MB.")
+        showStatus(statusMsg, "error", "Arquivo muito grande. O limite é de 20MB.")
         return
       }
 
