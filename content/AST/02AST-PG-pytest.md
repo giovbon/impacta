@@ -9,6 +9,17 @@ submission:
   - "AST02"
 ---
 
+```py
+python -m venv .venv
+# linux
+source .venv/bin/activate 
+# windows
+.venv\Scripts\activate
+
+
+pip install pytest
+```
+
 ## 📚 Referência
 
 - [pytest documentation](https://docs.pytest.org/en/stable/)
