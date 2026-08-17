@@ -8,7 +8,16 @@
 ---
 
 
-O **Pytest** é um *framework de testes* para Python muito popular por ser expressivo, escalável e simples. 
+
+O **Pytest** é um *framework de testes* para Python muito popular por ser expressivo, escalável e simples. Ele **é focado primordialmente em Testes de Unidade** (ou Testes Unitários) que servem para *verificar se as menores partes de um sistema* (as "unidades") estão funcionando exatamente como deveriam, de forma *isolada*.
+
+Uma unidade é geralmente:
+
+- Uma única *função*.
+- Um *método* de uma classe.
+- Um pequeno componente lógico.
+
+---
 
 ### Pytest vs. Unittest
 
@@ -24,83 +33,34 @@ O **Pytest** é um *framework de testes* para Python muito popular por ser expre
 
 **Nomes de Funções:** Dentro desses arquivos, ele só executa funções que começam com `test_`. (Ex: `def test_soma_positivos():`).
 
-**Asserções Simples:** Esqueça `self.assertEqual`. Use apenas a palavra reservada nativa do Python: `assert`.
+**Asserções Simples:** Esqueça `self.assertEqual` do unittest. Use apenas a palavra reservada nativa do Python: `assert`.
 
 **Execução:** Para rodar, basta digitar `pytest` no terminal (na pasta do projeto).
 
 ---
 
-## Estrutura de pastas e arquivos
+Um exemplo simples:
 
-*Separar o código da aplicação do código de teste* é uma prática essencial no desenvolvimento profissional em Python.
+```py
+def soma(a, b):
+    return a + b
 
-A estrutura padrão de um projeto Python geralmente inclui uma *pasta dedicada para os testes*, permitindo que ferramentas como `pytest` localizem automaticamente os arquivos de teste cujo nome começa com `test_`.
 
-```bash
-meu_projeto/
-├── app/                  # Onde vive seu código real
-│   ├── __init__.py
-│   ├── main.py           # Onde o programa começa
-│   └── utilitarios.py    # Funções auxiliares
-│├── tests/                # Pasta dedicada aos testes
-│   ├── __init__.py
-│   ├── test_main.py      # Testa o main.py
-│   └── test_utilitarios.py # Testa o utilitarios.py
-├── requirements.txt      # Dependências
-└── README.md
+# No pytest, basta criar uma função que comece com test_
+def test_funcao_soma():
+    # O pytest utiliza a palavra-chave nativa `assert` do Python
+    assert soma(10, 5) == 15
 ```
+
+--
+
+Você precisa instalar o `pytest` no ambiente virtual (venv) do seu projeto para que o comando fique disponível no terminal, com `pip install pytest`.
+
+No terminal: use o comando `pytest` (que você instalou via pip) que faz o trabalho de varrer a pasta, encontrar as funções que começam com `test_` e executá-las.
 
 ---
 
-
-Embora funcione colocar tudo em um único arquivo, essa abordagem é considerada ruim em projetos reais, pois compromete a organização e a clareza do código. Mantendo *arquivos distintos*, como `main.py` para a lógica da aplicação e `test_main.py` para os testes, *cada um se concentra em sua função específica, facilitando a legibilidade e manutenção*. Além disso, ao implementar essa separação, é mais simples *evitar o envio de arquivos de teste para o ambiente de produção*.
-
-Exemplo:
-
-```python
-# Arquivo: funcao.py
-
-def eh_par(numero):
-    """Retorna True se o número for par, False caso contrário."""
-    return numero % 2 == 0
-```
-
----
-
-```python
-# Arquivo: test_funcoes.py
-from funcoes import eh_par
-import pytest
-
-# Teste 1: Verifica um caso verdadeiro
-def test_deve_retornar_true_para_numero_par():
-    resultado = eh_par(4)
-    assert resultado is True
-
-# Teste 2: Verifica um caso falso
-def test_deve_retornar_false_para_numero_impar():
-    resultado = eh_par(5)
-    assert resultado is False
-```
-
-Depois, abra seu terminal na pasta onde salvou os arquivos e digite `pytest test_funcoes.py -v`.
-
----
-
-
-
-O comando `pytest` *executa todos os arquivos de teste* que seguem a convenção de nomenclatura (como `test_*.py` ou `*_test.py`) no diretório atual e em subdiretórios. Se você *especificar um nome de arquivo*, como `pytest nome_do_arquivo.py`, o pytest executará apenas os testes contidos nesse arquivo. 
-
-A opção `-v` (ou `--verbose`) aumenta a verbosidade da saída, fornecendo *detalhes sobre cada teste, incluindo seu nome e resultado*, o que facilita a identificação de falhas. Sem essa opção, a saída é mais resumida, mostrando apenas um ponto (`.`) para testes que passaram, um `F` para os que falharam, e um `s` para os que foram pulados.
-
-```bash
-test_funcoes.py ..
-
-======== 2 passed in 0.02s 
-```
-
-
----
+`assert` é utilizados para *verificar se os resultados obtidos em testes de unidade correspondem aos resultados esperados*
 
 Possibilidades de uso do `assert` no pytest:
 
@@ -137,7 +97,17 @@ assert idade >= 18
 
 Existem *dois casos* onde o `assert` puro do Python não resolve bem, e o pytest oferece ferramentas auxiliares:
 
-1. *Testar erros*: Testar se seu código falha quando deveria falhar (`assertRaises` do UnitTest):
+## Testar erros
+
+Testar se seu código falha quando deveria falhar.
+
+Muitas vezes, queremos *testar se o código falha* corretamente quando recebe dados inválidos. 
+
+O `pytest.raises` é um método do módulo pytest que *verifica se uma função específica levanta uma EXCEÇÃO ESPERADA quando é executada*. Ao usar esse método, o desenvolvedor pode garantir que o *código se comporta corretamente em SITUAÇÕES DE ERRO*, validando se a exceção correta é gerada em resposta a condições inesperadas.
+
+--
+
+Imagine uma função simples de divisão. O Python não consegue dividir por zero e lança um erro do tipo `ZeroDivisionError`. Podemos testar se isso realmente acontece:
 
 ```py
 def test_deve_falhar_ao_dividir_por_zero():
@@ -146,13 +116,96 @@ def test_deve_falhar_ao_dividir_por_zero():
     # O teste PASSA se o erro acontecer. Se NÃO der erro, o teste falha.
 ```
 
-2. *Aproximação*: computadores são ruins com números decimais (float). `0.1 + 0.2` muitas vezes resulta em `0.30000000000000004` e o teste falha se usar `==`.
+--
+
+Se um erro aconteceu: o `with` captura o erro e verifica se é do tipo que você esperava (`ZeroDivisionError`). Se for, ele "engole" o erro e deixa o teste seguir como **Sucesso**.
+
+Se nenhum erro aconteceu: o `with` entende que algo está errado (já que você esperava um erro) e interrompe o teste como **Falha**.
+
+---
+
+## Aproximação
+
+Computadores são ruins com números decimais (float). `0.1 + 0.2` muitas vezes resulta em `0.30000000000000004` e o teste falha se usar `==`.
 
 ```py
 def test_calculo_decimal():
     # assert 0.1 + 0.2 == 0.3  <-- ISSO FALHARIA
     assert 0.1 + 0.2 == pytest.approx(0.3) # ISSO PASSA
 ```
+
+O `pytest.approx()` funciona aplicando uma margem de tolerância flexível à comparação: em vez de exigir igualdade exata bit a bit, ele calcula a diferença entre os números e aceita o resultado se a variação for insignificante, ignorando os pequenos ruídos de arredondamento da memória.
+
+---
+
+## Execução
+
+O comando `pytest` *executa todos os arquivos de teste* que seguem a convenção de nomenclatura (como `test_*.py` ou `*_test.py`) no diretório atual e em subdiretórios. Se você *especificar um nome de arquivo*, como `pytest nome_do_arquivo.py`, o pytest executará apenas os testes contidos nesse arquivo. 
+
+A opção `-v` (ou `--verbose`) aumenta a verbosidade da saída, fornecendo *detalhes sobre cada teste, incluindo seu nome e resultado*, o que facilita a identificação de falhas. Sem essa opção, a saída é mais resumida, mostrando apenas um ponto (`.`) para testes que passaram, um `F` para os que falharam, e um `s` para os que foram pulados.
+
+```bash
+test_funcoes.py ..
+
+======== 2 passed in 0.02s 
+``` 
+
+---
+
+## Estrutura de pastas e arquivos
+
+*Separar o código da aplicação do código de teste* é uma prática essencial no desenvolvimento profissional em Python.
+
+A estrutura padrão de um projeto Python geralmente inclui uma *pasta dedicada para os testes*, permitindo que ferramentas como `pytest` localizem automaticamente os arquivos de teste cujo nome começa com `test_`.
+
+```bash
+meu_projeto/
+├── app/                  # Onde vive seu código real
+│   ├── __init__.py
+│   ├── main.py           # Onde o programa começa
+│   └── utilitarios.py    # Funções auxiliares
+│├── tests/                # Pasta dedicada aos testes
+│   ├── __init__.py
+│   ├── test_main.py      # Testa o main.py
+│   └── test_utilitarios.py # Testa o utilitarios.py
+├── requirements.txt      # Dependências
+└── README.md
+```
+
+--
+
+
+Embora funcione colocar tudo em um único arquivo, essa abordagem é considerada ruim em projetos reais, pois compromete a organização e a clareza do código. Mantendo *arquivos distintos*, como `main.py` para a lógica da aplicação e `test_main.py` para os testes, *cada um se concentra em sua função específica, facilitando a legibilidade e manutenção*. Além disso, ao implementar essa separação, é mais simples *evitar o envio de arquivos de teste para o ambiente de produção*.
+
+Exemplo:
+
+```python
+# Arquivo: funcao.py
+
+def eh_par(numero):
+    """Retorna True se o número for par, False caso contrário."""
+    return numero % 2 == 0
+```
+
+--
+
+```python
+# Arquivo: test_funcoes.py
+from funcoes import eh_par
+import pytest
+
+# Teste 1: Verifica um caso verdadeiro
+def test_deve_retornar_true_para_numero_par():
+    resultado = eh_par(4)
+    assert resultado is True
+
+# Teste 2: Verifica um caso falso
+def test_deve_retornar_false_para_numero_impar():
+    resultado = eh_par(5)
+    assert resultado is False
+```
+
+Depois, abra seu terminal na pasta onde salvou os arquivos e digite `pytest test_funcoes.py -v`.
 
 ---
 
@@ -164,7 +217,7 @@ Em termos simples, ela responde à pergunta: "*Quanto do meu código foi realmen
 
 Imagine que você tem uma função simples com uma condição `if/else`. Se você escrever um teste que apenas verifica o caso do `if`, o código dentro do `else` nunca será executado durante o teste. Nesse cenário, sua *cobertura seria parcial (por exemplo, 50%)*, pois metade da lógica não foi validada.
 
----
+--
 
 Podemos utilizar o `pytest-cov` para fornecer dados sobre cobertura. Primeiro intale-o com `pip install pytest-cov`. Feito isso, podemos usar `pytest -v --cov=funcao`. `--cov=funcao` indica qual arquivo se quer analizar, tendo como resultado:
 
@@ -179,7 +232,7 @@ Isso testa a **cobertura de linha** (Line Coverage) que é a métrica mais simpl
 - **`Miss`**: durante a execução dos testes, zero linhas deixaram de rodar.
 - **`Cover`**: matemática simples: (2 linhas totais - 0 perdidas) / 2 totais = 100% de cobertura de testes.
 
----
+--
 
 Além da cobertura de linha há a **cobertura de desvio** (Branch Coverage), é a mais crítica para lógica complexa pois *verifica se todos os caminhos possíveis foram testados* (cada `true` e `false` de um `if`). Para obter dados desse tipo de cobertura use `pytest -v --cov=funcao --cov-branch`, que exibirá:
 
@@ -216,7 +269,7 @@ def test_deve_retornar_true_para_numero_par():
     assert resultado is True
 ```
 
----
+--
 
 Ao rodar `pytest -v --cov=funcao --cov-branch` teríamos:
 
@@ -234,9 +287,7 @@ O relatório de cobertura do teste para o arquivo `funcao.py` mostra:
 - **`BrPart` :** (Desvio Parcial) Houve **1** desvio parcial, ou seja, um lado de uma estrutura condicional foi testado, mas o outro não.
 - **`Cover`:** A cobertura total é de **67%**, sinalizando que os testes são razoáveis, mas falharam em testar uma linha e um dos caminhos de uma condicional.
 
-
-
----
+--
 
 O comando **`coverage html`** gera um *relatório visual e interativo* a partir dos dados de cobertura de testes, tornando mais fácil *identificar quais partes do código não foram testadas*. Ele cria automaticamente uma pasta chamada **`htmlcov`** no diretório do projeto, onde o arquivo principal **`index.html`** é responsável por fornecer a interface visual da cobertura de testes (gera para *todo o projeto*).
 
@@ -246,52 +297,3 @@ Ao abrir o arquivo `index.html` no navegador, você encontrará seu código-font
 - linhas em **verde** indicam que foram cobertas
 - linhas em **vermelho** que nunca foram executadas
 - linhas em **amarelo** (se usando `--cov-branch`) que foram atingidas, mas *não em todos os caminhos possíveis*, facilitando a identificação de áreas que precisam de mais testes.
-
----
-
-<div style="text-align: center;">
-    <img src="../zSLIDES/img/coverage1.png" width="70%">
-    <img src="../zSLIDES/img/coverage2.png" width="70%">
-</div>
-
-O `if` está amarelo porque ele é o "pai" de um desvio (branch). A cor amarela não significa que a linha não foi lida, mas sim que a lógica daquela linha não foi explorada em todas as suas possibilidades (o `else`, no caso).
-
----
-
-
-## Pular Testes
-
-Pular testes no pytest é uma funcionalidade importante para gerenciar a suíte de testes sem a necessidade de *apagar ou comentar código*. Essa prática é útil em algumas situações, como veremos. Pular testes deve ser feito com *cautela*, para não esconder bugs.
-
-Existem *três maneiras* principais de pular testes: 
-
-1.  A primeira é o uso do **`@pytest.mark.skip`**, que permite *pular incondicionalmente* um teste. 
-
-```py
-@pytest.mark.skip(reason="Ainda não implementamos a função de login")
-def test_login_complexo():
-    assert login("user", "pass") == "Token"
-```
-
----
-
-2. A segunda é o **`@pytest.mark.skipif`**, que permite *especificar uma condição*; o teste será pulado se essa condição for verdadeira.
-
-```py
-# Pula se estiver rodando no Windows
-@pytest.mark.skipif(sys.platform == "win32", reason="Não roda no Windows")
-def test_caminho_arquivo_linux():
-    assert limpar_pasta("/tmp/arquivos") == True
-```
-
----
-
-3. A terceira abordagem é pular o teste de *forma dinâmica*, usando **`pytest.skip()`** dentro do próprio teste se uma condição necessária não for atendida durante a execução.
-
-```py
-def test_conexao_banco_dados():
-    if not conexao_ativa():
-        pytest.skip("Banco de dados offline - pulando teste de integração")
-    
-    assert salvar_usuario() == True
-```
