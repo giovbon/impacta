@@ -7,6 +7,7 @@ typst:
   name: "Exercício AST02"
 submission: 
   - "AST02"
+  - "AST02 ADS3-SI3 ADS4-SI4"
 ---
 
 ```py

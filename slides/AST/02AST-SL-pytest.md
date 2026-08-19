@@ -165,6 +165,8 @@ Se nenhum erro aconteceu: o `with` entende que algo está errado (já que você 
 
 --
 
+| Exceção | Quando usar no `assertRaises` | Exemplo Prático |
+| --- | --- | --- |
 | `AttributeError` | Ao tentar chamar um método ou atributo que o objeto não possui. | Tentar usar `.upper()` em uma variável que é um número inteiro. |
 | `FileNotFoundError` | Ao tentar manipular um arquivo cujo caminho não existe no sistema. | Executar um leitor de dados apontando para um arquivo `.csv` deletado. |
 | `PermissionError` | Ao tentar realizar operações de arquivo sem o nível de acesso necessário. | Tentar salvar um log em uma pasta restrita do sistema operacional. |
