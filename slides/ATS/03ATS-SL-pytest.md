@@ -234,6 +234,15 @@ Isso testa a **cobertura de linha** (Line Coverage) que é a métrica mais simpl
 
 --
 
+Comandos:
+
+```bash
+pytest -v --cov=funcao # se funcao for arquivo .py o analiza, de for pasta, analiza a cobertura todos os testes desses arquivos
+pytest -v --cov=. # análise de todos os testes
+```
+
+--
+
 Além da cobertura de linha há a **cobertura de desvio** (Branch Coverage), é a mais crítica para lógica complexa pois *verifica se todos os caminhos possíveis foram testados* (cada `true` e `false` de um `if`). Para obter dados desse tipo de cobertura use `pytest -v --cov=funcao --cov-branch`, que exibirá:
 
 ```bash
