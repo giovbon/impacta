@@ -1,4 +1,4 @@
-<!-- .slide: data-background-image="https://images.squarespace-cdn.com/content/v1/5fb4ea8933ae6c208c3dac41/1656395530398-NQT3HSOMM2GVD84P8FXM/car2car" data-background-size="cover" data-background-opacity="0.4" -->
+<!-- .slide: data-background-image="https://i.ibb.co/mrbpyRNH/AAGemini-Generated-Image-lsw6plsw6plsw6pl.png" data-background-size="cover" data-background-opacity="0.4" -->
 
 <div class="glass-box">
     <h1>cobertura de testes</h1>
@@ -50,11 +50,11 @@ TOTAL           2      0      0      0   100%
 
 - **`Branch`**: quantidade de bifurcações de decisão presentes no código (ex: 2 decisões para 1 `if/else`).
 - **`BrPart`**: quantidade de desvios executados apenas parcialmente (ex: testou o `if`, mas não o `else`).
-- **`Cover`**:** calculado considerando linhas e desvios não atingidos
+- **`Cover`**: calculado considerando linhas e desvios não atingidos
 
 --
 
-Se formos pensar em alterar o código para algo assim:
+Se formos analizar esse código:
 
 ```py
 def eh_par(numero):
@@ -89,7 +89,7 @@ O relatório de cobertura do teste para o arquivo `funcao.py` mostra:
 - **`Stmts`:** O arquivo contém **4** linhas de código executáveis.
 - **`Miss`:** **1** linha nunca foi executada durante os testes, indicando que existe um trecho de código não testado.
 - **`Branch`:** O código possui **2** caminhos de decisão (por exemplo, estruturas condicionais).
-- **`BrPart` :** (Desvio Parcial) Houve **1** desvio parcial, ou seja, um lado de uma estrutura condicional foi testado, mas o outro não.
+- **`BrPart`:** (Desvio Parcial) Houve **1** desvio parcial, ou seja, um lado de uma estrutura condicional foi testado, mas o outro não.
 - **`Cover`:** A cobertura total é de **67%**, sinalizando que os testes são razoáveis, mas falharam em testar uma linha e um dos caminhos de uma condicional.
 
 ---
