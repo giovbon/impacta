@@ -7,15 +7,19 @@
 
 ---
 
+## O que é Fixture
 
 **Fixture** é uma função que prepara e *fornece dados ou contexto* para os testes.
 
-- *fornecer dados*, que envolve a criação e injeção de informações ou objetos, como usuários falsos ou listas de produtos
--  *fornecer contexto* refere-se à configuração do ambiente de execução, como abrir conexões com bancos de dados ou criar pastas temporárias, assegurando um cenário ideal e isolado para a validação do código durante o teste.
+- *Fornecer dados*: Criação e injeção de informações ou objetos (ex: usuários falsos, listas de produtos).
+- *Fornecer contexto*: Configuração do ambiente de execução (ex: abrir conexões com bancos de dados, criar pastas temporárias), assegurando um cenário ideal e isolado.
 
 O pytest *detecta automaticamente essas funções marcadas* com `@pytest.fixture`. Seus resultados são *injetados nos testes que as solicitam*, eliminando a necessidade de chamadas manuais, por simplesmente *adicionar o nome da fixture dentro dos parênteses da função de teste*.
 
 ---
+
+## Retornando Dados
+### `return`
 
 Use `return` quando você só quer *fornecer um dado inicial para o teste e não precisa desfazer/limpar nada depois*:
 
@@ -30,28 +34,51 @@ def test_nome_do_usuario(usuario_padrao):
 
 ---
 
-Use `yield` quando você cria algo que *precisa ser destruído ou fechado depois que o teste acabar* (ex: arquivos físicos, conexões de rede, bancos de dados):
+## `yield`
 
+Use quando você cria um recurso que precisa ser destruído, limpo ou fechado após o teste terminar. (ex: arquivos físicos, conexões de rede, bancos de dados). O código após o `yield` sempre executa, mesmo que o teste falhe.
+
+Exemplo:
 
 ```py
 @pytest.fixture
-def arquivo_temporario():
-    # 1. SETUP
-    arquivo = open("temp.txt", "w")
+def conexao_banco():
+    # 1. SETUP: Abre a conexão antes do teste
+    conexao = conectar_banco()
 
-    # 2. INJEÇÃO (pausa a fixture e roda o teste)
-    yield arquivo 
+    # 2. INJEÇÃO: Pausa a fixture e entrega a conexão ao teste
+    yield conexao 
 
-    # 3. TEARDOWN (o teste acabou, o código volta para cá)
-    arquivo.close()
+    # 3. TEARDOWN: O teste acabou, o pytest retoma aqui e fecha a conexão
+    conexao.close()
 ```
+
+--
 
 A transição entre os momentos no pytest é *gerida automaticamente com a palavra-chave `yield`*. Quando o teste começa, o pytest executa a fixture até encontrar o `yield`, momento em que "congela" a execução (da função da fixture) e entrega a variável ao teste. Após a execução do teste, independentemente do resultado, o pytest retoma a fixture a partir do `yield` para realizar a limpeza necessária. Todo esse processo acontece sem a necessidade de código adicional para gerenciar as transições, pois o pytest cuida disso automaticamente.
 
 ---
 
-<!-- _class: invert -->
-## Parâmetros de Fixtures
+## Fixture chamando Fixture
+
+Uma fixture pode solicitar outra fixture nos seus parênteses. Isso permite reaproveitar lógicas e criar cenários complexos em camadas.
+
+```python
+@pytest.fixture
+def usuario():
+    return {"nome": "Ana", "admin": True}
+
+@pytest.fixture
+def token_autenticacao(usuario): # Recebe o resultado da fixture 'usuario'
+    return f"bearer_token_para_{usuario['nome']}"
+
+def test_acesso(token_autenticacao):
+    assert "Ana" in token_autenticacao
+```
+
+---
+
+## Parâmetros Globais de Fixtures
 
 Alguns **parâmetros** são cruciais para definir o *comportamento e a abrangência* de uma fixture no Pytest.
 
@@ -66,13 +93,23 @@ O `scope` *determina como e quando a fixture é criada e destruída*. Com ele, v
 | `function` (Padrão)        | Roda a fixture *uma vez para cada teste*. Se 10 testes chamarem a fixture, ela roda 10 vezes. Ideal para dados simples em memória.                                   |
 | `class`           | Roda apenas *uma vez por classe* de testes. Todos os testes dentro daquela classe compartilham o mesmo resultado da fixture.                                          |
 | `module`          | Roda apenas *uma vez por arquivo de teste (`.py`)*. Útil para carregar um arquivo pesado (como um CSV gigante) apenas uma vez e reutilizá-lo nos testes daquele arquivo. |
+| `package`          | Roda uma vez por pacote/pasta `(__init__.py)`. Funciona bem em casos de configurações compartilhadas em um domínio do sistema.|
 | `session`         | O mais abrangente. *Roda apenas uma vez para toda a execução do pytest*, independentemente de quantos arquivos ou testes diferentes você use. Funciona bem para serviços globais. |
 
 ---
 
 ### `autouse`
 
-O parâmetro `autouse=True` permite que a *fixture seja aplicada automaticamente a todos os testes dentro do seu escopo* (`scope`), eliminando a necessidade de injetar seu nome em cada função de teste (ex: `def test_algo(minha_fixture):`). Isso é útil para *configurações globais que devem impactar todos os testes*, mas que não requerem interação direta, como silenciar logs, configurar variáveis de ambiente ou limpar tabelas do banco de dados.
+O parâmetro autouse=True faz a fixture rodar automaticamente em todos os testes do seu escopo, sem precisar ser declarada nos parênteses do teste.
+
+```python
+@pytest.fixture(autouse=True)
+def silenciar_logs():
+    # Roda automaticamente para todos os testes do arquivo/módulo
+    desativar_logs_do_sistema()
+```
+
+Use `autouse` com moderação, pois o uso excessivo pode ocultar dependências invisíveis e deixar a execução da suíte mais lenta.
 
 ---
 
@@ -82,13 +119,23 @@ O parâmetro `params` permite que uma *fixture execute múltiplas vezes com dado
 
 Para usá-lo, define-se a lista em `@pytest.fixture(params=[...])` e, dentro da fixture, usa-se `request.param` para acessar o valor atual.
 
+```python
+@pytest.fixture(params=["mysql", "postgres", "sqlite"])
+def banco_dados(request):
+    return conectar_banco(request.param)
+
+def test_consulta(banco_dados):
+    # Este teste rodará 3 vezes automaticamente, uma para cada banco
+    assert banco_dados.status_ativo()
+```
+
 ---
 
 ## `conftest.py`
 
 O **`conftest.py`** é um *arquivo do Pytest que centraliza recursos compartilhados para testes*. Ao definir fixtures ou configurações nele, o Pytest as torna automaticamente *disponíveis para todos os arquivos de teste na mesma pasta e subpastas, sem necessidade de importações manuais*. É ideal para armazenar fixtures globais, como conexões de banco de dados ou autenticações de API, mantendo o código dos testes limpo e livre de repetições.
 
----
+--
 
 *Colocar todas as fixtures* no `conftest.py` é considerado *má prática*, tornando o arquivo complexo e difícil de manter. A organização ideal é:
 - Crie fixtures específicas *dentro do arquivo de teste* (`test_*.py`) para uso exclusivo desse arquivo.
@@ -104,7 +151,7 @@ meu_projeto/
 │   ├── api/
 │   │   ├── conftest.py       <-- Fixtures específicas para testes de API
 │   │   └── test_api.py
-│   └── frontend/
+│   └── backend/
 │       ├── conftest.py       <-- Fixtures específicas para testes de backend
 │       └── test_backend.py
 ```
