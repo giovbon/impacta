@@ -51,7 +51,7 @@ As plataformas LC/NC não são apenas uma inovação tecnológica , elas são um
 - Vendor Lock-In : Ficar preso a uma plataforma pode dificultar migrações e extração de dados, tornando a troca de solução complexa e custosa.
 - Limitações de Escopo e Complexidade : Ferramentas LC/NC são adequadas para problemas de baixa a média complexidade , mas não substituem sistemas robustos, podendo falhar em contextos corporativos grandes. Pra coisas mais complexas, o low-code facilmente vira "muito-
 - muito-code".
-- Questões de escala : Exemplo: uma aplicação LC/NC pode funcionar bem para alguns milhares de usuários, mas para milhões ou bilhões de usuários? Para esse tipo de otimização na aplicação, apenas equipes de desenvolvedores profissionais podem atender a demanda .
+- Questões de escala : Exemplo: uma aplicação LC/NC pode funcionar bem para alguns milhares de usuários, mas para milhões ou bilhões de usuários? Para esse tipo de otimização na aplicação, apenas equipes de desenvolvedores profissionais podem atender a demanda.
 
 ---
 

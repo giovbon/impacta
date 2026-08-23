@@ -8,7 +8,7 @@
 ---
 
 ## Automated Software Testing
-> ⚠️ Ver planos de aula e de ensino no classroom.
+> ⚠️ Ver plano de ensino no classroom.
 
 ---
 
