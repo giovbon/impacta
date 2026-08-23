@@ -30,6 +30,15 @@ Isso testa a **cobertura de linha** (Line Coverage) que é a métrica mais simpl
 - **`Miss`**: durante a execução dos testes, zero linhas deixaram de rodar.
 - **`Cover`**: matemática simples: (2 linhas totais - 0 perdidas) / 2 totais = 100% de cobertura de testes.
 
+--
+
+Comandos:
+
+```bash
+pytest -v --cov=funcao # se funcao for arquivo .py o analiza, de for pasta, analiza a cobertura todos os testes desses arquivos
+pytest -v --cov=. # análise de todos os testes
+```
+
 ---
 
 ### Cobertura de desvio
