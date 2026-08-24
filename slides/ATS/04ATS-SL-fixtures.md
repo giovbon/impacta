@@ -96,6 +96,29 @@ O `scope` *determina como e quando a fixture é criada e destruída*. Com ele, v
 | `package`          | Roda uma vez por pacote/pasta `(__init__.py)`. Funciona bem em casos de configurações compartilhadas em um domínio do sistema.|
 | `session`         | O mais abrangente. *Roda apenas uma vez para toda a execução do pytest*, independentemente de quantos arquivos ou testes diferentes você use. Funciona bem para serviços globais. |
 
+--
+
+```python
+import pytest
+
+# Recurso pesado: Conexão com o banco de dados.
+# Definimos scope="session" para conectar apenas UMA vez durante toda a bateria de testes.
+@pytest.fixture(scope="session")
+def conexao_banco():
+    ...
+
+# Recurso leve: Estado individual do carrinho de compras.
+# Usamos scope="function" (padrão) para garantir um carrinho limpo antes de CADA teste.
+@pytest.fixture(scope="function")
+def carrinho_vazio():
+    return []
+
+# --- TESTES ---
+
+def test_adicionar_item(carrinho_vazio, conexao_banco):
+    ...
+```
+
 ---
 
 ### `autouse`
