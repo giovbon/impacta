@@ -1,4 +1,4 @@
-<!-- .slide: data-background-image="https://i.ibb.co/gMPTvdCg/op-Ten-Front-End-Design-Rules-For-Developers-Luke-Social-33a3a7c9b759fdaa22973906070f8065-2082809947.png" data-background-size="cover" data-background-opacity="0.4" -->
+<!-- .slide: data-background-image="https://i.ibb.co/sdTzbgWb/watermark-removed-Gemini-Generated-Image-m61yahm61yahm61y.png" data-background-size="cover" data-background-opacity="0.4" -->
 
 
 <div class="glass-box">
@@ -68,6 +68,8 @@
     - **Acessibilidade & Custos:** Modelos SaaS e menor investimento inicial em infraestrutura.
     - **Automação & Eficiência:** Otimização do tempo e redução do trabalho manual repetitivo.
     - **Inovação Democrática:** Descentralização da capacidade de criar software na empresa.
+
+--
 
 - **Desvantagens**
     - **Vendor Lock-In:** Ficar preso à plataforma (minimizado no FlutterFlow pela exportação de código).
