@@ -1,6 +1,6 @@
 ---
 title: Fixtures
-presentation: "slides/AST/03AST-SL-pytest-cobertura.md"
+presentation: "slides/AST/04AST-SL-fixtures.md"
 order: 3
 typst: 
 - path: "typs/AST/AST04.typ"
