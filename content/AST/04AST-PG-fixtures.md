@@ -1,13 +1,12 @@
 ---
-title: Cobertura de Testes
+title: Fixtures
 presentation: "slides/AST/03AST-SL-pytest-cobertura.md"
-order: 2
+order: 3
 typst: 
-- path: "typs/AST/AST03.typ"
-  name: "Exercício AST03"
+- path: "typs/AST/AST04.typ"
+  name: "Exercício AST04"
 submission: 
-  - "AST03"
-  - "AST03 ADS3-SI3 ADS4-SI4"
+  - "AST04"
 ---
 
 ```py
