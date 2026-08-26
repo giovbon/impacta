@@ -16,9 +16,15 @@ source .venv/bin/activate
 # windows
 .venv\Scripts\activate
 
-
+# instalações das bibliotecas
 pip install pytest
 pip install pytest-cov
+
+# comando que gera relatório de cobertura
+pytest -v --cov=funcoes --cov-branch
+
+# abrir html de cobertura no codespaces
+python -m http.server 8000 --directory htmlcov
 ```
 
 ## 📚 Referência
