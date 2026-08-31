@@ -151,3 +151,17 @@ imagem
 As representações do slide usam o estilo visual da Notação de Pé de Galinha (ERD). Ela é a favorita para diagramas relacionais porque é muito intuitiva. Os símbolos que usamos nas extremidades das linhas definem a cardinalidade (quantos registros se relacionam com quantos),
 
 Tabela visual
+
+
+
+
+
+
+
+
+
+
+
+Para que essas conexões e regras sejam mantidas de forma consistente, o modelo conceitual deve incorporar conceitos adicionais de integridade.
+
+**Integridade referencial** é a regra que garante que os dados ligados entre si continuem consistentes. Ela exige que, quando um atributo de uma entidade aponta para outra entidade, esse valor exista de verdade na tabela/entidade referenciada. Isso evita erros, como um funcionário estar ligado a um departamento que não existe.
