@@ -7,19 +7,8 @@ typst:
   name: "Exercício AST04"
 submission: 
   - "AST04"
+  - "AST04 ADS3-SI3 ADS4-SI4"
 ---
-
-```py
-python -m venv .venv
-# linux
-source .venv/bin/activate 
-# windows
-.venv\Scripts\activate
-
-
-pip install pytest
-pip install pytest-cov
-```
 
 ## 📚 Referência
 
