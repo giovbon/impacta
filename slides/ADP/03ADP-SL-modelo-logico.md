@@ -7,7 +7,7 @@
 
 ---
 
-Enquanto o **modelo conceitual** se concentra em capturar e representar os requisitos de negócio de *forma abstrata e independente de tecnologia*, o **modelo relacional** atua como uma ponte,* traduzindo essa abstração em uma estrutura lógica, organizada e padronizada*. Essa estrutura, composta por tabelas e regras de integridade, está pronta para ser compreendida e implementada pela vasta maioria dos Sistemas Gerenciadores de Banco de Dados (SGBDs) modernos.
+Enquanto o **modelo conceitual** se concentra em capturar e representar os requisitos de negócio de *forma abstrata e independente de tecnologia*, o **modelo relacional** atua como uma ponte, traduzindo essa abstração em uma estrutura lógica, organizada e padronizada. Essa estrutura, composta por tabelas e regras de integridade, está pronta para ser compreendida e implementada pela vasta maioria dos Sistemas Gerenciadores de Banco de Dados (SGBDs) modernos.
 
 Para construir essa ponte de maneira sólida, é essencial *dominar os conceitos fundamentais* que sustentam a arquitetura e a lógica do modelo relacional.
 
