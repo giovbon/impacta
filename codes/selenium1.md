@@ -16,22 +16,22 @@
     print("Iniciando a Aula Prática de Selenium... preparando ambiente\n")
     
     caminho_arquivo = f"file://{Path(__file__).parent.absolute()}/playground.html"
-    driver = webdriver.Chrome() #@@[Inicia uma nova instância do Google Chrome controlada pelo Selenium]
-    driver.get(caminho_arquivo) #@@[Carrega o conteúdo do arquivo HTML]
-    driver.maximize_window() #@@[Abre a janela do Chrome em tela cheia]
+    driver = webdriver.Chrome() # Inicia uma nova instância do Google Chrome controlada pelo Selenium
+    driver.get(caminho_arquivo) # Carrega o conteúdo do arquivo HTML
+    driver.maximize_window() # Abre a janela do Chrome em tela cheia
     
-    acoes_avancadas = ActionChains(driver) #@@[Instanciação de ActionChains]
+    acoes_avancadas = ActionChains(driver) # Instanciação de ActionChains
     time.sleep(2)
     
     try:
         print("Executando clique simples...")
-        caixa_clique = driver.find_element(By.ID, 'caixa-clique') #@@[Vasculha o código HTML da página procurando por um elemento que tenha o atributo id="caixa-clique"]
-        caixa_clique.click() #@@[Simula um clique físico do mouse em cima do elemento]
+        caixa_clique = driver.find_element(By.ID, 'caixa-clique') # Vasculha o código HTML da página procurando por um elemento que tenha o atributo id="caixa-clique"
+        caixa_clique.click() # Simula um clique físico do mouse em cima do elemento
         time.sleep(2)
     
         print("Executando duplo clique...")
         caixa_duplo = driver.find_element(By.ID, 'caixa-duplo')
-        acoes_avancadas.double_click(caixa_duplo).perform() #@@[Prepara o comando de "clicar duas vezes rapidamente", `perform()` é o gatilho da ação]
+        acoes_avancadas.double_click(caixa_duplo).perform() # Prepara o comando de "clicar duas vezes rapidamente", `perform()` é o gatilho da ação
         time.sleep(2)
     
         print("Executando clique com o botão direito...")
@@ -41,12 +41,12 @@
     
         print("Limpando texto e digitando com o teclado...")
         area_teclado = driver.find_element(By.ID, 'area-teclado')
-        area_teclado.click() #@@[Clica na caixa de texto para focar nela]
+        area_teclado.click() # Clica na caixa de texto para focar nela
         
         acoes_avancadas\
             .key_down(Keys.CONTROL).send_keys("a").key_up(Keys.CONTROL)\
             .send_keys(Keys.BACKSPACE)\
-            .perform() #@@[Primeira linha "aperta" a tecla Control (Ctrl) e a mantém pressionada, toca na tecla "A" e finalmente solta a tecla. A segunda linha apaga o conteúdo.]
+            .perform() # Primeira linha "aperta" a tecla Control (Ctrl) e a mantém pressionada, toca na tecla "A" e finalmente solta a tecla. A segunda linha apaga o conteúdo.
         
         time.sleep(1)
         
@@ -57,7 +57,7 @@
     
     finally:
         print("Encerrando o navegador...")
-        driver.quit() #@@[Fecha tudo e mata o processo do driver (diferente do `driver.close()` que fecha apenas a janela/aba que está em foco no momento)]
+        driver.quit() # Fecha tudo e mata o processo do driver (diferente do `driver.close()` que fecha apenas a janela/aba que está em foco no momento)
     ```
   - playground.html
     ```html
@@ -111,7 +111,7 @@
     def test_verificar_titulo_do_playground(navegador):
         # # Executa a validação — descobre o caminho do playground.html, abre o arquivo no Chrome e checa se o título da aba é exatamente "Playground Selenium" (assert).
         pasta_atual = Path(__file__).parent.absolute()
-        caminho_html = f"file://{pasta_atual}/playground.html" #@@[O código utiliza um caminho para um arquivo HTML local na mesma pasta que o script de teste, em vez de acessar um site na Internet. O prefixo `file://` indica ao navegador para abrir um arquivo local.]
+        caminho_html = f"file://{pasta_atual}/playground.html" # O código utiliza um caminho para um arquivo HTML local na mesma pasta que o script de teste, em vez de acessar um site na Internet. O prefixo `file://` indica ao navegador para abrir um arquivo local.
         
         navegador.get(caminho_html)
         
