@@ -8,9 +8,11 @@
 
 ## O que são Dublês de Testes?
 
-Dublês de Testes são ferramentas utilizadas no desenvolvimento de software para *simular dependências externas durante testes unitários*. Assim como em um filme de ação, onde dublês substituem atores em cenas arriscadas, os dublês *imitam componentes complexos* como bancos de dados e APIs.
+**Dublês de teste** (*Test Doubles*) são objetos ou componentes utilizados no desenvolvimento de software para *substituir dependências reais de um sistema durante a execução de testes automatizados*. Assim como os dublês no cinema substituem os atores em cenas perigosas ou complexas, os dublês de teste simulam partes do código que podem ser difíceis de manipular, lentas (como bancos de dados ou APIs externas) ou que ainda não foram implementadas. O objetivo principal é *isolar a unidade sob teste, garantindo previsibilidade, velocidade na execução e facilitando a identificação da causa exata de possíveis falhas*.
 
-Ao usar um dublê, você evita que o teste acesse essas dependências reais, o que tornaria o teste um teste de integração, mais lento e suscetível a falhas externas. Os dublês *fornecem respostas controladas e rápidas, permitindo que você foque na lógica do seu código* sem preocupações externas.
+--
+
+O termo abrange diferentes categorias de substitutos, cada uma com uma finalidade específica no fluxo de verificação. Os **Dummies** são *objetos passados apenas para preencher listas de parâmetros*, sem que suas funções sejam realmente chamadas. Já os **Stubs** *fornecem respostas prontas e pré-configuradas* para as chamadas feitas durante o teste, enquanto os **Spies** funcionam como stubs que *também registram informações sobre como foram chamados* (como quantidade de invocações ou parâmetros recebidos). Por sua vez, os **Mocks** vão um passo além, contendo expectativas pré-programadas e *verificando se as interações esperadas realmente ocorreram*. Por fim, os **Fakes** possuem *implementações funcionais de fato, porém simplificadas ou inadequadas para produção*, como um banco de dados em memória.
 
 ---
 
