@@ -85,9 +85,9 @@ No contexto de uma API, usando o FastAPI, a fixture `session` cria um *banco de 
 @pytest.fixture
 def session():
     engine = create_engine(
-        "sqlite:///:memory:", 
-        connect_args={"check_same_thread": False}, 
-        poolclass=StaticPool, 
+        "sqlite:///:memory:", # cria um banco de dados SQLite temporário armazenado inteiramente na RAM, que é destruído assim que a conexão é fechada
+        connect_args={"check_same_thread": False}, # Desativa a trava padrão do SQLite que restringe a conexão a uma única thread
+        poolclass=StaticPool, # Garante que todas as threads reutilizem a mesma conexão ativa. No SQLite em memória, se a conexão fechar ou mudar, o banco e todos os seus dados somem. O StaticPool mantém o banco vivo durante todo o ciclo do teste.
     )
 
     mapeador.metadata.create_all(engine) 
