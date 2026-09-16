@@ -21,14 +21,14 @@ O termo abrange diferentes categorias de substitutos, cada uma com uma finalidad
 | **Tipo de Dublê**              | **Quando usar**                                                                                               | **Exemplo**                                                                                                                                                              |
 |--------------------------------|----------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Dummy**           | Quando uma dependência é necessária para a assinatura do método, mas não é usada na lógica testada.          | Ao testar a classe `GeradorDeRelatorio`, que exige um `DatabaseConnection` e um `TemaVisual`, você pode passar `None` ou um dicionário vazio para `TemaVisual`.       |
-| **Fake** | Quando uma implementação simplificada da dependência é suficiente para o teste (ex: banco de dados em memória). | Substituir um banco de dados PostgreSQL por um SQLite em memória ou criar um `FakeStorageClient` que simula uploads de arquivos em um dicionário na RAM.               |
 | **Stub** | Quando você precisa controlar o retorno de uma dependência para testar diferentes caminhos de código.          | Configure um Stub que sempre retorne um JSON específico para uma API externa, permitindo testar o comportamento da aplicação sem depender da API real.                 |
+| **Spy**               | Quando você precisa verificar se um método foi chamado, quantas vezes foi chamado, e com quais argumentos, sem alterar seu comportamento. | Substituindo a função de envio de e-mail por um Spy, você pode verificar se o e-mail foi enviado corretamente após criar um usuário.                                   |
 
 ---
 
 | **Tipo de Dublê**              | **Quando usar**                                                                                               | **Exemplo**                                                                                                                                                              |
 |--------------------------------|----------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Spy**               | Quando você precisa verificar se um método foi chamado, quantas vezes foi chamado, e com quais argumentos, sem alterar seu comportamento. | Substituindo a função de envio de e-mail por um Spy, você pode verificar se o e-mail foi enviado corretamente após criar um usuário.                                   |
+| **Fake** | Quando uma implementação simplificada da dependência é suficiente para o teste (ex: banco de dados em memória). | Substituir um banco de dados PostgreSQL por um SQLite em memória ou criar um `FakeStorageClient` que simula uploads de arquivos em um dicionário na RAM.               |
 | **Mock** | Quando você precisa testar interações complexas e a ordem das chamadas entre objetos, garantindo que um contrato seja seguido. | Em um fluxo de pagamento, um Mock pode assegurar que a ordem das chamadas (como prevenção à fraude antes da cobrança) seja mantida, falhando o teste se houver violação. |
 
 ---
@@ -37,19 +37,7 @@ O termo abrange diferentes categorias de substitutos, cada uma com uma finalidad
 
 A característica principal de um Stub é que ele *não tem lógica interna*; ele apenas devolve o que você mandou ele devolver.
 
-Vamos supor que você tenha uma função que busca informações sobre o clima a partir de uma API externa:
-
-```py
-import requests
-
-def obter_clima(cidade):
-    response = requests.get(f"https://api.exemplo.com/clima/{cidade}")
-    return response.json()
-```
-
----
-
-Você pode criar um teste que simula a resposta dessa API. O stub substitui uma dependência real por uma resposta estática:
+Vamos supor que você tenha uma função que busca informações sobre o clima a partir de uma API externa. Você pode criar um teste que simula a resposta dessa API. O stub substitui uma dependência real por uma resposta estática:
 
 --
 
