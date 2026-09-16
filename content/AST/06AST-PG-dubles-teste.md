@@ -7,6 +7,7 @@ typst:
   name: "Exercício AST06"
 submission: 
   - "AST06"
+  - "AST06 ADS3-SI3 ADS4-SI4"
 ---
 
 
