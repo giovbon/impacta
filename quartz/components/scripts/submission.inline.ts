@@ -26,6 +26,7 @@ const SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbwauFvnfDsrpl_ACYeZ46NxwKAp2BR9b-3Z0Nz9uTelTaRIYsdQwWYYTYO4GvNBmw4/exec"
 
 const MAX_FILE_SIZE_BYTES = 20 * 1024 * 1024 // 20 MB
+const EXTENSAO_PERMITIDA = /\.zip$/i // apenas .zip (.rar/.7z recusados)
 
 /**
  * Converte um File (ZIP) para base64
@@ -221,7 +222,7 @@ async function initSubmission() {
     const fileInput = card.querySelector('input[type="file"]') as HTMLInputElement
     const fileNameDisplay = card.querySelector(".file-name-display") as HTMLSpanElement
     const clearFileBtn = card.querySelector(".clear-file-btn") as HTMLButtonElement
-    const dropZone = card.querySelector(".file-drop-zone") as HTMLDivElement
+    const pickFileBtn = card.querySelector(".file-pick-btn") as HTMLButtonElement
     const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement
     const raInput = form.querySelector("#ra") as HTMLInputElement
     const nomeInput = form.querySelector("#nome_aluno") as HTMLInputElement
@@ -311,6 +312,13 @@ async function initSubmission() {
     fileInput.addEventListener("change", () => {
       if (fileInput.files && fileInput.files.length > 0) {
         const file = fileInput.files[0]
+        if (!EXTENSAO_PERMITIDA.test(file.name)) {
+          fileNameDisplay.textContent = "❌ Apenas arquivos .zip são aceitos"
+          fileNameDisplay.style.color = "#ef4444"
+          clearFileBtn.style.display = "flex"
+          fileInput.value = ""
+          return
+        }
         if (file.size > MAX_FILE_SIZE_BYTES) {
           fileNameDisplay.textContent = "❌ Arquivo muito grande (máx. 20MB)"
           fileNameDisplay.style.color = "#ef4444"
@@ -338,21 +346,21 @@ async function initSubmission() {
       clearFileBtn.style.display = "none"
     })
 
-      // ── Drag & Drop ──
-      ;["dragenter", "dragover"].forEach((eventName) => {
-        dropZone.addEventListener(eventName, (e) => {
-          e.preventDefault()
-          e.stopPropagation()
-          dropZone.classList.add("drag-over")
-        })
+    // ── Seleção de arquivo SOMENTE pelo botão (arrastar e soltar removido) ──
+    pickFileBtn?.addEventListener("click", (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+      fileInput.click()
+    })
+
+    // Bloqueia o comportamento nativo de arrastar/soltar dentro do card.
+    // Sem isso o navegador abriria o arquivo solto e a página perderia o formulário.
+    ;["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+      card.addEventListener(eventName, (e) => {
+        e.preventDefault()
+        e.stopPropagation()
       })
-      ;["dragleave", "drop"].forEach((eventName) => {
-        dropZone.addEventListener(eventName, (e) => {
-          e.preventDefault()
-          e.stopPropagation()
-          dropZone.classList.remove("drag-over")
-        })
-      })
+    })
 
     // ══════════════════════════════════════════════════════════
     // SUBMIT: Tudo em uma única requisição POST
@@ -399,6 +407,15 @@ async function initSubmission() {
           )
           return
         }
+      }
+
+      if (hasFile && !EXTENSAO_PERMITIDA.test(zipFile!.name)) {
+        showStatus(
+          statusMsg,
+          "error",
+          "Apenas arquivos .zip são aceitos. Compacte sua entrega em .zip (arquivos .rar e .7z são recusados).",
+        )
+        return
       }
 
       if (hasFile && zipFile!.size > MAX_FILE_SIZE_BYTES) {
@@ -451,6 +468,16 @@ async function initSubmission() {
         }
 
         if (result.result !== "success") {
+          // O aviso de duplicidade do Apps Script significa que a entrega JÁ existe:
+          // mostramos isso de forma clara em vez do erro bruto (o aluno não fica
+          // sem saber o que aconteceu quando a resposta anterior se perdeu).
+          if (/j[áa] enviou esta atividade/i.test(String(result.error || ""))) {
+            statusMsg.style.display = "block"
+            statusMsg.className = "status-message success"
+            statusMsg.innerHTML =
+              "✅ Esta entrega já havia sido registrada nas últimas 24 horas — nenhum envio duplicado foi criado."
+            return
+          }
           throw new Error(result.error || "Erro ao salvar na planilha.")
         }
 
@@ -490,7 +517,12 @@ async function initSubmission() {
         })
       } catch (err: any) {
         statusMsg.className = "status-message error"
-        statusMsg.innerHTML = `❌ ${err.message}`
+        // O 404 do Apps Script pode acontecer DEPOIS de a entrega ter sido salva
+        // (redirect do Google), então avisamos para não reenviar às cegas.
+        const aviso404 = /404/.test(String(err.message))
+          ? "<br><small>⚠️ Em alguns casos a entrega é registrada mesmo com este erro. Confirme com o professor antes de reenviar.</small>"
+          : ""
+        statusMsg.innerHTML = `❌ ${err.message}${aviso404}`
       } finally {
         if (submitBtn.style.display !== "none") {
           submitBtn.disabled = false

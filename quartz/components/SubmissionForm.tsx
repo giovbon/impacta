@@ -214,46 +214,50 @@ const SubmissionForm: QuartzComponent = ({ displayClass, fileData }: QuartzCompo
                 </svg>
                 Ou Enviar Arquivo ZIP
               </label>
-              <div class="file-drop-zone" id="dropzone">
-                <input type="file" id="zipfile" name="zipfile" accept=".zip,.rar,.7z" />
-                <div class="drop-zone-content">
-                  <div class="drop-icon-container">
+              <div class="file-input-area">
+                <input
+                  type="file"
+                  id="zipfile"
+                  name="zipfile"
+                  accept=".zip,application/zip,application/x-zip-compressed"
+                  class="file-input-hidden"
+                />
+                <button type="button" class="file-pick-btn">
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="18"
+                    height="18"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    fill="none"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                  </svg>
+                  <span>Escolher arquivo .zip</span>
+                </button>
+                <div class="file-info-container">
+                  <span class="file-name-display">Nenhum arquivo selecionado</span>
+                  <button type="button" class="clear-file-btn" title="Remover arquivo">
                     <svg
                       viewBox="0 0 24 24"
-                      width="32"
-                      height="32"
+                      width="16"
+                      height="16"
                       stroke="currentColor"
                       stroke-width="2"
                       fill="none"
                       stroke-linecap="round"
                       stroke-linejoin="round"
                     >
-                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                      <polyline points="7 10 12 15 17 10"></polyline>
-                      <line x1="12" y1="15" x2="12" y2="3"></line>
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
                     </svg>
-                  </div>
-                  <span class="drop-text">Clique ou arraste o arquivo</span>
-                  <div class="file-info-container">
-                    <span class="file-name-display">Nenhum arquivo selecionado</span>
-                    <button type="button" class="clear-file-btn" title="Remover arquivo">
-                      <svg
-                        viewBox="0 0 24 24"
-                        width="16"
-                        height="16"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        fill="none"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      >
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                      </svg>
-                    </button>
-                  </div>
-                  <small>Formatos: .zip, .rar, .7z (Máx. 20MB)</small>
+                  </button>
                 </div>
+                <small class="file-hint">Formato aceito: .zip (Máx. 20MB)</small>
               </div>
             </div>
 
@@ -544,71 +548,79 @@ SubmissionForm.css = `
   transform: translateY(-1px);
 }
 
-/* Drop Zone Compact */
-.file-drop-zone {
+/* Seleção de arquivo (somente botão, sem arrastar e soltar) */
+.file-input-area {
   position: relative;
   width: 100%;
   box-sizing: border-box;
-  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 1rem;
   border: 2px dashed var(--lightgray);
   border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.4s ease;
   background: rgba(var(--secondary-rgb), 0.01);
-  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.file-drop-zone:hover {
+.file-input-area:hover {
   border-color: var(--secondary);
   background: rgba(var(--secondary-rgb), 0.04);
 }
 
-.file-drop-zone.drag-over {
-  border-color: var(--secondary);
-  background: rgba(var(--secondary-rgb), 0.08);
-}
-
-.file-drop-zone input[type="file"] {
+/* Input real fica invisível: a seleção acontece pelo botão */
+.file-input-hidden {
   position: absolute;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  cursor: pointer;
-  z-index: 2;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
-.drop-zone-content {
+.file-pick-btn {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  text-align: center;
-  pointer-events: none;
-  gap: 5px;
-}
-
-.drop-icon-container {
-  color: var(--gray);
-  transition: all 0.3s ease;
-}
-
-.drop-icon-container svg {
-  width: 24px;
-  height: 24px;
-}
-
-.drop-text {
+  justify-content: center;
+  gap: 8px;
+  padding: 0.7rem 1.4rem;
+  background: rgba(var(--secondary-rgb), 0.08);
+  border: 2px solid var(--secondary);
+  border-radius: 12px;
+  color: var(--secondary);
+  font-family: var(--bodyFont);
   font-weight: 700;
-  color: var(--dark);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.file-pick-btn:hover {
+  background: var(--secondary);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.file-pick-btn svg {
+  width: 18px;
+  height: 18px;
 }
 
 .file-info-container {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   max-width: 90%;
+}
+
+.file-hint {
+  font-size: 0.75rem;
+  opacity: 0.7;
 }
 
 .file-name-display {
@@ -640,11 +652,6 @@ SubmissionForm.css = `
   background: #f85149;
   color: #fff;
   transform: scale(1.1);
-}
-
-.drop-zone-content small {
-  font-size: 0.75rem;
-  opacity: 0.7;
 }
 
 .input-group textarea {
