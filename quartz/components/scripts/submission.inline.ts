@@ -288,10 +288,14 @@ async function initSubmission() {
       exibirInfoPrazo(form, activity)
     }
 
-    selectButtons.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        onActivitySelected(btn.getAttribute("data-activity") || "")
-      })
+    // ── Delegação de clique: sobrevive à reconstrução da lista de atividades ──
+    card.addEventListener("click", (e) => {
+      const btn = (e.target as HTMLElement | null)?.closest(
+        ".select-activity-btn",
+      ) as HTMLButtonElement | null
+      if (!btn) return
+      e.preventDefault()
+      onActivitySelected(btn.getAttribute("data-activity") || "")
     })
 
     if (backBtn) {
@@ -306,6 +310,82 @@ async function initSubmission() {
     if (singleActivity) {
       exibirInfoPrazo(form, singleActivity)
     }
+
+    // ══════════════════════════════════════════════════════════
+    // LISTA CANÔNICA DE ATIVIDADES (aba "Atividades" da planilha)
+    // ──────────────────────────────────────────────────────────
+    // Regra: o rótulo gravado em "Entregas" tem de ser EXATAMENTE o que está
+    // cadastrado na aba "Atividades". O frontmatter da página define apenas
+    // QUAIS códigos aparecem aqui (whitelist); o texto final vem da planilha,
+    // então não existe mais risco de o site enviar um nome divergente.
+    // Se a consulta falhar, NADA é alterado: o HTML estático continua valendo.
+    async function sincronizarAtividades() {
+      const fallback = Array.from(selectButtons)
+        .map((b) => b.getAttribute("data-activity") || "")
+        .filter((v) => v.trim().length > 0)
+
+      const codigos = new Set(fallback.map((v) => v.trim().split(/\s+/)[0].toUpperCase()))
+      if (codigos.size === 0) return
+
+      const lista: string[] = []
+      try {
+        const res = await getFromGAS(SCRIPT_URL, { action: "listarAtividades" })
+        if (!res || res.result !== "success" || !Array.isArray(res.atividades)) return
+
+        const vistos = new Set<string>()
+        for (const item of res.atividades) {
+          const nome = String(item?.atividade ?? "").trim()
+          if (!nome) continue
+          // mesma regra de inatividade usada no doPost
+          if (item?.ativo === false || String(item?.ativo).toLowerCase() === "false") continue
+          if (!codigos.has(nome.split(/\s+/)[0].toUpperCase())) continue
+          const chave = nome.toLowerCase()
+          if (vistos.has(chave)) continue
+          vistos.add(chave)
+          lista.push(nome)
+        }
+      } catch {
+        return // consulta indisponível → mantém o rótulo do frontmatter
+      }
+
+      if (lista.length === 0) return
+
+      const activityList = card.querySelector(".activity-list")
+      const template = activityList?.querySelector(".select-activity-btn") as HTMLButtonElement | null
+
+      // 2+ variantes cadastradas → o aluno precisa escolher
+      if (lista.length > 1 && activityList && template) {
+        activityList.innerHTML = ""
+        for (const nome of lista) {
+          const clone = template.cloneNode(true) as HTMLButtonElement
+          clone.setAttribute("data-activity", nome)
+          const label = clone.querySelector(".act-name")
+          if (label) label.textContent = nome
+          activityList.appendChild(clone)
+        }
+        form.setAttribute("data-activity", "")
+        backBtn?.classList.remove("hidden")
+        selectionScreen?.classList.remove("hidden")
+        formScreen?.classList.add("hidden")
+        return
+      }
+
+      // Uma única variante canônica → entra direto no formulário
+      const nome = lista[0]
+      const atual = form.getAttribute("data-activity") || ""
+      form.setAttribute("data-activity", nome)
+      if (activityHighlight) activityHighlight.textContent = nome
+      backBtn?.classList.add("hidden")
+      selectionScreen?.classList.add("hidden")
+      formScreen?.classList.remove("hidden")
+      // Não chamamos onActivitySelected() aqui: ele dá form.reset() e apagaria
+      // o que o aluno já tivesse digitado enquanto a consulta respondia.
+      if (atual.trim().toLowerCase() !== nome.toLowerCase()) {
+        exibirInfoPrazo(form, nome)
+      }
+    }
+
+    sincronizarAtividades().catch(() => {})
 
     // ── Feedback de arquivo selecionado ──
     function mostrarErroArquivo(mensagem: string) {

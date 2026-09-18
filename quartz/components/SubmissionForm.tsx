@@ -18,58 +18,36 @@ const SubmissionForm: QuartzComponent = ({ displayClass, fileData }: QuartzCompo
   return (
     <div class={classNames(displayClass, "submission-container")}>
       <div class="submission-card">
-        {/* Selection Screen (only if multiple) */}
-        {isMultiple && (
-          <div class="selection-screen">
-            <div class="card-header">
-              <div class="icon-wrapper">
-                <svg
-                  viewBox="0 0 24 24"
-                  width="32"
-                  height="32"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  fill="none"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                  <line x1="12" y1="11" x2="12" y2="17"></line>
-                  <line x1="9" y1="14" x2="15" y2="14"></line>
-                </svg>
-              </div>
-              <div class="header-text">
-                <h3>Escolha a Atividade</h3>
-                <p class="subtitle">Selecione para qual atividade deseja entregar</p>
-              </div>
+        {/* Selection Screen — SEMPRE renderizada:
+            com 2+ atividades mostra a escolha; com 1 fica `hidden`, servindo de
+            fonte do rótulo e de fallback caso a consulta à aba "Atividades" falhe */}
+        <div class={classNames("selection-screen", !isMultiple && "hidden")}>
+          <div class="card-header">
+            <div class="icon-wrapper">
+              <svg
+                viewBox="0 0 24 24"
+                width="32"
+                height="32"
+                stroke="currentColor"
+                stroke-width="2"
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                <line x1="12" y1="11" x2="12" y2="17"></line>
+                <line x1="9" y1="14" x2="15" y2="14"></line>
+              </svg>
             </div>
-            <div class="activity-list">
-              {activities.map((act) => (
-                <button type="button" class="select-activity-btn" data-activity={act}>
-                  <span class="act-name">{act}</span>
-                  <svg
-                    viewBox="0 0 24 24"
-                    width="18"
-                    height="18"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    fill="none"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                  </svg>
-                </button>
-              ))}
+            <div class="header-text">
+              <h3>Escolha a Atividade</h3>
+              <p class="subtitle">Selecione para qual atividade deseja entregar</p>
             </div>
           </div>
-        )}
-
-        {/* Form Screen */}
-        <div class={classNames("form-screen", isMultiple && "hidden")}>
-          <div class="card-header">
-            {isMultiple && (
-              <button type="button" class="back-to-selection" title="Voltar para escolha">
+          <div class="activity-list">
+            {activities.map((act) => (
+              <button type="button" class="select-activity-btn" data-activity={act}>
+                <span class="act-name">{act}</span>
                 <svg
                   viewBox="0 0 24 24"
                   width="18"
@@ -80,11 +58,35 @@ const SubmissionForm: QuartzComponent = ({ displayClass, fileData }: QuartzCompo
                   stroke-linecap="round"
                   stroke-linejoin="round"
                 >
-                  <line x1="19" y1="12" x2="5" y2="12"></line>
-                  <polyline points="12 19 5 12 12 5"></polyline>
+                  <polyline points="9 18 15 12 9 6"></polyline>
                 </svg>
               </button>
-            )}
+            ))}
+          </div>
+        </div>
+
+        {/* Form Screen */}
+        <div class={classNames("form-screen", isMultiple && "hidden")}>
+          <div class="card-header">
+            <button
+              type="button"
+              class={classNames("back-to-selection", !isMultiple && "hidden")}
+              title="Voltar para escolha"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                width="18"
+                height="18"
+                stroke="currentColor"
+                stroke-width="2"
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
+            </button>
             <div class="icon-wrapper">
               <svg
                 viewBox="0 0 24 24"
