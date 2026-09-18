@@ -257,7 +257,7 @@ const SubmissionForm: QuartzComponent = ({ displayClass, fileData }: QuartzCompo
                     </svg>
                   </button>
                 </div>
-                <small class="file-hint">Formato aceito: .zip (Máx. 20MB)</small>
+                <small class="file-hint">Somente .zip (Máx. 20MB) — PDF, .py, .rar e .7z são recusados</small>
               </div>
             </div>
 

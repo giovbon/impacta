@@ -22,11 +22,10 @@
 // 6. Copie a URL gerada e cole na variável SCRIPT_URL abaixo
 // ═══════════════════════════════════════════════════════════════════════
 
+import { validarArquivoZip } from "../../util/submissionFile"
+
 const SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbwauFvnfDsrpl_ACYeZ46NxwKAp2BR9b-3Z0Nz9uTelTaRIYsdQwWYYTYO4GvNBmw4/exec"
-
-const MAX_FILE_SIZE_BYTES = 20 * 1024 * 1024 // 20 MB
-const EXTENSAO_PERMITIDA = /\.zip$/i // apenas .zip (.rar/.7z recusados)
 
 /**
  * Converte um File (ZIP) para base64
@@ -309,21 +308,19 @@ async function initSubmission() {
     }
 
     // ── Feedback de arquivo selecionado ──
-    fileInput.addEventListener("change", () => {
+    function mostrarErroArquivo(mensagem: string) {
+      fileNameDisplay.textContent = `❌ ${mensagem}`
+      fileNameDisplay.style.color = "#ef4444"
+      clearFileBtn.style.display = "flex"
+      fileInput.value = ""
+    }
+
+    fileInput.addEventListener("change", async () => {
       if (fileInput.files && fileInput.files.length > 0) {
         const file = fileInput.files[0]
-        if (!EXTENSAO_PERMITIDA.test(file.name)) {
-          fileNameDisplay.textContent = "❌ Apenas arquivos .zip são aceitos"
-          fileNameDisplay.style.color = "#ef4444"
-          clearFileBtn.style.display = "flex"
-          fileInput.value = ""
-          return
-        }
-        if (file.size > MAX_FILE_SIZE_BYTES) {
-          fileNameDisplay.textContent = "❌ Arquivo muito grande (máx. 20MB)"
-          fileNameDisplay.style.color = "#ef4444"
-          clearFileBtn.style.display = "flex"
-          fileInput.value = ""
+        const erro = await validarArquivoZip(file)
+        if (erro) {
+          mostrarErroArquivo(erro)
           return
         }
         fileNameDisplay.textContent = `📄 ${file.name}`
@@ -409,18 +406,13 @@ async function initSubmission() {
         }
       }
 
-      if (hasFile && !EXTENSAO_PERMITIDA.test(zipFile!.name)) {
-        showStatus(
-          statusMsg,
-          "error",
-          "Apenas arquivos .zip são aceitos. Compacte sua entrega em .zip (arquivos .rar e .7z são recusados).",
-        )
-        return
-      }
-
-      if (hasFile && zipFile!.size > MAX_FILE_SIZE_BYTES) {
-        showStatus(statusMsg, "error", "Arquivo muito grande. O limite é de 20MB.")
-        return
+      // Revalida o anexo no envio: o handler do input pode ter sido contornado
+      if (hasFile) {
+        const erroArquivo = await validarArquivoZip(zipFile!)
+        if (erroArquivo) {
+          showStatus(statusMsg, "error", erroArquivo)
+          return
+        }
       }
 
       // ── Tudo ok localmente → prepara envio ──
