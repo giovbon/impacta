@@ -39,6 +39,7 @@ Ações comuns:
 
 - [`/buscaCEP`](https://drive.google.com/file/d/1ggxz9hAAIbNd77pfws1hwV1k2AKLCfdg/view?usp=sharing) Recebe um CEP (texto) e busca na tabela CEP. Se encontrar, devolve o registro; se não, devolve null. Serve para evitar o "Query All" (buscar tudo) que seria lento.
 
+<!--
 - [`/buscaCliente`](https://drive.google.com/file/d/1azg3iYRAFbsFuzTKdr4Xkn0Wp23SjPtg/view?usp=drive_link) (ou `/consultaCliente`). Recebe `authToken`, chama internamente `/auth/me` para pegar o `user_id`, e então busca na tabela Cliente. É a base para quase todas as outras APIs.
 
 - [`/upsertCEP`](https://drive.google.com/file/d/1OdKfFIRCVkojJWSwt-eJfOnubnPelE2J/view?usp=drive_link) Recebe {cep, cidade, estado}. Se o CEP existe, faz PATCH (atualiza); se não, faz POST (insere). Sempre retorna o registro do CEP (com o id).
@@ -52,3 +53,4 @@ Ações comuns:
 - [`/atualizaEndereco`](https://drive.google.com/file/d/1NCyq6bS5kq4vFssT_kk-1B5E50a-P1Iz/view?usp=drive_link) Similar ao anterior, mas faz PATCH na tabela ENDERECO usando o `endereco_id`. Também usa o `/upsertCEP` internamente.
 
 - [`/marcarEnderecoPadrao`](https://drive.google.com/file/d/19SBDYP9XKtNyrO7qRzP957NZNP7UCkiX/view?usp=drive_link) Torna um endereço `padrão = true` e, via lógica de Array Map, define todos os outros endereços do mesmo cliente como `padrão = false`.
+-->
