@@ -1,7 +1,7 @@
 ---
 title: Selenium 2
 presentation: "slides/AST/08AST-SL-selenium2.md"
-order: 5
+order: 8
 typst: 
 - path: "typs/AST/AST08.typ"
   name: "Exercício AST08"

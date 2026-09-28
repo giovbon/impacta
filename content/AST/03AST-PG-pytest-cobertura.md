@@ -1,7 +1,7 @@
 ---
 title: Cobertura de Testes
 presentation: "slides/AST/03AST-SL-pytest-cobertura.md"
-order: 2
+order: 3
 typst: 
 - path: "typs/AST/AST03.typ"
   name: "Exercício AST03"

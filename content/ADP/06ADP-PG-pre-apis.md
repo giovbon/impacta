@@ -1,5 +1,5 @@
 ---
-title: APIs
+title: APIs de Autenticação
 presentation: "slides/ADP/07ADP-SL-02-apis-auth.md"
 order: 9
 ---
@@ -18,6 +18,9 @@ order: 9
 Um **authToken** é utilizado para provar que as futuras requisições pertencem à mesma pessoa que fez login naquela sessão.
 
 Tabelas a serem usadas para autenticação de usuários devem possuir campo de `Email` (tipo `text`) e um campo de `Password` (tipo `password`).
+
+<!--
+DEPRECATED !!!
 
 ## SNIPPETs importados
 
@@ -85,4 +88,4 @@ O objetivo é criar uma API no Xano que envia e-mails. O Xano utiliza outro serv
 Erros mais comuns ao usar o SendGrid:
 
 - `Status 401` (Não autorizado): Geralmente significa que sua API Key está errada, ou que você digitou errado na tabela tokens (ex: um espaço a mais).
-- `Status 403` (Proibido/Sender não autorizado): Ocorre quando o e-mail que você colocou no campo `from` não é o mesmo e-mail que você cadastrou e verificou como "Sender" na plataforma do SendGrid.
+- `Status 403` (Proibido/Sender não autorizado): Ocorre quando o e-mail que você colocou no campo `from` não é o mesmo e-mail que você cadastrou e verificou como "Sender" na plataforma do SendGrid. -->

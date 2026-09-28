@@ -1,7 +1,7 @@
 ---
 title: TDD
 presentation: "slides/AST/05AST-SL-TDD.md"
-order: 4
+order: 5
 typst: 
 - path: "typs/AST/AST05.typ"
   name: "Exercício AST05"

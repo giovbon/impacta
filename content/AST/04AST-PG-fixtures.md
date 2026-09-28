@@ -1,7 +1,7 @@
 ---
 title: Fixtures
 presentation: "slides/AST/04AST-SL-fixtures.md"
-order: 3
+order: 4
 typst: 
 - path: "typs/AST/AST04.typ"
   name: "Exercício AST04"

@@ -1,7 +1,7 @@
 ---
 title: Dublê de Testes
 presentation: "slides/AST/06AST-SL-duble-testes.md"
-order: 5
+order: 6
 typst: 
 - path: "typs/AST/AST06.typ"
   name: "Exercício AST06"

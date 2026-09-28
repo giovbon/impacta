@@ -16,3 +16,5 @@ dev/
 # cache do Eleventy
 .cache/
 .tmp-tests/
+
+OCULTO/
