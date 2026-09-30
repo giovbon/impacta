@@ -33,7 +33,7 @@ O que o Flake8 analisa:
 
 - **Violações do PEP 8**: Espaços em branco incorretos, linhas com mais de 79 caracteres, nomes de funções fora do padrão, falta de linhas em branco entre classes e funções.
 - **Erros Lógicos e Sintaxe**: Módulos importados mas não usados, variáveis definidas mas nunca acessadas, uso de sintaxe desalinhada com a versão do Python.
-- **Complexidade Ciclomática** (Opcional): Quantidade de caminhos de execução independentes em uma função ou método.
+- **Complexidade Ciclomática** (Opcional): métrica que calcula o número de caminhos lógicos diferentes que um código pode seguir (através de `if`, `while`, etc.), servindo como um "termômetro" da saúde do software: valores altos indicam códigos confusos e difíceis de manter.
 
 ---
 
@@ -44,7 +44,7 @@ As mensagens geradas pelo Flake8 dividem-se em quatro grandes classes de prefixo
 - **E (Errors - PEP 8)**: *Erros de formatação e estilo* segundo o guia oficial do Python. Incluem problemas com espaçamento, indentação, tamanho de linha e separação de blocos.
 - **W (Warnings - PEP 8)**: *Avisos* sobre práticas de estilo que não são erros de sintaxe diretos, mas que *afetam a legibilidade* (ex.: linhas em branco desnecessárias, espaços no final de linhas).
 - **F (PyFlakes / Logical Errors)**: *Erros lógicos e potenciais bugs no código*. Apontam variáveis/módulos importados e não utilizados, referências a variáveis inexistentes ou redefinições indevidas.
-- **C (McCabe Complexity)**: Avisos sobre a *complexidade do código*. Indicam funções ou métodos muito longos e cheios de estruturas condicionais aninhadas (if, else, for), sugerindo refatoração.
+- **C (McCabe Complexity)**: Avisos sobre a *complexidade do código*. Indicam funções ou métodos muito longos e cheios de estruturas condicionais aninhadas (`if`, `else`, `for`), sugerindo refatoração.
 
 --
 
@@ -102,7 +102,7 @@ Quando se cria um projeto Python, ele gera pastas automáticas ou virtuais que n
 
 Código complexo demais é difícil de manter e fácil de quebrar. A complexidade ciclomática mede quantas decisões (como if, else, for, while) uma única função toma.
 
-**Medindo a Complexidade do Código** com `flake8 --max-complexity=10 .`
+**Medindo a Complexidade do Código** com `flake8 --max-complexity=10 .` sendo `10` o limite máximo permitido de Complexidade Ciclomática, um limite clássico recomendado na engenharia de software para separar um código "saudável" de um código excessivamente ramificado.
 
 - **O que faz**: Avalia todas as funções do projeto. Se alguma função tiver um nível de complexidade maior que 10 (muitos ifs ou laços aninhados), o Flake8 gera um alerta C901.
 - **Para que serve**: Avisa quando uma função/teste ficou grande e confusa demais, sugerindo que você deve dividi-la em funções menores.
@@ -130,5 +130,7 @@ ignore = E501
 # Limite máximo de complexidade por função
 max-complexity = 10
 ```
+
+--
 
 Depois de salvar esse arquivo, no terminal você precisa digitar apenas `flake8 .`'
