@@ -58,13 +58,14 @@ Para o exemplo demonstrativo utilizaremos as tabelas descritas abaixo, *adapte o
 
 ## API `verify_otp`
 
-<img src="https://i.ibb.co/Df9Q4fM8/FED58931-5584-48-DE-9-B6-D-2-F29238-EE9-E8.png" width="90%" data-preview-image>
+<img src="https://i.ibb.co/8gdRKjpw/AF976-CF2-FC1-F-4-C0-E-A1-C1-EA0895-E5-FC51.png" width="90%" data-preview-image>
 
 --
 
 ### Detalhes
 
 <img src="https://i.ibb.co/j9R1rz33/664329-FA-9862-4-FCC-BF67-4022-D8-E50041.png" width="40%" data-preview-image>
+<img src="https://i.ibb.co/xq76gNzC/8-EA024-AE-AF61-4461-B08-D-24-F1388201-D5.png" width="25%" data-preview-image>
 
 **Error messages**:
 - Precondition 1: Nenhuma solicitação de código encontrada para este e-mail.
