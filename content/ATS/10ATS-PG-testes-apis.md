@@ -10,7 +10,13 @@ submission:
 codes: "codes/testes-api.md"
 ---
 
-
+Para não ter de colocar o python path no comando, toda vez que rodar o pytest:
+- Crie arquivo `pyproject.toml` na raiz
+- Inclua dentro dele:
+```
+[tool.pytest.ini_options]
+pythonpath = ["."]
+```
 
 ## 📚 Referência
 - [Easier API testing with Tavern - Tavern](https://tavern.readthedocs.io/en/latest/)
