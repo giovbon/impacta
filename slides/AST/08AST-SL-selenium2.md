@@ -59,25 +59,6 @@ A linha significa: *espere até que o navegador tenha exatamente 2 janelas/abas 
 ---
 
 
-## Extraindo Dados
-
-Automações também servem para *capturar informações*. O Selenium permite ler textos visíveis e atributos invisíveis do HTML.
-
-  - **`.text`**: Retorna o *texto* que o usuário enxerga na tela.
-  - **`get_attribute("nome")`**: Pega *valores dentro da tag HTML* (como o link de um `href` ou o texto que foi digitado em um `value`).
-
-
-```python
-mensagem = driver.find_element(By.ID, "msg-sucesso")
-print("O texto da tela é:", mensagem.text) # Extrai o texto visível contido no elemento e o exibe no console
-
-link = driver.find_element(By.TAG_NAME, "a")
-print("O destino do link é:", link.get_attribute("href")) # Captura o valor do atributo 'href' (a URL de destino) do link e o exibe no console
-```
-
----
-
-
 ## Sincronização (Waits)
 
 **Regra de Ouro:** A internet tem atrasos; o Selenium não.
@@ -122,9 +103,23 @@ botao = WebDriverWait(driver, 15).until(
 botao.click()
 ```
 
---
+---
 
-Formalmente, as **Expected Conditions (EC)** são um conjunto de regras de validação nativas do Selenium que atuam como os *critérios de parada para as Esperas Explícitas* (`WebDriverWait`). Em vez de o programador precisar criar manualmente loops complexos e tratamentos de erro para aguardar o carregamento dinâmico de uma página, o módulo EC abstrai essa complexidade avaliando o estado do navegador a cada 500 milissegundos; *assim que a condição exigida se torna verdadeira* (como um botão ficar clicável ou um pop-up desaparecer), *ele interrompe a espera na mesma hora e libera a execução do código*, garantindo que o robô interaja com a tela no momento exato em que ela estiver pronta.
+## Extraindo Dados
+
+Automações também servem para *capturar informações*. O Selenium permite ler textos visíveis e atributos invisíveis do HTML.
+
+  - **`.text`**: Retorna o *texto* que o usuário enxerga na tela.
+  - **`get_attribute("nome")`**: Pega *valores dentro da tag HTML* (como o link de um `href` ou o texto que foi digitado em um `value`).
+
+
+```python
+mensagem = driver.find_element(By.ID, "msg-sucesso")
+print("O texto da tela é:", mensagem.text) # Extrai o texto visível contido no elemento e o exibe no console
+
+link = driver.find_element(By.TAG_NAME, "a")
+print("O destino do link é:", link.get_attribute("href")) # Captura o valor do atributo 'href' (a URL de destino) do link e o exibe no console
+```
 
 ---
 
