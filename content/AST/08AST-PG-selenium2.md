@@ -7,6 +7,7 @@ typst:
   name: "Exercício AST08"
 submission: 
   - "AST08"
+  - "AST08 Manha"
 codes: "codes/selenium2.md"
 ---
 
