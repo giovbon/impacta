@@ -5,7 +5,7 @@
     
     pip install pytest pytest-bdd
     
-    Execute com: pytest test saque.py -v
+    Execute com: pytest test_saque.py -v
     ```
   - conta.py
     ```python
