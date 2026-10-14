@@ -111,7 +111,7 @@ Código complexo demais é difícil de manter e fácil de quebrar. A complexidad
 
 ## Simplificando com arquivo `.flake8`
 
-Digitar comandos longos no terminal toda vez cansa e gera erros. A melhor prática em um projeto real é criar um arquivo texto na raiz do seu projeto chamado `.flake8`.
+Digitar comandos longos no terminal toda vez cansa e gera erros. A melhor prática em um projeto real é criar um arquivo texto *na raiz* do seu projeto chamado `.flake8`.
 
 ```py
 [flake8]
