@@ -7,6 +7,7 @@ typst:
   name: "Exercício AST09"
 submission: 
   - "AST09"
+  - "AST09 Manha"
 codes: "codes/flake8.md"
 ---
 
