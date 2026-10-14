@@ -6,7 +6,7 @@
     pip install flake8
     
     Rode o comando abaixo e interprete o retorno:
-    flake8 --max-complexity=3 exemplo_erros.py
+    flake8 exemplo_erros.py
     ```
   - exemplo_erros.py
     ```python
@@ -45,4 +45,9 @@
 
     # Aviso W291: Há um espaço em branco invisível no final da linha acima (trailing whitespace)
     # Aviso W292: Não há uma linha em branco no final deste arquivo
+    ```
+  - .flake8
+    ```
+    [flake8]
+    max-complexity = 3
     ```
