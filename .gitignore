@@ -3,6 +3,7 @@ node_modules/
 
 # saída do build
 _site/
+public/
 
 # artefatos gerados dentro de src (libs vendorizadas são versionadas junto)
 src/assets/static/app.js

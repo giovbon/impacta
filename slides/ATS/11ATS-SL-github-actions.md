@@ -1,9 +1,13 @@
-<!-- .slide: data-background-image="https://images.squarespace-cdn.com/content/v1/5fb4ea8933ae6c208c3dac41/1656395530398-NQT3HSOMM2GVD84P8FXM/car2car" data-background-size="cover" data-background-opacity="0.4" -->
 
-<div class="glass-box">
-    <h1>github actions</h1>
-    <img src="https://simpleicons.org/icons/githubactions.svg" alt="Pytest" class="glass-icon imagem-invertida" />
-</div>
+<!-- .slide: class="slide-cover" -->
+<p class="slide-cover__kicker">ATS · Automação de Testes de Software</p>
+
+# Github Actions
+
+<p class="slide-cover__rule"></p>
+<p class="slide-cover__sub"></p>
+<p class="slide-cover__meta"><span>Prof. Giovani B.</span></p>
+<p class="slide-cover__num">10</p>
 
 ---
 
@@ -39,7 +43,7 @@ No GitHub, quando você faz um `git push`, o servidor olha para a pasta `.github
 Elementos básicos de um workflow, a estrutura mínima para um workflow funcionar:
 
 <div style="text-align: center;">
-<img src="../zSLIDES/img/composição-workflow.png" width="80%" data-preview-image>
+<img src="https://i.ibb.co/Dg82tY2K/image.png" width="80%" data-preview-image>
 </div>
 
 --
@@ -205,5 +209,5 @@ Quando o fluxo termina, o GitHub nos dá um retorno visual imediato direto no re
 - ❌ **Vermelho (Failed):** Algum passo quebrou ou um teste falhou. O GitHub bloqueia a integração e o desenvolvedor precisa ler os Logs para consertar o código.
 
 <div style="text-align: center;">
-<img src="../zSLIDES/img/ci-cd-githubactions.png" width="50%" data-preview-image>
+<img src="https://i.ibb.co/rfmWKpRg/image.png" width="50%" data-preview-image>
 </div>
