@@ -1,6 +1,6 @@
 - /
   - .github/
-    - workflows
+    - workflows/
       - ci.yml
         ```yml
         name: Teste de API
