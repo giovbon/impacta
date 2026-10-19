@@ -26,7 +26,7 @@
 
               - name: Rodar Testes
                 run: pytest test_main.py
-      ```
+        ```
   - .gitignore
     ```
     .venv/
