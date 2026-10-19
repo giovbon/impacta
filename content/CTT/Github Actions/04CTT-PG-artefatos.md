@@ -5,7 +5,7 @@ presentation:
   - "slides/CTT/Github-Actions/05-artefatos-transf.md"
 ---
 
-## Exemplo do uso de artefatos
+## Exemplo do uso de artefatos!
 
 ```yaml
 name: Aprendendo Artefatos
