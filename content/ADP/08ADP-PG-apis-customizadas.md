@@ -41,6 +41,45 @@ Ações comuns:
 
 - [`/buscaCliente`](https://drive.google.com/file/d/1azg3iYRAFbsFuzTKdr4Xkn0Wp23SjPtg/view?usp=drive_link) (ou `/consultaCliente`). Recebe `authToken`, chama internamente `/auth/me` para pegar o `user_id`, e então busca na tabela Cliente. É a base para quase todas as outras APIs.
 
+<!-- PRECISA DE REVISÃO O parâmetro params = $input.auhtoken insere o token na URL (query parameters) desnecessariamente, já que ele deve trafegar apenas no cabeçalho Authorization. CORRETO ABAIXO:
+
+query buscaCliente verb=GET {
+  api_group = "APIS_Customizadas"
+
+  input {
+    text authToken? filters=trim
+  }
+
+  stack {
+    api.request {
+      url = "https://x8ki-letl-twmt.n7.xano.io/api:KK94uh0w/auth/me"
+      method = "GET"
+      headers = [
+        "Authorization: Bearer " ~ $input.authToken
+        "Content-Type: application/json"
+      ]
+    } as $api1
+  
+    conditional {
+      if ($api1.response.status == 200) {
+        db.get usuario {
+          field_name = "id"
+          field_value = `$api1.response.result.id`
+        } as $CLIENTE1
+      }
+    
+      else {
+        var $CLIENTE1 {
+          value = {}
+        }
+      }
+    }
+  }
+
+  response = $CLIENTE1
+}
+-->
+
 - [`/upsertCEP`](https://drive.google.com/file/d/1OdKfFIRCVkojJWSwt-eJfOnubnPelE2J/view?usp=drive_link) Recebe {cep, cidade, estado}. Se o CEP existe, faz PATCH (atualiza); se não, faz POST (insere). Sempre retorna o registro do CEP (com o id).
 
 - [`/cadastraCliente`](https://drive.google.com/file/d/1a9_3I1K0J2Qr4_qeHXCz8JSq49-0O63i/view?usp=drive_link) Fluxo de 4 etapas: Recebe dados do cliente e cadastra um novo usuário para login e já cria o perfil de cliente vinculado a ele na mesma operação.
