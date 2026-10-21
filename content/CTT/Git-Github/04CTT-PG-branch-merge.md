@@ -8,5 +8,6 @@ asciinema:
   - "asciinema/09-merge-fast.cast"
   - "asciinema/10-merge-tres-vias.cast"
   - "asciinema/11-rebase.cast"
+quiz: "quizzes/git-branch-merge.md"
 ---
 

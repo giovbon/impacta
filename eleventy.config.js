@@ -9,12 +9,13 @@ import { renderCodes } from "./src/components/codes/render.js"
 import { renderSubmission } from "./src/components/submission/render.js"
 import { renderAsciinema } from "./src/components/asciinema/render.js"
 import { renderMarkmap } from "./src/components/markmap/render.js"
+import { renderQuiz } from "./src/components/quiz/render.js"
 
 /**
  * Configuração do Eleventy.
  *
  * Regras do projeto (ver MODELO.md):
- *  - `content/`, `slides/`, `mindmaps/`, `codes/` são SOMENTE LEITURA e ficam fora daqui.
+ *  - `content/`, `slides/`, `mindmaps/`, `codes/`, `quizzes/` são SOMENTE LEITURA e ficam fora daqui.
  *  - Nada de SPA: cada navegação é um carregamento novo.
  *  - 1 chave de frontmatter = 1 componente (src/components/<nome>/).
  */
@@ -50,7 +51,7 @@ export default function (eleventyConfig) {
   // `dev/` entra na lista porque é onde o esbuild grava o carimbo dos assets: o
   // watcher do Eleventy não reage a `src/_data` nem a caminhos de passthrough,
   // então um watch target dedicado é o que dispara o rebuild quando o CSS muda.
-  for (const dir of ["content", "slides", "mindmaps", "codes", "dev"]) {
+  for (const dir of ["content", "slides", "mindmaps", "codes", "quizzes", "dev"]) {
     eleventyConfig.addWatchTarget(`./${dir}/`)
   }
 
@@ -102,6 +103,7 @@ export default function (eleventyConfig) {
   eleventyConfig.addFilter("submission", (frontmatter) => renderSubmission(frontmatter))
   eleventyConfig.addFilter("asciinema", (frontmatter) => renderAsciinema(frontmatter))
   eleventyConfig.addFilter("markmap", (frontmatter) => renderMarkmap(frontmatter))
+  eleventyConfig.addFilter("quiz", (frontmatter) => renderQuiz(frontmatter))
 
   // No `--serve`, o padrão do Eleventy copia os passthrough uma única vez e não os
   // recopia em rebuild incremental; quem publica a saída do esbuild no dev é

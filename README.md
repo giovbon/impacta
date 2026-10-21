@@ -3,7 +3,7 @@
 Abre a navegação com `[` (ou Ctrl+B); fecha com `Esc`. Não há botão de abrir na interface.
 
 Projeto **separado** do site Quartz que existe na raiz do repositório. Este projeto é autocontido:
-conteúdo, slides, mapas mentais, códigos e libs vivem todos aqui dentro.
+conteúdo, slides, mapas mentais, códigos, quizzes e libs vivem todos aqui dentro.
 
 ## Requisitos
 
@@ -21,8 +21,8 @@ npm run clean    # apaga _site/
 ```
 
 `./run.sh` roda Eleventy (`--serve`, com live reload), o esbuild em watch e o watch de
-`content/`, `slides/`, `mindmaps/` e `codes/`: **salvar qualquer arquivo reconstrói o site e o
-navegador recarrega sozinho**. Opções:
+`content/`, `slides/`, `mindmaps/`, `codes/` e `quizzes/`: **salvar qualquer arquivo reconstrói o
+site e o navegador recarrega sozinho**. Opções:
 
 ```bash
 PORT=8081 ./run.sh                  # outra porta
@@ -57,6 +57,7 @@ content/    aulas em markdown (o frontmatter aciona os componentes) + static/ (a
 slides/     decks reveal.js (.md), lidos em tempo de build
 mindmaps/   mapas mentais (.md), lidos em tempo de build
 codes/      árvores de código do explorer (.zcode)
+quizzes/    quizzes em markdown, lidos em tempo de build
 docs/       PROPOSTA.md (contrato), MODELO.md (arquitetura) e SLIDES.md (guia dos decks)
 scripts/    dev.mjs (serve + watch), build-assets.mjs (esbuild) e vendor-libs.mjs
 run.sh      sobe o ambiente de desenvolvimento
@@ -71,6 +72,50 @@ _site/      saída do build (não versionada)
 3. Asset que precisa chegar ao navegador mora em `content/static/**` → publicado em `/static/**`.
 4. Pastas `oculto/` não são publicadas (ver abaixo).
 5. Sem SPA: cada navegação é um carregamento novo.
+6. Quizzes ficam em `quizzes/**`, são lidos no build e não são publicados como página solta.
+
+## Quiz
+
+Um quiz é acionado pelo frontmatter, igual a slides/códigos, e aparece **depois do conteúdo da
+aula e antes da entrega**. A correção é local no navegador: **nada é enviado** e não há RA nem
+planilha.
+
+```yaml
+---
+title: Branching e Merging
+quiz: "quizzes/git-branch-merge.md"
+---
+```
+
+O arquivo em `quizzes/` usa uma sintaxe inspirada no Quizdown:
+
+```md
+---
+title: Quiz — Branching e Merging
+---
+
+### O que `git switch -c feature` faz?
+
+> Dica opcional. O blockquote antes das opções vira o botão "Ver dica".
+
+1. [x] Cria a branch e passa para ela.
+    > Comentário opcional desta opção.
+1. [ ] Apaga a branch.
+1. [ ] Faz merge na branch atual.
+
+> Explicação mostrada depois de conferir.
+```
+
+- `1. [x]` = **escolha única** (radio); `- [x]` = **múltipla escolha** (checkbox).
+- Blockquote **antes** das opções = dica; **depois** = explicação; **indentado sob uma opção** =
+  comentário daquela opção.
+- `shuffleQuestions: true` e `shuffleAnswers: true` no frontmatter do quiz embaralham de forma
+  determinística no build.
+- O gabarito fica no HTML (`data-correct`): é um recurso didático, não uma avaliação.
+- Se o arquivo não existir ou a sintaxe estiver inválida, o build avisa no console e a página mostra
+  um cartão de erro em vez de quebrar.
+- **Não implementado nesta versão**: quiz de sequência/ordenação do Quizdown (só escolha única e
+  múltipla escolha) e envio de respostas.
 
 ## Ocultar conteúdo
 

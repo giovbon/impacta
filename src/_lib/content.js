@@ -21,6 +21,7 @@ import { isExternalUrl } from "./urls.js"
  *   slides/**    (decks reveal)
  *   mindmaps/**  (mapas mentais)
  *   codes/**     (árvores de código do explorer)
+ *   quizzes/**   (quizzes de autoavaliação)
  */
 
 /** Raiz deste projeto (`site-11ty/`). */

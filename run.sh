@@ -5,7 +5,7 @@
 # O script roda três coisas em paralelo:
 #   1. `eleventy --serve`  gera o HTML, serve em HTTP e injeta o live reload
 #   2. `esbuild --watch`   recompila /static/app.js e /static/app.css
-#   3. watch targets       content/, slides/, mindmaps/, codes/ (ver eleventy.config.js)
+#   3. watch targets       content/, slides/, mindmaps/, codes/, quizzes/ (ver eleventy.config.js)
 #
 # Uso:
 #   ./run.sh                      # porta 8080, base "/"

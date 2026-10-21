@@ -17,8 +17,3 @@ dev/
 # cache do Eleventy
 .cache/
 .tmp-tests/
-
-# rascunhos: o build também ignora esta pasta (src/_lib/content.js).
-# O git trata cada grafia como um padrão separado no Linux/macOS.
-OCULTO/
-oculto/

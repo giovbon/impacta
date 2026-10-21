@@ -5,7 +5,7 @@
 > Versão 1.0 — escrita a partir do site Quartz v4.5.2 em produção (`quartz.config.ts`, `quartz.layout.ts`, `content/`).
 
 > **Atualização (2026-09-19) — projeto autocontido.** O projeto vive isolado em `site-11ty/` e
-> **não lê nada fora dele**: `content/`, `slides/`, `mindmaps/`, `codes/` e as libs vendorizadas
+> **não lê nada fora dele**: `content/`, `slides/`, `mindmaps/`, `codes/`, `quizzes/` e as libs vendorizadas
 > (`src/assets/static/lib/`) estão todos dentro da pasta. Onde este documento citar caminhos na raiz
 > do repositório (inclusive `quartz/static/lib/`), leia-se o equivalente dentro de `site-11ty/`.
 > Decisões fechadas e estado atual: [`../MODELO.md`](../MODELO.md).
@@ -16,7 +16,7 @@
 
 1. **REGRA**: o novo site vive em `site-11ty/`. **Não** altere, mova ou apague nada de `quartz/`, `quartz.config.ts`, `quartz.layout.ts` ou `node_modules/`.
 2. **REGRA**: **nunca** altere `quartz/google-sheets-apps-script.gs`. É o backend do formulário de entrega em produção (Google Apps Script). O contrato HTTP dele é **fixo**; descubra-o lendo `quartz/components/scripts/submission.inline.ts` e `quartz/util/submissionFile.ts`.
-3. **REGRA**: `content/`, `slides/`, `mindmaps/`, `codes/` são a **fonte da verdade** e são apenas **leitura**. Não renomeie, não reformate e não corrija frontmatter existente.
+3. **REGRA**: `content/`, `slides/`, `mindmaps/`, `codes/`, `quizzes/` são a **fonte da verdade** e são apenas **leitura**. Não renomeie, não reformate e não corrija frontmatter existente.
 4. **REGRA**: o output do novo site é `site-11ty/_site/`. **Nunca** escreva em `public/` (pasta do Quartz).
 5. **REGRA**: `oculto/` e `demonstracao.md` estão no `.gitignore` e **não são publicados** (hoje 39 dos 57 arquivos `.md` viram página). O novo site deve respeitar a mesma exclusão. Ver apêndice A.
 6. **REGRA**: cada fase (seção 11) termina com o checklist da seção 9 verde. Commits pequenos, um por item relevante.
@@ -26,9 +26,9 @@
 
 ## 1. Objetivo
 
-Reproduzir **paridade funcional** com o site atual: um site estático de materiais de aula onde o **frontmatter do markdown aciona componentes** — deck de slides (reveal.js) embutido na mesma página da matéria, player de terminal (asciinema), mapa mental (markmap), exercício em Typst compilado no navegador, explorador de código e formulário de entrega de atividade — com navegação por disciplina, busca, índice de pastas e deploy no GitHub Pages.
+Reproduzir **paridade funcional** com o site atual: um site estático de materiais de aula onde o **frontmatter do markdown aciona componentes** — deck de slides (reveal.js) embutido na mesma página da matéria, player de terminal (asciinema), mapa mental (markmap), exercício em Typst compilado no navegador, explorador de código, formulário de entrega de atividade e quiz de autoavaliação — com navegação por disciplina, busca, índice de pastas e deploy no GitHub Pages.
 
-O que dá valor ao site **não é o gerador**, são os seis componentes e o contrato de conteúdo. Portanto: paridade de contrato primeiro, estética depois.
+O que dá valor ao site **não é o gerador**, são os sete componentes e o contrato de conteúdo. Portanto: paridade de contrato primeiro, estética depois.
 
 ---
 
@@ -39,7 +39,7 @@ O que dá valor ao site **não é o gerador**, são os seis componentes e o cont
 - Renderizar todos os `.md` publicáveis de `content/` (exceto os ignorados).
 - Navegação: barra lateral com título do site, busca e árvore de pastas/notas ordenada por `order`; breadcrumbs; índice de cada pasta.
 - Conteúdo: título, data/tempo de leitura, sumário (TOC) colapsável, tags, syntax highlight, KaTeX, callouts estilo Obsidian, links entre páginas resolvidos por caminho curto.
-- Os seis componentes: **Presentation, Asciinema, Mindmap, Typst, CodeExplorer, SubmissionForm** (seção 6).
+- Os sete componentes: **Presentation, Asciinema, Mindmap, Typst, CodeExplorer, SubmissionForm, Quiz** (seção 6).
 - Busca no cliente.
 - `404.html`, `sitemap.xml`, `index.xml` (RSS), páginas de tag.
 - Tema claro/escuro com persistência + `prefers-color-scheme`.
@@ -77,10 +77,11 @@ Backlinks ao pé da página, popovers de pré-visualização no hover, imagens O
 site-11ty/
 ├── eleventy.config.js
 ├── package.json
+├── quizzes/                     # quizzes em markdown, lidos em build
 ├── src/
 │   ├── _data/site.js            # título, baseUrl, cores, nav, links do rodapé
 │   ├── _includes/               # layouts nunjucks: base, pagina, lista, deck, asciinema...
-│   ├── _includes/components/    # partials dos 6 componentes
+│   ├── _includes/components/    # partials dos 7 componentes
 │   ├── assets/
 │   │   ├── styles/              # scss/css
 │   │   ├── static/lib/          # libs vendorizadas (reveal, asciinema, typst)
@@ -110,12 +111,13 @@ O conteúdo fica em `site-11ty/content/` (autocontido). O Eleventy lê os `.md` 
 | `markmap` | string | Mapa mental; caminho **lógico** `mindmaps/<arquivo>.md` | `markmap: "mindmaps/ast-roadmap.md"` |
 | `typst` | lista de `{ path, name }` | Exercícios: um botão por item (compila e baixa o `.typ`) | `typst:` ⏎ `- path: "typs/AST/AST06.typ"` ⏎ `  name: "Exercício AST06"` |
 | `codes` | string | Explorador de código; caminho para um arquivo em `codes/**` (formato `.zcode`, seção 6.5) | `codes: "codes/selenium1.md"` |
+| `quiz` | string \| string[] | Quiz(zes) de autoavaliação; caminho para um arquivo em `quizzes/**` (sintaxe na seção 6.7) | `quiz: "quizzes/git-branch-merge.md"` |
 | `submission` | string[] | Rótulos de atividade. 1 item = formulário direto; 2+ = tela de escolha | `submission: ["AST06", "AST06 ADS3-SI3 ADS4-SI4"]` |
 | `icon` | string | Ícone da página (hoje só usado em páginas não publicadas) | `icon: simple/git` |
 
 **Regras de parsing (todas obrigatórias):**
 
-- Aceitar **string ou lista** em `presentation`, `asciinema` e `submission`; ignorar itens vazios/whitespace.
+- Aceitar **string ou lista** em `presentation`, `asciinema`, `submission` e `quiz`; ignorar itens vazios/whitespace.
 - Aceitar a forma **mapa** em `typst` (`path` + `name` opcional; `name` default = nome do arquivo).
 - Se `typst` for string, tratar como lista de um item.
 - Componente sem dado no frontmatter **não renderiza nada** (nem `<div>` vazio).
@@ -130,6 +132,7 @@ Esta tabela é a origem da maioria dos bugs. Decore-a.
 | `slides/x.md` | `slides/x.md` (raiz) | — (não servido) | Lido em build-time e **injetado no HTML** |
 | `mindmaps/x.md` | `mindmaps/x.md` (raiz) | — (não servido) | Lido em build-time e **injetado no HTML** |
 | `codes/x.md` | `codes/x.md` (raiz) | — (não servido) | Lido em build-time e **injetado no HTML** |
+| `quizzes/x.md` | `quizzes/x.md` (raiz) | — (não servido) | Lido em build-time e **injetado no HTML** |
 | `asciinema/x.cast` | `content/static/asciinema/x.cast` | `/static/asciinema/x.cast` | **Copiado** e buscado pelo player em runtime |
 | `typs/AST/AST06.typ` | `content/static/typs/AST/AST06.typ` | `/static/typs/AST/AST06.typ` | **Copiado** e buscado em runtime |
 
@@ -265,7 +268,43 @@ Se o arquivo não existir, renderizar `<div class="code-explorer-error">Arquivo 
 12. Atividade com `ativo = FALSE` na aba "Atividades" é **encerrada**: o formulário é escondido, com aviso no lugar, e o `submit` é recusado localmente. O backend **não** checa `ativo` — quem barra é o front. Se a consulta falhar, mantém o comportamento antigo (fail-open).
 13. **Página com escolha nunca entra sozinha numa atividade (2026-09).** Com 2+ atividades no frontmatter, a tela de escolha permanece — o cliente **não** auto-entra na única ativa. A lista traz as linhas da planilha que casam com os códigos do frontmatter, inclusive as `ativo = FALSE`, marcadas com o selo "encerrada" (escolher uma delas mostra o aviso de encerrada, e o botão de voltar — visível sempre que a página tem escolha — reabre a lista). Motivo: antes, quando uma das duas estava inativa, o cliente entrava sozinho na outra → o aluno não escolhia, não tinha botão de voltar e a entrega podia ser gravada na atividade da turma errada. O auto-enter ficou só para a página de **1** atividade. Se `listarAtividades` responder depois de o aluno já ter escolhido, a tela dele não é trocada.
 
-### 6.7 Navegação, listas e páginas
+### 6.7 Quiz (autoavaliação local)
+
+**Entrada**: `quiz` (1..N arquivos em `quizzes/**`).
+**Referência de autoria**: Quizdown (projeto arquivado; **não** é dependência). O parser é nativo, em
+`src/components/quiz/render.js`.
+
+**Sintaxe do arquivo** (markdown válido):
+
+- Cada heading (`### ...`) começa uma questão.
+- Lista ordenada com checkbox (`1. [x]`) = **escolha única** (`radio`); lista não ordenada
+  (`- [x]`) = **múltipla escolha** (`checkbox`).
+- Blockquote **antes** das opções = dica; **depois** = explicação; **indentado sob uma opção** =
+  comentário daquela opção.
+- Frontmatter do quiz: `title`, `shuffleQuestions` e `shuffleAnswers` (booleanos). O shuffle é
+  determinístico no build, para o HTML não mudar a cada rebuild.
+
+**Validação no build**:
+
+1. Pelo menos uma questão e pelo menos duas opções por questão.
+2. Escolha única: exatamente uma opção correta. Múltipla escolha: pelo menos uma.
+3. Não misturar os dois tipos na mesma questão.
+4. Arquivo ausente ou sintaxe inválida **não quebra o build**: `console.error` com o caminho e a
+   questão, e a página recebe um cartão `.quiz--erro`.
+
+**HTML**: `<section class="quiz" data-quiz="...">` com `<fieldset class="quiz-question">`,
+`<legend>` acessível, inputs `radio`/`checkbox`, `data-correct` em cada opção, botão de dica
+(`aria-expanded`), explicação escondida, botões "Conferir respostas"/"Limpar" e região
+`aria-live` para a pontuação.
+
+**Cliente** (`initQuiz`): confere cada questão (múltipla escolha é tudo-ou-nada), marca opções
+certas/erradas/faltantes, abre dicas, exibe explicações, limpa e mostra `X de N` + percentual.
+**Não há envio, RA, planilha, `fetch` nem persistência**: o gabarito fica no HTML de propósito,
+porque o quiz é formativo.
+
+**Fora da v1**: quiz de sequência/ordenação do Quizdown e envio de respostas.
+
+### 6.8 Navegação, listas e páginas
 
 - **Sidebar esquerda**: título do site (`giovbon`), campo de busca e árvore de pastas/notas. Ordem: `order` numérico crescente; empate → `title`. Pastas com filhos aparecem expandíveis; pasta vazia não aparece.
 - **Breadcrumbs** (oculto na home), **título da página**, **meta** (data + tempo de leitura), **tags**, **TOC** colapsável, **backlinks** (fase 2).
@@ -331,14 +370,15 @@ Layout de 3 colunas (esquerda: navegação; centro: conteúdo; direita: vazia), 
 Execute cada item e cole a evidência (saída de comando ou trecho de HTML) no PR.
 
 - [ ] `npm run build` termina sem erro e **sem aviso de data inválida**.
-- [ ] Nenhum arquivo de `content/**/*.md`, `slides/**`, `mindmaps/**`, `codes/**` foi modificado (`git status` limpo nessas pastas).
+- [ ] Nenhum arquivo de `content/**/*.md`, `slides/**`, `mindmaps/**`, `codes/**`, `quizzes/**` foi modificado (`git status` limpo nessas pastas).
 - [ ] `curl -sI http://localhost:8080/static/asciinema/08-branches.cast` → **200**.
 - [ ] `curl -sI .../static/typs/AST/AST06.typ` → **200** e a caixa (`AST`) preservada.
-- [ ] `/CTT/Git/04CTT-PG-branch-merge/` contém: 1 `.reveal`, **4** blocos `.asciinema`, e o deck tem **25** `<section>`.
+- [ ] `/CTT/Git-Github/04CTT-PG-branch-merge/` contém: 1 `.reveal`, **4** blocos `.asciinema`, o deck tem **25** `<section>` e um `.quiz` com **3** `.quiz-question` (2 de escolha única e 1 de múltipla escolha).
 - [ ] Nessa página, nenhum slide fica deslocado/fora do container; ao injetar `img.style.height=400px` em um slide via console, o deck **recentraliza sozinho** (prova do re-layout da armadilha 3).
 - [ ] `/AST/06AST-PG-dubles-teste/` mostra o botão `Exercício AST06` (Typst) e o formulário com **2** atividades (tela de escolha).
 - [ ] `/AST/00AST-PG-ast-roadmap/` contém `.markmap-container` com `<script type="text/markdown">` não vazio e um `<svg>` gerado.
 - [ ] `/AST/07AST-PG-selenium1/` mostra o CodeExplorer com a árvore de `codes/selenium1.md` e abre arquivos no painel direito.
+- [ ] No quiz, responder errado marca a opção em vermelho e revela a correta; responder certo marca em verde; "Limpar" zera marcações, feedback, dicas e pontuação; recarregar a página não envia nada.
 - [ ] Formulário: com RA + link GitHub envia; com RA + ZIP (real) envia; com `.pdf` renomeado para `.zip` **bloqueia**; com ZIP vazio ou só com pastas **bloqueia**; com nada **bloqueia**; com os dois **bloqueia**.
 - [ ] Busca encontra "pytest" e leva a `/AST/02AST-PG-pytest/`.
 - [ ] `/tags/`, `/index.xml`, `/sitemap.xml`, `/404.html` respondem **200**.
@@ -366,7 +406,7 @@ Execute cada item e cole a evidência (saída de comando ou trecho de HTML) no P
 | Fase | Escopo | DoD |
 |---|---|---|
 | **0. Esqueleto** (~0,5 dia) | `eleventy.config.js`, layout base, passthrough de assets, 1 página de conteúdo | `npm run dev` serve `content/index.md` e `/static/lib/reveal/reveal.js` responde 200 |
-| **1. MVP navegável** (~1 fim de semana) | coleções + filtro de publicação, sidebar/árvore por `order`, markdown completo (highlight, KaTeX, callouts), TOC, breadcrumbs, **Presentation**, **Asciinema**, **Mindmap**, **Typst**, **CodeExplorer**, **SubmissionForm**, URLs de paridade | Itens do checklist da seção 9 até "Formulário" verdes |
+| **1. MVP navegável** (~1 fim de semana) | coleções + filtro de publicação, sidebar/árvore por `order`, markdown completo (highlight, KaTeX, callouts), TOC, breadcrumbs, **Presentation**, **Asciinema**, **Mindmap**, **Typst**, **CodeExplorer**, **SubmissionForm**, **Quiz**, URLs de paridade | Itens do checklist da seção 9 até "Formulário" verdes |
 | **2. Paridade de extras** (1–2 semanas de noites) | busca (Pagefind), tags, pasta/listas, RSS, sitemap, 404, data/tempo de leitura, tema escuro persistente, backlinks, popovers, OG images, View Transitions (opcional) | Checklist completo verde |
 | **3. Opcional** | SPA (só se pedido), grafo, export de deck para PDF/impressão | — |
 
@@ -379,7 +419,7 @@ Execute cada item e cole a evidência (saída de comando ou trecho de HTML) no P
 > Você é um dev front-end/full-stack sênior. No repositório aberto existe `PROPOSTA-ELEVENTY.md`, que é a especificação completa para reconstruir o site de materiais de aula em Eleventy, dentro de `site-11ty/`.
 > Leia o documento inteiro antes de escrever código, respeite todas as linhas marcadas como **REGRA** e o que está fora de escopo.
 > Comece pela **Fase 0** e depois a **Fase 1**, um item por vez. Antes de cada passo, diga em 1 linha o que vai fazer; depois de cada passo, rode a verificação correspondente da seção 9 e mostre a evidência.
-> Nunca modifique `content/`, `slides/`, `mindmaps/`, `codes/`, `quartz/` nem `quartz/google-sheets-apps-script.gs`. Em caso de ambiguidade, escolha a opção que preserve **paridade de comportamento** com o site Quartz atual e registre a decisão no PR.
+> Nunca modifique `content/`, `slides/`, `mindmaps/`, `codes/`, `quizzes/`, `quartz/` nem `quartz/google-sheets-apps-script.gs`. Em caso de ambiguidade, escolha a opção que preserve **paridade de comportamento** com o site Quartz atual e registre a decisão no PR.
 
 ---
 

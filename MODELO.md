@@ -9,7 +9,7 @@ o contrato funcional detalhado (frontmatter, componentes, armadilhas, critérios
 ## 1. Escopo e fronteira (regra dura)
 
 - **Este projeto é autocontido.** Tudo que ele usa está dentro de `site-11ty/`:
-  `content/`, `slides/`, `mindmaps/`, `codes/`, `src/assets/static/lib/`.
+  `content/`, `slides/`, `mindmaps/`, `codes/`, `quizzes/`, `src/assets/static/lib/`.
 - **Nada de referência para fora da pasta** (nada de `../content`, `../quartz`, etc.).
   Se um recurso precisar de um arquivo, ele é copiado para dentro.
 - O projeto Quartz (`quartz/`, `quartz.config.ts`, `content/` na raiz…) é **outro projeto** e
@@ -21,6 +21,7 @@ site-11ty/
 ├─ slides/           # decks reveal (.md), lidos em build
 ├─ mindmaps/         # mapas mentais (.md), lidos em build
 ├─ codes/            # árvores de código (.zcode), lidas em build
+├─ quizzes/          # quizzes em markdown, lidos em build
 ├─ docs/             # PROPOSTA.md (contrato) e este MODELO
 ├─ scripts/          # dev / build do JS
 ├─ src/              # código do site (layouts, componentes, estilos, cliente)
@@ -38,11 +39,13 @@ site-11ty/
 | Slides | **reveal.js vendorizado**, deck embutido na página | Mesma experiência do site atual |
 | Typst | **Compilado no navegador** (WASM vendorizado) | Sem dependência de binário no build/CI |
 | Entrega de exercícios | **Google Apps Script existente** | Zero backend novo; contrato já testado |
+| Quiz | **Componente nativo** inspirado no Quizdown, corrigido no navegador | Sem dependência arquivada e sem envio de resposta; é recurso didático |
 | Busca | Pagefind (Fase 2) | Menos código que reimplementar índice |
 | Assets publicados | `content/static/**` → `/static/**` | Regra que evita o bug de asset 404 |
 
-**Escopo da v1** (4 componentes): `presentation` (reveal), `typst`, `codes` (explorer), `submission`.
-Fase 1.1: `asciinema`, `markmap`. Fase 2: busca, tags, RSS, sitemap, backlinks, popovers.
+**Escopo atual** (7 componentes): `presentation` (reveal), `asciinema`, `markmap`, `typst`,
+`codes` (explorer), `submission` e `quiz`.
+Fase 2: busca, tags, RSS, sitemap, backlinks, popovers.
 
 ## 3. Princípios de organização
 
@@ -78,8 +81,8 @@ Caminhos com `BASE_URL`: toda URL interna passa pelo filtro `| link` nos templat
 ### 4.1 `run.sh`
 
 `./run.sh` sobe tudo em paralelo: Eleventy (`--serve`, que injeta o live reload na página), esbuild
-em modo watch e os watch targets de `content/`, `slides/`, `mindmaps/` e `codes/`. Salvar qualquer
-um desses arquivos reconstrói o site e **o navegador recarrega sozinho**.
+em modo watch e os watch targets de `content/`, `slides/`, `mindmaps/`, `codes/` e `quizzes/`.
+Salvar qualquer um desses arquivos reconstrói o site e **o navegador recarrega sozinho**.
 
 ```bash
 ./run.sh                            # porta 8080, base /
@@ -92,7 +95,7 @@ Armadilhas que já estão resolvidas (todas custaram diagnóstico):
 | Sintoma | Causa | Solução |
 |---|---|---|
 | Salva o arquivo e o site não muda | `/mnt/c` **não entrega eventos de inotify** — nem para o que o Windows grava, nem para o que o WSL grava | `setChokidarConfig({ usePolling: true })` automático quando o `cwd` casa com `/mnt/<letra>/`; `WATCH_POLLING=1`/`0` força ligado/desligado |
-| Salva um `.md` e o site não muda | `content/`, `slides/`, `mindmaps/`, `codes/` são lidos como dado, fora de `src/` | `addWatchTarget` em cada um deles |
+| Salva um `.md` e o site não muda | `content/`, `slides/`, `mindmaps/`, `codes/`, `quizzes/` são lidos como dado, fora de `src/` | `addWatchTarget` em cada um deles |
 | Salva CSS/JS e **nada** acontece | o Eleventy usa o `.gitignore` como lista de **exclusão do watcher** — e o bundle está lá (`src/assets/static/app.*`) | `setUseGitIgnore(false)`. Para conferir: `DEBUG='Eleventy*' npx eleventy --watch` imprime `Ignoring watcher changes to:`. |
 | O rebuild acontece mas o navegador continua com o CSS antigo | em `--serve` o passthrough copy copia uma vez e não recopia no rebuild incremental | o plugin `publicar-assets` (`scripts/build-assets.mjs`) copia o bundle para `_site/static/` |
 | Aba aberta há tempos mostra CSS velho | o servidor de dev não manda `Cache-Control`/`ETag` | `?v=` com o mtime do bundle (`dev/assetStamp.md` → global data `assetStamp` no `base.njk`) |
@@ -145,6 +148,25 @@ habilitado, o `configure-pages` falha com `Not Found`. Só então fazer push da 
 - A capa do deck é a classe `slide-cover` (`kicker` + heading + `rule` + `sub` + `meta` + `num`
   opcional), com brilho radial em CSS — sem imagem externa.
 
+### 4.5 Quiz
+
+- **Entrada**: `quiz: "quizzes/<arquivo>.md"` (string ou lista), no frontmatter da página.
+- **Build**: `src/components/quiz/render.js` lê o arquivo em `quizzes/`, interpreta a sintaxe
+  inspirada no Quizdown e injeta o HTML **depois do artigo e antes da entrega**. O arquivo não é
+  servido; ele só existe no HTML final.
+- **Sintaxe**: cada heading (`### ...`) começa uma questão; `1. [x]` = escolha única (radio) e
+  `- [x]` = múltipla escolha (checkbox); blockquote antes das opções = dica, depois = explicação,
+  indentado sob uma opção = comentário daquela opção. O frontmatter do quiz aceita `title`,
+  `shuffleQuestions` e `shuffleAnswers`.
+- **Cliente**: `src/components/quiz/client.js` só confere, marca acertos/erros, abre dicas, mostra
+  explicações, limpa e calcula a pontuação. **Não há envio, RA, planilha nem rede**; o gabarito fica
+  em `data-correct` no HTML porque o quiz é formativo.
+- **Erro de autoria**: arquivo ausente ou sintaxe inválida não quebra o build — o console avisa e a
+  página mostra um cartão `.quiz--erro`.
+- `quizzes/` é fonte somente leitura, como `codes/` e `mindmaps/`, e entra nos watch targets.
+- **Fora da v1**: sequência/ordenação do Quizdown (só escolha única e múltipla escolha) e qualquer
+  envio de resposta.
+
 ## 5. Como adicionar um componente (receita)
 
 1. `src/components/<nome>/render.js` — lê o frontmatter e devolve **os dados + o HTML**
@@ -170,7 +192,8 @@ cobrem só o que é determinístico e não depende de navegador:
 | `test/core.test.js` | `asList`, `buildFolders`/`buildNavigation` (com fixtures), `getEntries` sobre o conteúdo real (39 páginas, URLs, breadcrumbs, frontmatter dos componentes), `resolveUrl`/`getBaseUrl` (incluindo subpasta) |
 | `test/zip.test.js` | validação do anexo: extensão, vazio, 20 MB (limite exato) e assinatura PK (PDF renomeado) |
 | `test/codes.test.js` | `parseZCode`: árvore, recorte da indentação, linguagem do bloco, pasta seguida de bloco, e o `codes/selenium1.md` real |
-| `test/render.test.js` | HTML dos seis componentes: deck sem frontmatter e com 2 decks, caminhos do asciinema/typst, markmap local/remoto/ausente, contrato do formulário (campos, escolha múltipla e a URL do Apps Script) |
+| `test/quiz.test.js` | parser do quiz: escolha única/múltipla, dica, explicação, comentário de opção, shuffle determinístico, erros de autoria, arquivo ausente e HTML acessível |
+| `test/render.test.js` | HTML dos demais componentes: deck sem frontmatter e com 2 decks, caminhos do asciinema/typst, markmap local/remoto/ausente, contrato do formulário (campos, escolha múltipla e a URL do Apps Script) |
 
 Regra: teste não sobe servidor nem rede. O que depende de navegador (reveal, player, markmap,
 formulário ao vivo) continua sendo verificado manualmente na seção 9.
@@ -186,6 +209,7 @@ formulário ao vivo) continua sendo verificado manualmente na seção 9.
 | Fase 1 — SubmissionForm (Apps Script) | ✅ validações, prazos reais da planilha, POST testado contra o deploy |
 | Fase 1.1 — Asciinema (`.cast`) | ✅ player vendorizado, 4 gravações na aula do CTT, playback validado |
 | Fase 1.1 — Markmap (mapa mental) | ✅ libs vendorizadas sob demanda, 66 nós no roadmap do CTT, zoom/centralizar/tela cheia |
+| Fase 1.2 — Quiz (autoavaliação) | ✅ sintaxe Quizdown-like, escolha única/múltipla, dicas, explicações, correção local e pontuação |
 | Infra — `run.sh` + watch no WSL | ✅ live reload validado no navegador (edição de `.md` e de CSS) |
 | Infra — navegação em gaveta, pastas colapsáveis, sem sumário/meta | ✅ atalhos `[` e `Ctrl+B`, `Esc`, foco gerenciado, sem botão |
 | Infra — workflow de deploy | ✅ escrito, ainda não exercitado (falta criar o repositório) |
@@ -220,12 +244,18 @@ girando para sempre, sem mensagem de erro. As opções do player ficam no `clien
 para todos) e o HTML carrega só `data-src`.
 
 Ordem de leitura na página da aula (do topo para baixo): **deck** (teoria) → **mapa mental**
-→ **asciinema** (terminal) → **typst** (exercício) → conteúdo em markdown → **código** (explorer)
-→ **entrega**.
+→ **asciinema** (terminal) → **typst** (exercício) → **código** (explorer) → conteúdo em markdown
+→ **quiz** → **entrega**.
 
 Sobre o markmap: o markdown de `mindmaps/` é embutido no HTML em tempo de build (igual aos slides)
 e as libs (d3 + markmap-lib + markmap-view, vendorizadas de `node_modules`) só são baixadas em
 páginas que têm mapa mental — nada disso entra no `app.js`. O `client.js` injeta os três scripts
 na ordem certa (d3 primeiro; a view depende do `d3` global).
+
+Sobre o quiz: o componente foi escrito **do zero** com a sintaxe do Quizdown como referência de
+autoria (o pacote está arquivado desde 2022/2025 e não entra como dependência). Como não há envio,
+o gabarito fica no DOM e a correção é toda local; o `client.js` não faz `fetch`. O parser roda no
+build, então erro de sintaxe aparece no console com o caminho do arquivo e a questão problemática,
+e a página publica um cartão de erro em vez de quebrar o restante do site.
 
 Antes de cada componente: conferir a seção correspondente de `docs/PROPOSTA.md` (contrato e armadilhas).

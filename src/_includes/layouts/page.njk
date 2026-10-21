@@ -35,6 +35,9 @@
     {{ item.html | safe }}
   </article>
 
+  {# O quiz vem depois da leitura: o aluno revisa o conteúdo e se autoavalia. #}
+  {{ item.frontmatter | quiz | safe }}
+
   {# A entrega vem depois do conteúdo: o aluno lê o exercício e envia #}
   {{ item.frontmatter | submission | safe }}
 {% endblock %}

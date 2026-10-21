@@ -8,4 +8,5 @@
 @import "../../components/submission/styles.css";
 @import "../../components/asciinema/styles.css";
 @import "../../components/markmap/styles.css";
+@import "../../components/quiz/styles.css";
 @import "./syntax.css";

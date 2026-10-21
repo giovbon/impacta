@@ -10,6 +10,7 @@ import { initCodes } from "../components/codes/client.js"
 import { initSubmission } from "../components/submission/client.js"
 import { initAsciinema } from "../components/asciinema/client.js"
 import { initMarkmap } from "../components/markmap/client.js"
+import { initQuiz } from "../components/quiz/client.js"
 
 const html = document.documentElement
 
@@ -83,6 +84,7 @@ initMarkmap()
 initAsciinema()
 initTypst()
 initCodes()
+initQuiz()
 initSubmission()
 
 /* 4. Links externos abrem em nova aba ------------------------------------- */
