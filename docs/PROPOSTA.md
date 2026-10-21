@@ -299,9 +299,13 @@ questões escritas), `data-correct` em cada opção, botão de dica (`aria-expan
 escondida, botões "Conferir respostas"/"Limpar"/"Baixar resultado (.txt)" e região `aria-live` para
 a pontuação.
 
-**Cliente** (`initQuiz`): confere cada questão (múltipla escolha é tudo-ou-nada; resposta escrita
-ignora caixa, espaços repetidos e crases), marca opções certas/erradas/faltantes, abre dicas, exibe
-explicações, limpa e mostra `X de N` + percentual. O botão de download monta localmente um `.txt`
+**Cliente** (`initQuiz`): confere cada questão (a resposta completa é tudo-ou-nada para o status
+"correta"/"incorreta"; múltipla escolha acumula crédito parcial fracionário no percentual — cada
+opção é uma decisão, e decidir certo (marcar a correta, deixar a errada de fora) vale 1/N: marcar
+1 de 2 corretas em 4 opções dá 3/4 da questão; resposta escrita ignora caixa, espaços repetidos e
+crases), marca opções
+certas/erradas/faltantes, abre dicas, exibe explicações, limpa e mostra `X de N` + percentual.
+O botão de download monta localmente um `.txt`
 com as questões erradas/não respondidas (enunciado, resposta marcada, resposta correta, comentários,
 dica e explicação) via `Blob` + `<a download>`.
 **Não há envio, RA, planilha, `fetch` nem persistência**: o gabarito fica no HTML de propósito,

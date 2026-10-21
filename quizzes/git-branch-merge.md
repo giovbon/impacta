@@ -1,5 +1,7 @@
 ---
 title: Quiz — Branching e Merging
+shuffleQuestions: true
+shuffleAnswers: true
 ---
 
 ### O que `git switch -c feature` faz?

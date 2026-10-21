@@ -205,12 +205,12 @@ test("quiz: o exemplo real em quizzes/ é válido", () => {
 
   assert.equal(item.erro, "")
   assert.equal(item.quiz.questions.length, 5)
-  assert.equal(item.quiz.questions[0].tipo, "single")
-  assert.equal(item.quiz.questions[2].tipo, "multiple")
-  assert.equal(item.quiz.questions[3].tipo, "text")
-  assert.deepEqual(item.quiz.questions[3].respostas, ["-c", "--create"])
-  assert.equal(item.quiz.questions[4].tipo, "single")
-  assert.match(item.quiz.questions[4].prompt, /merge-tres-vias\.svg/)
+  const tipos = item.quiz.questions.map((q) => q.tipo)
+  assert.deepEqual([...tipos].sort(), ["multiple", "single", "single", "single", "text"].sort())
+  const escrita = item.quiz.questions.find((q) => q.tipo === "text")
+  assert.deepEqual(escrita.respostas, ["-c", "--create"])
+  const [diagrama] = item.quiz.questions.filter((q) => /merge-tres-vias\.svg/.test(q.prompt))
+  assert.equal(diagrama.tipo, "single")
 })
 
 test("quiz: código e imagem do exemplo real chegam ao HTML", () => {

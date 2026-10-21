@@ -35,6 +35,7 @@ function atualizarSelecionadas(pergunta) {
 
 function limparPergunta(pergunta) {
   delete pergunta.dataset.quizStatus
+  delete pergunta.dataset.quizPoints
 
   for (const opcao of pergunta.querySelectorAll(".quiz-option")) {
     opcao.classList.remove("is-correct", "is-incorrect", "is-missed")
@@ -206,7 +207,12 @@ function nomeDoArquivo(quiz) {
 function descreverQuestao(pergunta, indice) {
   const numero = indice + 1
   const status = pergunta.dataset.quizStatus
-  const rotulo = status === "empty" ? "não respondida" : "incorreta"
+  const rotulo =
+    status === "empty"
+      ? "não respondida"
+      : status === "partial"
+        ? "parcialmente correta"
+        : "incorreta"
   const linhas = [
     "",
     "-".repeat(72),
@@ -283,8 +289,11 @@ function montarRelatorio(quiz, perguntas) {
   const titulo = tituloBruto.replace(/^quiz\s*[-—–:]\s*/i, "") || tituloBruto
   const total = perguntas.length
   const acertos = perguntas.filter((pergunta) => pergunta.dataset.quizStatus === "correct").length
-  const erradas = perguntas.filter((pergunta) => pergunta.dataset.quizStatus !== "correct")
-  const percentual = total > 0 ? Math.round((acertos / total) * 100) : 0
+  const parciais = perguntas.filter((pergunta) => pergunta.dataset.quizStatus === "partial").length
+  // O percentual soma o crédito parcial de cada questão (0 a 1), não só as
+  // corretas inteiras — ver `calcularPontos`.
+  const somaPontos = perguntas.reduce((soma, pergunta) => soma + (Number(pergunta.dataset.quizPoints) || 0), 0)
+  const percentual = total > 0 ? Math.round((somaPontos / total) * 100) : 0
 
   const linhas = [
     `QUIZ — ${titulo}`,
@@ -293,10 +302,13 @@ function montarRelatorio(quiz, perguntas) {
     `Data: ${new Date().toLocaleString("pt-BR")}`,
     `Página: ${window.location.href}`,
     "",
-    `Questões para revisar: ${erradas.length}`,
   ]
+  if (parciais > 0) {
+    linhas.push(`Questões parcialmente corretas: ${parciais}`)
+  }
+  linhas.push(`Questões para revisar: ${total - acertos}`)
 
-  if (erradas.length === 0) {
+  if (total === acertos) {
     linhas.push("", "Você acertou todas as questões. Nada para revisar.")
     return linhas.join("\r\n")
   }
@@ -327,9 +339,41 @@ function baixarRelatorio(quiz, perguntas) {
 
 /* ───────────────────── correção ───────────────────── */
 
+/**
+ * Pontuação de uma questão (0 a 1) para o percentual final:
+ *
+ *  - `single`/`text`: binário — 1 ou 0.
+ *  - `multiple`: crédito parcial. Cada opção é uma "decisão" (marcar ou não
+ *    marcar) e a fração de decisões corretas vira pontos fracionários. Assim,
+ *    marcar uma correta entre duas não zera a questão, e marcar tudo a esmo
+ *    não dá nota cheia (as não marcadas corretas também contam).
+ *
+ * A resposta completa continua tudo-ou-nada para o status "correta"/"incorreta"
+ * — o crédito parcial só afeta a nota percentual. Sem seleção, não há pontos.
+ */
+function calcularPontos(pergunta, inputs) {
+  const selecionadas = inputs.filter((input) => input.checked)
+  const corretas = inputs.filter((input) => input.dataset.correct === "true")
+  if (selecionadas.length === 0 || inputs.length === 0) return 0
+
+  const completa =
+    selecionadas.length === corretas.length &&
+    selecionadas.every((input) => input.dataset.correct === "true")
+
+  if (completa) return 1
+
+  if (pergunta.dataset.questionType === "single") return 0
+
+  const decisoesCorretas = inputs.filter(
+    (input) => (input.dataset.correct === "true") === input.checked,
+  ).length
+  return decisoesCorretas / inputs.length
+}
+
 function corrigir(quiz, perguntas) {
   let acertos = 0
   let respondidas = 0
+  let somaPontos = 0
 
   for (const pergunta of perguntas) {
     limparPergunta(pergunta)
@@ -344,6 +388,8 @@ function corrigir(quiz, perguntas) {
 
       if (respondeu) respondidas += 1
       if (acertou) acertos += 1
+      somaPontos += acertou ? 1 : 0
+      pergunta.dataset.quizPoints = String(acertou ? 1 : 0)
 
       pergunta.dataset.quizStatus = acertou ? "correct" : respondeu ? "wrong" : "empty"
 
@@ -373,11 +419,15 @@ function corrigir(quiz, perguntas) {
       selecionadas.length > 0 &&
       selecionadas.length === corretas.length &&
       selecionadas.every((input) => input.dataset.correct === "true")
+    const pontos = calcularPontos(pergunta, inputs)
 
     if (selecionadas.length > 0) respondidas += 1
     if (acertou) acertos += 1
+    somaPontos += pontos
+    pergunta.dataset.quizPoints = String(pontos)
 
-    pergunta.dataset.quizStatus = acertou ? "correct" : selecionadas.length === 0 ? "empty" : "wrong"
+    pergunta.dataset.quizStatus =
+      acertou ? "correct" : selecionadas.length === 0 ? "empty" : pontos > 0 ? "partial" : "wrong"
 
     for (const input of inputs) {
       const opcao = input.closest(".quiz-option")
@@ -417,6 +467,7 @@ function corrigir(quiz, perguntas) {
 
       if (selecionadas.length === 0) status.textContent = "⚠️ Selecione uma resposta."
       else if (acertou) status.textContent = "✅ Resposta correta."
+      else if (pontos > 0) status.textContent = "🔶 Resposta parcialmente correta."
       else status.textContent = "❌ Resposta incorreta."
     }
   }
@@ -426,7 +477,8 @@ function corrigir(quiz, perguntas) {
 
   const total = perguntas.length
   const naoRespondidas = total - respondidas
-  const percentual = total > 0 ? Math.round((acertos / total) * 100) : 0
+  const parciais = perguntas.filter((pergunta) => pergunta.dataset.quizStatus === "partial").length
+  const percentual = total > 0 ? Math.round((somaPontos / total) * 100) : 0
 
   const resumo = document.createElement("strong")
   resumo.textContent = `${acertos} de ${total} ${total === 1 ? "questão correta" : "questões corretas"}`
@@ -435,6 +487,13 @@ function corrigir(quiz, perguntas) {
   detalhe.textContent = `${percentual}%`
 
   resultado.replaceChildren(resumo, document.createTextNode(" · "), detalhe)
+
+  if (parciais > 0) {
+    const nota = document.createElement("span")
+    nota.className = "quiz__result-nota"
+    nota.textContent = `${parciais} ${parciais === 1 ? "parcialmente correta" : "parcialmente corretas"}`
+    resultado.append(document.createTextNode(" · "), nota)
+  }
 
   if (naoRespondidas > 0) {
     const aviso = document.createElement("span")
