@@ -1,14 +1,18 @@
 import { test } from "node:test"
 import assert from "node:assert/strict"
 import fs from "node:fs"
+import os from "node:os"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 
 import {
+  HIDDEN_DIR_NAME,
   asList,
   buildFolders,
   buildNavigation,
   getEntries,
+  isHiddenPath,
+  listMarkdownFiles,
   markdown,
 } from "../src/_lib/content.js"
 import { isExternalUrl } from "../src/_lib/urls.js"
@@ -31,7 +35,7 @@ function contarPublicaveis(dir = path.join(RAIZ, "content")) {
 function publicaveis(dir) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((item) => {
     if (item.isDirectory()) {
-      return item.name === "oculto" ? [] : publicaveis(path.join(dir, item.name))
+      return isHiddenPath(item.name) ? [] : publicaveis(path.join(dir, item.name))
     }
     if (!item.name.toLowerCase().endsWith(".md")) return []
     return item.name === "demonstracao.md" ? [] : [item.name]
@@ -113,6 +117,49 @@ test("buildNavigation expõe só o nível raiz", () => {
   assert.ok(navegacao.some((no) => no.dir === "CTT"))
   assert.ok(!navegacao.some((no) => no.dir === "CTT/Git"))
   assert.ok(!navegacao.some((no) => no.isIndex), "a home não entra na navegação")
+})
+
+test("oculto: reconhece a pasta em qualquer caixa e em qualquer nível", () => {
+  assert.equal(HIDDEN_DIR_NAME, "oculto")
+
+  for (const caminho of [
+    "oculto",
+    "OCULTO",
+    "Oculto",
+    "ADP/oculto/x.md",
+    "ADP/Oculto/sub/x.md",
+    "content/static/OCULTO/imagem.png",
+    "/oculto/",
+    "a\\oculto\\b.md",
+  ]) {
+    assert.equal(isHiddenPath(caminho), true, `deveria esconder: ${caminho}`)
+  }
+
+  for (const caminho of ["", null, undefined, "oculto.md", "nao-oculto/x.md", "ADP/x.md"]) {
+    assert.equal(isHiddenPath(caminho), false, `não deveria esconder: ${String(caminho)}`)
+  }
+})
+
+test("oculto: pasta some da listagem de markdown (inclusive aninhada)", () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "impacta-oculto-"))
+  try {
+    fs.mkdirSync(path.join(tmp, "ADP", "oculto", "sub"), { recursive: true })
+    fs.mkdirSync(path.join(tmp, "AST"), { recursive: true })
+
+    for (const arquivo of [
+      "ADP/a.md",
+      "ADP/oculto/rascunho.md",
+      "ADP/oculto/sub/fundo.md",
+      "ADP/oculto.md",
+      "AST/b.md",
+    ]) {
+      fs.writeFileSync(path.join(tmp, arquivo), "# teste")
+    }
+
+    assert.deepEqual(listMarkdownFiles(tmp).sort(), ["ADP/a.md", "ADP/oculto.md", "AST/b.md"])
+  } finally {
+    fs.rmSync(tmp, { recursive: true, force: true })
+  }
 })
 
 test("getEntries lê o conteúdo real, ignora oculto/ e monta as URLs", () => {

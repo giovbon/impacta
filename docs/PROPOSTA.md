@@ -140,6 +140,8 @@ Esta tabela é a origem da maioria dos bugs. Decore-a.
 
 Publicar `.md` de `content/**` **exceto** o que estiver no `.gitignore` (`oculto/`, `demonstracao.md`). Implemente como filtro de coleção, não como lista hardcoded, e valide a contagem (hoje: **39 páginas**).
 
+A pasta oculta é reconhecida pelo **nome** em qualquer nível de `content/`, sem diferenciar maiúsculas (`oculto`, `Oculto`, `OCULTO`). A mesma regra vale para assets: `content/static/oculto/**` não é copiado para `_site/`.
+
 ---
 
 ## 6. Especificação dos componentes

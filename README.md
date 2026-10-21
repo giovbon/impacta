@@ -69,7 +69,18 @@ _site/      saída do build (não versionada)
 1. Nada lê pastas fora de `site-11ty/`.
 2. Um componente = uma pasta (`src/components/<nome>/`).
 3. Asset que precisa chegar ao navegador mora em `content/static/**` → publicado em `/static/**`.
-4. Pastas `oculto/` não são publicadas.
+4. Pastas `oculto/` não são publicadas (ver abaixo).
 5. Sem SPA: cada navegação é um carregamento novo.
+
+## Ocultar conteúdo
+
+Uma pasta chamada **`oculto`** em qualquer nível de `content/` tira tudo que está dentro dela do site publicado. Maiúsculas/minúsculas não importam (`oculto`, `Oculto`, `OCULTO`).
+
+```text
+content/ADP/oculto/rascunho.md        # não vira página nem aparece na navegação
+content/static/oculto/imagem.png      # não é copiada para /static/oculto/
+```
+
+O build ignora a pasta inteira: páginas, listagens de pasta, navegação e assets em `content/static/oculto/**`. Para voltar a publicar, mova o arquivo para fora da pasta `oculto/` (ou renomeie a pasta).
 
 Detalhes e roadmap: [`MODELO.md`](MODELO.md).

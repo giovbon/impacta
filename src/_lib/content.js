@@ -30,9 +30,33 @@ export const SLIDES_DIR = path.join(ROOT, "slides")
 export const MINDMAPS_DIR = path.join(ROOT, "mindmaps")
 export const CODES_DIR = path.join(ROOT, "codes")
 
-/** Espelha o `.gitignore` da raiz: nada aqui é publicado. */
-const IGNORED_DIRS = new Set(["oculto", "node_modules", ".git"])
+/**
+ * Nome da pasta que esconde o que está dentro dela.
+ *
+ * Vale em QUALQUER nível de `content/` e sem diferenciar maiúsculas de
+ * minúsculas (`oculto`, `Oculto`, `OCULTO`). Um `.md` dentro dela não vira
+ * página nem entra na navegação; um asset em `content/static/oculto/**` não é
+ * copiado para `_site/` (ver `eleventy.config.js`).
+ */
+export const HIDDEN_DIR_NAME = "oculto"
+
+/** Outras pastas que nunca são publicadas (não são conteúdo). */
+const IGNORED_DIRS = new Set(["node_modules", ".git"])
 const IGNORED_FILES = new Set(["demonstracao.md"])
+
+/**
+ * `true` se qualquer segmento do caminho for a pasta oculta.
+ * Aceita `/` e `\`, caminho absoluto ou relativo.
+ */
+export function isHiddenPath(value) {
+  if (!value) return false
+  const oculto = HIDDEN_DIR_NAME.toLowerCase()
+  return String(value)
+    .replace(/\\/g, "/")
+    .split("/")
+    .filter(Boolean)
+    .some((segment) => segment.toLowerCase() === oculto)
+}
 
 /**
  * Realce de sintaxe do conteúdo (markdown da aula) feito no BUILD, com o
@@ -100,7 +124,7 @@ function walkMarkdown(dir, base = dir, out = []) {
     if (entry.name.startsWith(".")) continue
     const full = path.join(dir, entry.name)
     if (entry.isDirectory()) {
-      if (IGNORED_DIRS.has(entry.name)) continue
+      if (isHiddenPath(entry.name) || IGNORED_DIRS.has(entry.name)) continue
       walkMarkdown(full, base, out)
     } else if (entry.name.toLowerCase().endsWith(".md")) {
       if (IGNORED_FILES.has(entry.name)) continue
@@ -108,6 +132,14 @@ function walkMarkdown(dir, base = dir, out = []) {
     }
   }
   return out
+}
+
+/**
+ * Todos os `.md` publicáveis sob `dir`, em caminhos relativos com `/`.
+ * Exportado para os testes montarem uma árvore temporária sem tocar em `content/`.
+ */
+export function listMarkdownFiles(dir) {
+  return walkMarkdown(dir)
 }
 
 function stripTags(html) {
@@ -201,7 +233,7 @@ const byOrder = (a, b) => a.order - b.order || labelOf(a).localeCompare(labelOf(
 
 /** Todas as páginas publicáveis, ordenadas. */
 export function getEntries() {
-  return walkMarkdown(CONTENT_DIR)
+  return listMarkdownFiles(CONTENT_DIR)
     .sort()
     .map(toPage)
     .sort(byOrder)

@@ -53,7 +53,11 @@ Fase 1.1: `asciinema`, `markmap`. Fase 2: busca, tags, RSS, sitemap, backlinks, 
    interpretados (frontmatter) e renderizados por nós — assim o markdown fica intocado.
 4. **URL = caminho**: `content/CTT/Git/04-x.md` → `/CTT/Git/04-x/`; `content/index.md` → `/`.
    Pastas geram página de listagem com filhos ordenados por `order`.
-5. **Nada em `oculto/`** é publicado (mesma regra do projeto antigo).
+5. **Nada em `oculto/`** é publicado: qualquer pasta com esse nome — em qualquer nível de
+   `content/` e sem diferenciar maiúsculas (`oculto`, `Oculto`, `OCULTO`) — fica fora das
+   páginas, da navegação e das listagens de pasta. O mesmo vale para assets em
+   `content/static/oculto/**`, que não são copiados para `_site/`. O nome é único e vive em
+   `HIDDEN_DIR_NAME` (`src/_lib/content.js`); `isHiddenPath()` é a única implementação da regra.
 6. **Datas**: `mtime` do arquivo (nunca `birthtime` — em WSL/DrvFs vem 0).
 
 ## 4. Pipeline

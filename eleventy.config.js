@@ -2,6 +2,7 @@ import fs from "node:fs"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 import { withPrefix } from "./src/_lib/urls.js"
+import { isHiddenPath } from "./src/_lib/content.js"
 import { renderPresentation } from "./src/components/presentation/render.js"
 import { renderTypst } from "./src/components/typst/render.js"
 import { renderCodes } from "./src/components/codes/render.js"
@@ -36,7 +37,12 @@ export default function (eleventyConfig) {
 
   // Assets publicados do conteúdo: content/static/**  ->  /static/**
   // (gravações .cast, exercícios .typ, imagens usadas nas páginas)
-  eleventyConfig.addPassthroughCopy({ "content/static": "static" })
+  // O filtro repete a regra da pasta `oculto/` (ver src/_lib/content.js): o que
+  // está em content/static/oculto/** não chega ao _site/ (nem ao Pages).
+  eleventyConfig.addPassthroughCopy(
+    { "content/static": "static" },
+    { filter: (relativePath) => !isHiddenPath(relativePath) },
+  )
 
   // O conteúdo é lido como DADO (src/_lib/content.js), não como template — ou seja,
   // vive fora de src/ e o Eleventy não o observaria sozinho. Sem isto, salvar um
