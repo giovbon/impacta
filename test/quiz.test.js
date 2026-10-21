@@ -8,6 +8,7 @@ import { buildQuiz, parseQuiz, renderQuiz } from "../src/components/quiz/render.
 
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..")
 const FIXTURE = "test/fixtures/quiz-valido.md"
+const FIXTURE_TEXTO = "test/fixtures/quiz-texto.md"
 
 /** As funções de build reclamam no console; nos testes de erro isso é ruído. */
 function semRuido(fn) {
@@ -22,6 +23,10 @@ function semRuido(fn) {
 
 function lerFixture() {
   return fs.readFileSync(path.join(RAIZ, FIXTURE), "utf8")
+}
+
+function lerFixtureTexto() {
+  return fs.readFileSync(path.join(RAIZ, FIXTURE_TEXTO), "utf8")
 }
 
 /* ───────────────────────── parser ───────────────────────── */
@@ -57,6 +62,47 @@ test("quiz: preserva # no título e remove fechamento de heading", () => {
   const comFechamento = parseQuiz("### Título ###\n\n1. [x] A\n1. [ ] B\n")
   assert.match(comFechamento.questions[0].prompt, /Título/)
   assert.doesNotMatch(comFechamento.questions[0].prompt, /###/)
+})
+
+test("quiz: interpreta resposta escrita com código e alternativas", () => {
+  const [questao] = parseQuiz(lerFixtureTexto(), { id: "lacuna" }).questions
+
+  assert.equal(questao.tipo, "text")
+  assert.equal(questao.options.length, 0)
+  assert.deepEqual(questao.respostas, ["-c", "--create"])
+  assert.deepEqual(questao.respostasTexto, ["-c", "--create"])
+  assert.match(questao.prompt, /git switch ___ feature/)
+  assert.match(questao.prompt, /<pre><code/)
+  assert.match(questao.prompt, /src="\/static\/quiz\/merge-tres-vias\.svg"/)
+  assert.match(questao.dica, /flag curta/)
+  assert.match(questao.explicacao, /forma curta de/)
+})
+
+test("quiz: resposta escrita ignora caixa e espaços repetidos", () => {
+  const [questao] = parseQuiz("### Qual?\n\nResposta: Git  MERGE feature\n").questions
+
+  assert.equal(questao.tipo, "text")
+  assert.deepEqual(questao.respostas, ["git merge feature"])
+})
+
+test("quiz: resposta escrita aceita pipe literal escapado", () => {
+  const [questao] = parseQuiz(
+    "### Qual?\n\nResposta: git log \\| grep fixo | git log --grep\n",
+  ).questions
+
+  assert.deepEqual(questao.respostasTexto, ["git log | grep fixo", "git log --grep"])
+  assert.deepEqual(questao.respostas, ["git log | grep fixo", "git log --grep"])
+})
+
+test("quiz: rejeita Resposta vazia", () => {
+  assert.throws(() => parseQuiz("### Qual?\n\nResposta:\n"), /está vazia/)
+})
+
+test("quiz: rejeita mistura de Resposta e opções", () => {
+  assert.throws(
+    () => parseQuiz("### Qual?\n\nResposta: a\n\n1. [x] A\n1. [ ] B\n"),
+    /não misture `Resposta:` com opções/,
+  )
 })
 
 test("quiz: o mesmo arquivo com shuffle é determinístico", () => {
@@ -125,6 +171,20 @@ test("quiz: lê o arquivo do frontmatter e monta o HTML acessível", () => {
   assert.doesNotMatch(html, /\saction=/, "quiz não envia nada")
 })
 
+test("quiz: questão escrita vira input de texto com o gabarito", () => {
+  const html = renderQuiz({ quiz: FIXTURE_TEXTO })
+
+  assert.match(html, /data-question-type="text"/)
+  assert.match(html, /<input class="quiz-answer__input" type="text"/)
+  assert.match(html, /data-answers="\[&quot;-c&quot;,&quot;--create&quot;\]"/)
+  assert.match(html, /data-answer-display="-c"/)
+  assert.match(html, /Sua resposta/)
+  assert.match(html, /A comparação ignora maiúsculas/)
+  assert.doesNotMatch(html, /class="quiz-option"/)
+  assert.match(html, /1 questão · resposta escrita/)
+  assert.match(html, /data-quiz-download hidden/)
+})
+
 test("quiz: uma lista no frontmatter gera um quiz por arquivo", () => {
   const html = renderQuiz({ quiz: [FIXTURE, FIXTURE] })
 
@@ -144,9 +204,22 @@ test("quiz: o exemplo real em quizzes/ é válido", () => {
   const [item] = buildQuiz({ quiz: "quizzes/git-branch-merge.md" })
 
   assert.equal(item.erro, "")
-  assert.equal(item.quiz.questions.length, 3)
+  assert.equal(item.quiz.questions.length, 5)
   assert.equal(item.quiz.questions[0].tipo, "single")
   assert.equal(item.quiz.questions[2].tipo, "multiple")
+  assert.equal(item.quiz.questions[3].tipo, "text")
+  assert.deepEqual(item.quiz.questions[3].respostas, ["-c", "--create"])
+  assert.equal(item.quiz.questions[4].tipo, "single")
+  assert.match(item.quiz.questions[4].prompt, /merge-tres-vias\.svg/)
+})
+
+test("quiz: código e imagem do exemplo real chegam ao HTML", () => {
+  const html = renderQuiz({ quiz: "quizzes/git-branch-merge.md" })
+
+  assert.match(html, /<pre><code class="hljs language-bash" data-lang="bash">/)
+  assert.match(html, /src="\/static\/quiz\/merge-tres-vias\.svg"/)
+  assert.match(html, /alt="Diagrama de um merge de três vias/)
+  assert.match(html, /data-quiz-download hidden/)
 })
 
 test("quiz: arquivo inexistente vira aviso na página, sem quebrar o build", () => {

@@ -89,7 +89,7 @@ quiz: "quizzes/git-branch-merge.md"
 
 O arquivo em `quizzes/` usa uma sintaxe inspirada no Quizdown:
 
-```md
+````md
 ---
 title: Quiz — Branching e Merging
 ---
@@ -104,18 +104,37 @@ title: Quiz — Branching e Merging
 1. [ ] Faz merge na branch atual.
 
 > Explicação mostrada depois de conferir.
+
+### Complete o comando que cria a branch `feature`:
+
+```bash
+git switch ___ feature
 ```
 
+Resposta: -c | --create
+
+> Explicação da lacuna.
+````
+
 - `1. [x]` = **escolha única** (radio); `- [x]` = **múltipla escolha** (checkbox).
-- Blockquote **antes** das opções = dica; **depois** = explicação; **indentado sob uma opção** =
-  comentário daquela opção.
+- `Resposta: ...` = **resposta escrita** (input de texto, sem opções). Separe alternativas aceitas
+  com `|` (para um `|` literal, escape com `\|`); a comparação ignora maiúsculas/minúsculas, espaços
+  repetidos e crases. Serve tanto para texto comum quanto para lacunas em blocos de código no
+  enunciado.
+- Blockquote **antes** das opções (ou do `Resposta:`) = dica; **depois** = explicação;
+  **indentado sob uma opção** = comentário daquela opção.
 - `shuffleQuestions: true` e `shuffleAnswers: true` no frontmatter do quiz embaralham de forma
   determinística no build.
-- O gabarito fica no HTML (`data-correct`): é um recurso didático, não uma avaliação.
+- Enunciado, dica, explicação e opções aceitam **markdown completo**: blocos de código com realce e
+  imagens. Imagens locais ficam em `content/static/**` e são referenciadas por `/static/...` (o
+  prefixo do `BASE_URL` é aplicado automaticamente).
+- Depois de **Conferir respostas**, o botão **Baixar resultado (.txt)** gera um relatório local com
+  as questões erradas ou não respondidas: enunciado, o que foi marcado, resposta correta,
+  comentários das opções, dica e explicação. Nada é enviado pela rede.
+- O gabarito fica no HTML (`data-correct`/`data-answers`): é um recurso didático, não uma avaliação.
 - Se o arquivo não existir ou a sintaxe estiver inválida, o build avisa no console e a página mostra
   um cartão de erro em vez de quebrar.
-- **Não implementado nesta versão**: quiz de sequência/ordenação do Quizdown (só escolha única e
-  múltipla escolha) e envio de respostas.
+- **Não implementado nesta versão**: quiz de sequência/ordenação do Quizdown e envio de respostas.
 
 ## Ocultar conteúdo
 

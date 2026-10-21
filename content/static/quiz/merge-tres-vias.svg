@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 330" role="img" aria-labelledby="titulo descricao">
+  <title id="titulo">Merge de três vias</title>
+  <desc id="descricao">A branch main tem os commits A, B e C. A branch feature nasce em B e tem os commits D e E. O merge M combina C e E e por isso tem dois pais.</desc>
+
+  <rect width="760" height="330" fill="#15171a"/>
+
+  <text x="28" y="36" fill="#e7e9ee" font-family="Segoe UI, Arial, sans-serif" font-size="17" font-weight="600">Merge de três vias</text>
+
+  <!-- linhas -->
+  <path d="M60 240 H700" fill="none" stroke="#7aa2f7" stroke-width="3" stroke-linecap="round"/>
+  <path d="M240 240 C280 240 280 140 320 140 H500 C540 140 560 240 600 240" fill="none" stroke="#9ece6a" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- rótulos das branches -->
+  <text x="60" y="272" fill="#7aa2f7" font-family="ui-monospace, Consolas, monospace" font-size="14">main</text>
+  <text x="322" y="120" fill="#9ece6a" font-family="ui-monospace, Consolas, monospace" font-size="14">feature</text>
+
+  <!-- commits da main -->
+  <g font-family="ui-monospace, Consolas, monospace" font-size="13" text-anchor="middle">
+    <circle cx="100" cy="240" r="13" fill="#15171a" stroke="#7aa2f7" stroke-width="3"/>
+    <text x="100" y="245" fill="#e7e9ee">A</text>
+
+    <circle cx="240" cy="240" r="13" fill="#15171a" stroke="#7aa2f7" stroke-width="3"/>
+    <text x="240" y="245" fill="#e7e9ee">B</text>
+
+    <circle cx="500" cy="240" r="13" fill="#15171a" stroke="#7aa2f7" stroke-width="3"/>
+    <text x="500" y="245" fill="#e7e9ee">C</text>
+
+    <!-- commits da feature -->
+    <circle cx="360" cy="140" r="13" fill="#15171a" stroke="#9ece6a" stroke-width="3"/>
+    <text x="360" y="145" fill="#e7e9ee">D</text>
+
+    <circle cx="460" cy="140" r="13" fill="#15171a" stroke="#9ece6a" stroke-width="3"/>
+    <text x="460" y="145" fill="#e7e9ee">E</text>
+
+    <!-- commit de merge -->
+    <circle cx="600" cy="240" r="17" fill="#15171a" stroke="#e0af68" stroke-width="4"/>
+    <text x="600" y="246" fill="#e7e9ee">M</text>
+  </g>
+
+  <!-- pais do merge -->
+  <path d="M600 223 V205 H620" fill="none" stroke="#e0af68" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <text x="626" y="209" fill="#9aa3af" font-family="Segoe UI, Arial, sans-serif" font-size="12">dois pais (C e E)</text>
+
+  <text x="28" y="314" fill="#9aa3af" font-family="Segoe UI, Arial, sans-serif" font-size="13">B → C na main; B → D → E na feature; M combina as duas histórias.</text>
+</svg>

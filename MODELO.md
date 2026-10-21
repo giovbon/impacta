@@ -155,17 +155,25 @@ habilitado, o `configure-pages` falha com `Not Found`. Só então fazer push da 
   inspirada no Quizdown e injeta o HTML **depois do artigo e antes da entrega**. O arquivo não é
   servido; ele só existe no HTML final.
 - **Sintaxe**: cada heading (`### ...`) começa uma questão; `1. [x]` = escolha única (radio) e
-  `- [x]` = múltipla escolha (checkbox); blockquote antes das opções = dica, depois = explicação,
-  indentado sob uma opção = comentário daquela opção. O frontmatter do quiz aceita `title`,
-  `shuffleQuestions` e `shuffleAnswers`.
-- **Cliente**: `src/components/quiz/client.js` só confere, marca acertos/erros, abre dicas, mostra
+  `- [x]` = múltipla escolha (checkbox); `Resposta: ...` = resposta escrita (input de texto) com
+  alternativas aceitas separadas por `|` (escape `\|` para um pipe literal) e comparação sem caixa,
+  espaços repetidos ou crases —
+  funciona para texto comum e para lacunas em blocos de código; blockquote antes das opções (ou do
+  `Resposta:`) = dica, depois = explicação, indentado sob uma opção = comentário daquela opção. Enunciado, dica,
+  explicação e opções aceitam markdown completo (código e imagens). O frontmatter do quiz aceita
+  `title`, `shuffleQuestions` e `shuffleAnswers`.
+- **Imagens**: referencie assets de `content/static/**` por `/static/...`; o componente aplica o
+  prefixo do `BASE_URL` também no HTML do quiz.
+- **Cliente**: `src/components/quiz/client.js` confere, marca acertos/erros, abre dicas, mostra
   explicações, limpa e calcula a pontuação. **Não há envio, RA, planilha nem rede**; o gabarito fica
-  em `data-correct` no HTML porque o quiz é formativo.
+  em `data-correct`/`data-answers` no HTML porque o quiz é formativo.
+- **Download**: depois de conferir, o botão "Baixar resultado (.txt)" monta localmente um relatório
+  com as questões erradas ou não respondidas (enunciado, resposta marcada, resposta correta,
+  comentários das opções, dica e explicação) via `Blob` + `<a download>`; nada sai do navegador.
 - **Erro de autoria**: arquivo ausente ou sintaxe inválida não quebra o build — o console avisa e a
   página mostra um cartão `.quiz--erro`.
 - `quizzes/` é fonte somente leitura, como `codes/` e `mindmaps/`, e entra nos watch targets.
-- **Fora da v1**: sequência/ordenação do Quizdown (só escolha única e múltipla escolha) e qualquer
-  envio de resposta.
+- **Fora da v1**: sequência/ordenação do Quizdown e qualquer envio de resposta.
 
 ## 5. Como adicionar um componente (receita)
 
@@ -192,7 +200,7 @@ cobrem só o que é determinístico e não depende de navegador:
 | `test/core.test.js` | `asList`, `buildFolders`/`buildNavigation` (com fixtures), `getEntries` sobre o conteúdo real (39 páginas, URLs, breadcrumbs, frontmatter dos componentes), `resolveUrl`/`getBaseUrl` (incluindo subpasta) |
 | `test/zip.test.js` | validação do anexo: extensão, vazio, 20 MB (limite exato) e assinatura PK (PDF renomeado) |
 | `test/codes.test.js` | `parseZCode`: árvore, recorte da indentação, linguagem do bloco, pasta seguida de bloco, e o `codes/selenium1.md` real |
-| `test/quiz.test.js` | parser do quiz: escolha única/múltipla, dica, explicação, comentário de opção, shuffle determinístico, erros de autoria, arquivo ausente e HTML acessível |
+| `test/quiz.test.js` | parser do quiz: escolha única/múltipla, resposta escrita (alternativas, caixa e espaços), dica, explicação, comentário de opção, imagem/código, shuffle determinístico, erros de autoria, arquivo ausente e HTML acessível (input, gabarito e botão de download) |
 | `test/render.test.js` | HTML dos demais componentes: deck sem frontmatter e com 2 decks, caminhos do asciinema/typst, markmap local/remoto/ausente, contrato do formulário (campos, escolha múltipla e a URL do Apps Script) |
 
 Regra: teste não sobe servidor nem rede. O que depende de navegador (reveal, player, markmap,
@@ -209,7 +217,7 @@ formulário ao vivo) continua sendo verificado manualmente na seção 9.
 | Fase 1 — SubmissionForm (Apps Script) | ✅ validações, prazos reais da planilha, POST testado contra o deploy |
 | Fase 1.1 — Asciinema (`.cast`) | ✅ player vendorizado, 4 gravações na aula do CTT, playback validado |
 | Fase 1.1 — Markmap (mapa mental) | ✅ libs vendorizadas sob demanda, 66 nós no roadmap do CTT, zoom/centralizar/tela cheia |
-| Fase 1.2 — Quiz (autoavaliação) | ✅ sintaxe Quizdown-like, escolha única/múltipla, dicas, explicações, correção local e pontuação |
+| Fase 1.2 — Quiz (autoavaliação) | ✅ sintaxe Quizdown-like, escolha única/múltipla, resposta escrita, dicas, explicações, correção local, pontuação e relatório `.txt` das questões erradas |
 | Infra — `run.sh` + watch no WSL | ✅ live reload validado no navegador (edição de `.md` e de CSS) |
 | Infra — navegação em gaveta, pastas colapsáveis, sem sumário/meta | ✅ atalhos `[` e `Ctrl+B`, `Esc`, foco gerenciado, sem botão |
 | Infra — workflow de deploy | ✅ escrito, ainda não exercitado (falta criar o repositório) |

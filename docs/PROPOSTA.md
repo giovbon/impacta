@@ -279,30 +279,40 @@ Se o arquivo não existir, renderizar `<div class="code-explorer-error">Arquivo 
 - Cada heading (`### ...`) começa uma questão.
 - Lista ordenada com checkbox (`1. [x]`) = **escolha única** (`radio`); lista não ordenada
   (`- [x]`) = **múltipla escolha** (`checkbox`).
-- Blockquote **antes** das opções = dica; **depois** = explicação; **indentado sob uma opção** =
-  comentário daquela opção.
+- Blockquote **antes** das opções (ou do `Resposta:`) = dica; **depois** = explicação;
+  **indentado sob uma opção** = comentário daquela opção.
 - Frontmatter do quiz: `title`, `shuffleQuestions` e `shuffleAnswers` (booleanos). O shuffle é
   determinístico no build, para o HTML não mudar a cada rebuild.
 
 **Validação no build**:
 
-1. Pelo menos uma questão e pelo menos duas opções por questão.
+1. Pelo menos uma questão e, nas questões de opções, pelo menos duas opções.
 2. Escolha única: exatamente uma opção correta. Múltipla escolha: pelo menos uma.
 3. Não misturar os dois tipos na mesma questão.
 4. Arquivo ausente ou sintaxe inválida **não quebra o build**: `console.error` com o caminho e a
    questão, e a página recebe um cartão `.quiz--erro`.
+5. `Resposta:` exige pelo menos uma alternativa e não convive com opções da mesma questão.
 
 **HTML**: `<section class="quiz" data-quiz="...">` com `<fieldset class="quiz-question">`,
-`<legend>` acessível, inputs `radio`/`checkbox`, `data-correct` em cada opção, botão de dica
-(`aria-expanded`), explicação escondida, botões "Conferir respostas"/"Limpar" e região
-`aria-live` para a pontuação.
+`<legend>` acessível, inputs `radio`/`checkbox` (ou `<input type="text">` com `data-answers` nas
+questões escritas), `data-correct` em cada opção, botão de dica (`aria-expanded`), explicação
+escondida, botões "Conferir respostas"/"Limpar"/"Baixar resultado (.txt)" e região `aria-live` para
+a pontuação.
 
-**Cliente** (`initQuiz`): confere cada questão (múltipla escolha é tudo-ou-nada), marca opções
-certas/erradas/faltantes, abre dicas, exibe explicações, limpa e mostra `X de N` + percentual.
+**Cliente** (`initQuiz`): confere cada questão (múltipla escolha é tudo-ou-nada; resposta escrita
+ignora caixa, espaços repetidos e crases), marca opções certas/erradas/faltantes, abre dicas, exibe
+explicações, limpa e mostra `X de N` + percentual. O botão de download monta localmente um `.txt`
+com as questões erradas/não respondidas (enunciado, resposta marcada, resposta correta, comentários,
+dica e explicação) via `Blob` + `<a download>`.
 **Não há envio, RA, planilha, `fetch` nem persistência**: o gabarito fica no HTML de propósito,
 porque o quiz é formativo.
 
 **Fora da v1**: quiz de sequência/ordenação do Quizdown e envio de respostas.
+
+**Extensões pós-v1 (2026-10)**: `Resposta: ...` (resposta escrita, alternativas separadas por `|`,
+comparação sem caixa/espaços/crases, inclusive para lacunas em blocos de código), markdown completo
+no enunciado/dica/explicação (código e imagens em `/static/...` com prefixo do `BASE_URL`) e o
+relatório `.txt` das questões erradas.
 
 ### 6.8 Navegação, listas e páginas
 
@@ -370,15 +380,16 @@ Layout de 3 colunas (esquerda: navegação; centro: conteúdo; direita: vazia), 
 Execute cada item e cole a evidência (saída de comando ou trecho de HTML) no PR.
 
 - [ ] `npm run build` termina sem erro e **sem aviso de data inválida**.
-- [ ] Nenhum arquivo de `content/**/*.md`, `slides/**`, `mindmaps/**`, `codes/**`, `quizzes/**` foi modificado (`git status` limpo nessas pastas).
+- [ ] Nenhum arquivo de `content/**/*.md`, `slides/**`, `mindmaps/**`, `codes/**` foi modificado (`git status` limpo nessas pastas); `quizzes/**` é conteúdo editorial e pode ser editado.
 - [ ] `curl -sI http://localhost:8080/static/asciinema/08-branches.cast` → **200**.
 - [ ] `curl -sI .../static/typs/AST/AST06.typ` → **200** e a caixa (`AST`) preservada.
-- [ ] `/CTT/Git-Github/04CTT-PG-branch-merge/` contém: 1 `.reveal`, **4** blocos `.asciinema`, o deck tem **25** `<section>` e um `.quiz` com **3** `.quiz-question` (2 de escolha única e 1 de múltipla escolha).
+- [ ] `/CTT/Git-Github/04CTT-PG-branch-merge/` contém: 1 `.reveal`, **4** blocos `.asciinema`, o deck tem **25** `<section>` e um `.quiz` com **5** `.quiz-question` (2 de escolha única, 1 de múltipla escolha, 1 de resposta escrita com código e 1 de escolha única com imagem).
 - [ ] Nessa página, nenhum slide fica deslocado/fora do container; ao injetar `img.style.height=400px` em um slide via console, o deck **recentraliza sozinho** (prova do re-layout da armadilha 3).
 - [ ] `/AST/06AST-PG-dubles-teste/` mostra o botão `Exercício AST06` (Typst) e o formulário com **2** atividades (tela de escolha).
 - [ ] `/AST/00AST-PG-ast-roadmap/` contém `.markmap-container` com `<script type="text/markdown">` não vazio e um `<svg>` gerado.
 - [ ] `/AST/07AST-PG-selenium1/` mostra o CodeExplorer com a árvore de `codes/selenium1.md` e abre arquivos no painel direito.
 - [ ] No quiz, responder errado marca a opção em vermelho e revela a correta; responder certo marca em verde; "Limpar" zera marcações, feedback, dicas e pontuação; recarregar a página não envia nada.
+- [ ] No quiz, a lacuna de código aceita `-C` (caixa alta) e `--create`; o botão "Baixar resultado (.txt)" gera um arquivo com as questões erradas, o que foi marcado, a resposta correta, comentários, dica e explicação; a imagem do merge aparece no enunciado.
 - [ ] Formulário: com RA + link GitHub envia; com RA + ZIP (real) envia; com `.pdf` renomeado para `.zip` **bloqueia**; com ZIP vazio ou só com pastas **bloqueia**; com nada **bloqueia**; com os dois **bloqueia**.
 - [ ] Busca encontra "pytest" e leva a `/AST/02AST-PG-pytest/`.
 - [ ] `/tags/`, `/index.xml`, `/sitemap.xml`, `/404.html` respondem **200**.

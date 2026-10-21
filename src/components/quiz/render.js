@@ -2,6 +2,7 @@ import fs from "node:fs"
 import path from "node:path"
 import matter from "gray-matter"
 import { ROOT, asList, markdown } from "../../_lib/content.js"
+import { withPrefix } from "../../_lib/urls.js"
 
 /**
  * Componente `quiz` — quiz de múltipla escolha corrigido no navegador.
@@ -32,24 +33,43 @@ import { ROOT, asList, markdown } from "../../_lib/content.js"
  *
  *   > Explicação mostrada depois de conferir.
  *
+ *   ### Complete o comando que cria a branch `feature`:
+ *
+ *   ```bash
+ *   git switch ___ feature
+ *   ```
+ *
+ *   Resposta: -c | --create
+ *
  * Regras da sintaxe:
  *  - cada título (`#`, `##`, ...) começa uma questão;
  *  - lista ordenada (`1. [x]`) = escolha única;
  *  - lista não ordenada (`- [x]`) = múltipla escolha;
+ *  - `Resposta: ...` = resposta escrita (sem opções); separe alternativas
+ *    aceitas com `|` e escreva em minúsculas (a comparação ignora
+ *    maiúsculas/minúsculas e espaços repetidos). Serve tanto para texto comum
+ *    quanto para lacunas em blocos de código no enunciado;
  *  - blockquote antes das opções = dica;
  *  - blockquote depois das opções = explicação;
- *  - blockquote indentado embaixo de uma opção = comentário daquela opção.
+ *  - blockquote indentado embaixo de uma opção = comentário daquela opção;
+ *  - imagens e blocos de código no enunciado são markdown normal. Use caminhos
+ *    do site (`/static/...`) para imagens locais: o prefixo do `BASE_URL` é
+ *    aplicado automaticamente.
  *
  * Não há envio de resposta: o gabarito fica no HTML e a correção é local. Isso
- * é intencional — o quiz é um recurso didático, não uma avaliação.
+ * é intencional — o quiz é um recurso didático, não uma avaliação. O aluno pode
+ * baixar um `.txt` com as questões erradas, o que marcou e a resposta correta.
  */
 
 // O fechamento `###` só é removido quando vem separado por espaço (CommonMark):
 // assim um título como "O que é C#?" preserva o `#`.
 const HEADING_RE = /^(#{1,6})[ \t]+(.+?)(?:[ \t]+#*)?[ \t]*$/
 const OPTION_RE = /^([ \t]*)([-*+]|\d+[.)])[ \t]+\[([ xX])\][ \t]+(.*)$/
+const ANSWER_RE = /^[ \t]*resposta[ \t]*:[ \t]*(.*)$/i
 const FENCE_RE = /^[ \t]*(`{3,}|~{3,})(.*)$/
 const QUOTE_RE = /^([ \t]*)>[ \t]?(.*)$/
+
+const PREFIXO_INTERNO = withPrefix("/")
 
 const escapeHtml = (value) =>
   String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
@@ -101,35 +121,94 @@ function shuffle(list, random) {
 
 function renderMarkdownBlock(lines) {
   const source = lines.join("\n").trim()
-  return source ? markdown.render(source) : ""
+  return source ? prefixarUrls(markdown.render(source)) : ""
 }
 
 function renderMarkdownInline(lines) {
   const source = lines.join(" ").trim()
-  return source ? markdown.renderInline(source) : ""
+  return source ? prefixarUrls(markdown.renderInline(source)) : ""
+}
+
+/**
+ * Markdown do quiz pode apontar para assets do próprio site (`/static/...`).
+ * O prefixo do `BASE_URL` (GitHub Pages em subpasta) é aplicado aqui, como nos
+ * demais componentes.
+ */
+function prefixarUrls(html) {
+  return html.replace(/\b(src|href)="\/(?!\/)/g, `$1="${PREFIXO_INTERNO}`)
+}
+
+/** Mesma normalização do cliente: espaços, caixa e crases não contam. */
+export function normalizarResposta(value) {
+  return String(value ?? "")
+    .trim()
+    .replace(/^`+|`+$/g, "")
+    .replace(/^["']+|["']+$/g, "")
+    .replace(/\s+/g, " ")
+    .toLowerCase()
+}
+
+/**
+ * `Resposta: -c | --create` → duas alternativas aceitas.
+ * A primeira é a que aparece como "resposta correta" no feedback e no relatório.
+ */
+function lerRespostas(valor) {
+  const texto = String(valor ?? "")
+    .split(/(?<!\\)\|/)
+    .map((item) =>
+      item
+        .trim()
+        .replace(/\\\|/g, "|")
+        .replace(/^`+|`+$/g, "")
+        .replace(/^["']+|["']+$/g, "")
+        .trim(),
+    )
+    .filter(Boolean)
+
+  return {
+    texto,
+    normalizadas: [...new Set(texto.map(normalizarResposta).filter(Boolean))],
+  }
 }
 
 function finalizarPergunta(pergunta, indice, erros) {
   const rotulo = (pergunta.heading || `Questão ${indice + 1}`).replace(/[*_`[\]]/g, "").trim()
+  const ehEscrita = pergunta.tipo === "text"
 
   if (!pergunta.heading) {
     erros.push(`Questão ${indice + 1}: o título da questão está vazio.`)
   }
   if (!pergunta.tipo) {
-    erros.push(`Questão "${rotulo}": nenhuma opção encontrada (use \`- [x]\` ou \`1. [x]\`).`)
-  }
-  if (pergunta.options.length < 2) {
-    erros.push(`Questão "${rotulo}": são necessárias pelo menos duas opções.`)
-  }
-
-  const corretas = pergunta.options.filter((opcao) => opcao.correta).length
-  if (pergunta.tipo === "single" && corretas !== 1) {
     erros.push(
-      `Questão "${rotulo}": escolha única precisa ter exatamente uma opção correta (tem ${corretas}).`,
+      `Questão "${rotulo}": nenhuma opção encontrada ` +
+        "(use `- [x]`, `1. [x]` ou `Resposta: ...`).",
     )
   }
-  if (pergunta.tipo === "multiple" && corretas === 0) {
-    erros.push(`Questão "${rotulo}": múltipla escolha precisa ter pelo menos uma opção correta.`)
+
+  if (ehEscrita) {
+    if (pergunta.options.length > 0) {
+      erros.push(`Questão "${rotulo}": não misture \`Resposta:\` com opções.`)
+    }
+    if (pergunta.respostas.length === 0) {
+      erros.push(`Questão "${rotulo}": \`Resposta:\` está vazia.`)
+    }
+  } else {
+    if (pergunta.respostas.length > 0) {
+      erros.push(`Questão "${rotulo}": não misture \`Resposta:\` com opções.`)
+    }
+    if (pergunta.options.length < 2) {
+      erros.push(`Questão "${rotulo}": são necessárias pelo menos duas opções.`)
+    }
+
+    const corretas = pergunta.options.filter((opcao) => opcao.correta).length
+    if (pergunta.tipo === "single" && corretas !== 1) {
+      erros.push(
+        `Questão "${rotulo}": escolha única precisa ter exatamente uma opção correta (tem ${corretas}).`,
+      )
+    }
+    if (pergunta.tipo === "multiple" && corretas === 0) {
+      erros.push(`Questão "${rotulo}": múltipla escolha precisa ter pelo menos uma opção correta.`)
+    }
   }
 
   for (const [indiceOpcao, opcao] of pergunta.options.entries()) {
@@ -144,6 +223,8 @@ function finalizarPergunta(pergunta, indice, erros) {
     prompt: renderMarkdownBlock([pergunta.heading, ...pergunta.corpo]),
     dica: renderMarkdownBlock(pergunta.dica),
     explicacao: renderMarkdownBlock(pergunta.explicacao),
+    respostas: pergunta.respostas,
+    respostasTexto: pergunta.respostasTexto,
     options: pergunta.options.map((opcao, indiceOpcao) => ({
       id: `o${indiceOpcao + 1}`,
       texto: renderMarkdownInline([opcao.texto]),
@@ -202,6 +283,8 @@ export function parseQuiz(texto, opcoes = {}) {
         dica: [],
         explicacao: [],
         options: [],
+        respostas: [],
+        respostasTexto: [],
         tipo: null,
       }
       modo = "pre"
@@ -215,7 +298,12 @@ export function parseQuiz(texto, opcoes = {}) {
     if (opcao) {
       const tipo = /^[-*+]$/.test(opcao[2]) ? "multiple" : "single"
       if (!pergunta.tipo) pergunta.tipo = tipo
-      else if (pergunta.tipo !== tipo) {
+      else if (pergunta.tipo === "text") {
+        erros.push(
+          `Questão "${pergunta.heading}": não misture \`Resposta:\` com opções ` +
+            "(`- [x]` ou `1. [x]`).",
+        )
+      } else if (pergunta.tipo !== tipo) {
         erros.push(
           `Questão "${pergunta.heading}": não misture opções de escolha única (\`1. [x]\`) ` +
             "com múltipla escolha (`- [x]`).",
@@ -229,6 +317,29 @@ export function parseQuiz(texto, opcoes = {}) {
       }
       pergunta.options.push(opcaoAtual)
       modo = "opcoes"
+      continue
+    }
+
+    const resposta = linha.match(ANSWER_RE)
+    if (resposta) {
+      if (pergunta.options.length > 0) {
+        erros.push(`Questão "${pergunta.heading}": não misture \`Resposta:\` com opções.`)
+        continue
+      }
+      if (pergunta.respostas.length > 0) {
+        erros.push(
+          `Questão "${pergunta.heading}": use um único \`Resposta:\` por questão ` +
+            "(separe as alternativas aceitas com `|`).",
+        )
+        continue
+      }
+
+      const lidas = lerRespostas(resposta[1])
+      pergunta.respostas = lidas.normalizadas
+      pergunta.respostasTexto = lidas.texto
+      if (!pergunta.tipo) pergunta.tipo = "text"
+      // Depois do `Resposta:` um blockquote já é explicação, não dica.
+      modo = "pos"
       continue
     }
 
@@ -341,6 +452,8 @@ function renderPergunta(quiz, pergunta, indice) {
   const idPergunta = `quiz-${quiz.id}-${pergunta.id}`
   const idPrompt = `${idPergunta}-prompt`
   const idDica = `${idPergunta}-dica`
+  const idResposta = `${idPergunta}-texto`
+  const ehEscrita = pergunta.tipo === "text"
   const tipoInput = pergunta.tipo === "single" ? "radio" : "checkbox"
 
   const opcoes = pergunta.options
@@ -367,17 +480,37 @@ function renderPergunta(quiz, pergunta, indice) {
     ? `\n        <div class="quiz-explanation">${pergunta.explicacao}</div>`
     : ""
 
+  const corpo = ehEscrita
+    ? `      <div class="quiz-answer">
+        <label class="quiz-answer__label" for="${escapeAttr(idResposta)}">Sua resposta</label>
+        <input class="quiz-answer__input" type="text" id="${escapeAttr(idResposta)}" name="${escapeAttr(idPergunta)}-resposta" data-answers="${escapeAttr(JSON.stringify(pergunta.respostas))}" data-answer-display="${escapeAttr(pergunta.respostasTexto[0] ?? "")}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Digite a resposta">
+        <p class="quiz-answer__help">A comparação ignora maiúsculas, minúsculas e espaços repetidos.</p>
+      </div>`
+    : `      <div class="quiz-options">
+${opcoes}
+      </div>`
+
   return `    <fieldset class="quiz-question" data-question-id="${escapeAttr(pergunta.id)}" data-question-type="${escapeAttr(pergunta.tipo)}" aria-labelledby="${escapeAttr(idPrompt)}">
       <legend class="quiz-sr-only">Questão ${indice + 1}</legend>
       <div class="quiz-question__prompt" id="${escapeAttr(idPrompt)}">${pergunta.prompt}</div>
 ${dica}
-      <div class="quiz-options">
-${opcoes}
-      </div>
+${corpo}
       <div class="quiz-feedback" data-quiz-feedback hidden>
         <p class="quiz-feedback__status"></p>${explicacao}
       </div>
     </fieldset>`
+}
+
+const ROTULOS_TIPO = {
+  single: "escolha única",
+  multiple: "múltipla escolha",
+  text: "resposta escrita",
+}
+
+function listarTipos(tipos) {
+  const rotulos = ["single", "multiple", "text"].filter((tipo) => tipos.has(tipo)).map((tipo) => ROTULOS_TIPO[tipo])
+  if (rotulos.length <= 1) return rotulos[0] ?? "escolha única"
+  return `${rotulos.slice(0, -1).join(", ")} e ${rotulos.at(-1)}`
 }
 
 function renderSecaoQuiz(quiz) {
@@ -385,13 +518,7 @@ function renderSecaoQuiz(quiz) {
   const idTitulo = `quiz-${quiz.id}-titulo`
   const total = quiz.questions.length
   const tipos = new Set(quiz.questions.map((pergunta) => pergunta.tipo))
-  const tipo =
-    tipos.size > 1
-      ? "escolha única e múltipla escolha"
-      : tipos.has("single")
-        ? "escolha única"
-        : "múltipla escolha"
-  const meta = `${total} ${total === 1 ? "questão" : "questões"} · ${tipo}`
+  const meta = `${total} ${total === 1 ? "questão" : "questões"} · ${listarTipos(tipos)}`
 
   return `<section class="quiz" data-quiz="${escapeAttr(quiz.id)}" aria-labelledby="${escapeAttr(idTitulo)}">
   <header class="quiz__header">
@@ -404,6 +531,7 @@ ${quiz.questions.map((pergunta, indice) => renderPergunta(quiz, pergunta, indice
     <div class="quiz__actions">
       <button type="submit" class="quiz-btn quiz-btn--primary">Conferir respostas</button>
       <button type="button" class="quiz-btn quiz-btn--ghost" data-quiz-reset>Limpar</button>
+      <button type="button" class="quiz-btn quiz-btn--ghost" data-quiz-download hidden>Baixar resultado (.txt)</button>
     </div>
     <div class="quiz__result" data-quiz-result role="status" aria-live="polite" hidden></div>
   </form>

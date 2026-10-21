@@ -201,6 +201,58 @@
   display: none;
 }
 
+.quiz-answer {
+  margin-top: var(--s3);
+}
+
+.quiz-answer__label {
+  display: block;
+  margin-bottom: var(--s1);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.quiz-answer__input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: var(--s2) var(--s3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  transition:
+    border-color var(--transition),
+    background var(--transition);
+}
+
+.quiz-answer__input::placeholder {
+  color: var(--muted);
+}
+
+.quiz-answer__input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  border-color: var(--accent);
+}
+
+.quiz-answer__input.is-correct {
+  border-color: var(--ok);
+  background: rgba(158, 206, 106, 0.12);
+}
+
+.quiz-answer__input.is-incorrect {
+  border-color: var(--danger);
+  background: rgba(247, 118, 142, 0.12);
+}
+
+.quiz-answer__help {
+  margin: var(--s1) 0 0;
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+
 .quiz-option.is-correct {
   border-color: var(--ok);
   background: rgba(158, 206, 106, 0.12);
