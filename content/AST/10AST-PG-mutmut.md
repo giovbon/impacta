@@ -7,6 +7,7 @@ typst:
   name: "Exercício AST10"
 submission: 
   - "AST10"
+  - "AST10 Manha"
 codes: "codes/mutmut.md"
 ---
 
