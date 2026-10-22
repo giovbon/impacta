@@ -59,7 +59,8 @@ shuffleAnswers: true
 ### No Pytest, a gestão de contexto e dados de teste é realizada por meio de *Fixtures*. ___ é a palavra-chave do Python é utilizada dentro de uma fixture para separar a fase de preparação (*setup*) da fase de limpeza (*teardown*)?
 
 Resposta: yield
-    > No `pytest`, o `yield` pausa a execução da função de fixture para injetar a dependência no teste. Quando o teste termina, o Pytest retoma a execução imediatamente após o `yield` para executar o código de *teardown* (limpeza).
+
+> No `pytest`, o `yield` pausa a execução da função de fixture para injetar a dependência no teste. Quando o teste termina, o Pytest retoma a execução imediatamente após o `yield` para executar o código de *teardown* (limpeza).
 
 
 ### Complete a declaração da fixture no Pytest para que ela seja executada uma única vez para toda a sessão de testes, compartilhando o recurso entre todos os arquivos:
@@ -68,11 +69,10 @@ Resposta: yield
 @pytest.fixture(scope="___")
 def conexao_global():
 ```
-    > É o escopo mais abrangente do Pytest, indicado para recursos pesados compartilhados globalmente.
 
 Resposta: session
 
-> O parâmetro `scope="session"` faz com que a fixture seja instanciada apenas uma vez durante toda a execução da suíte do Pytest, independentemente da quantidade de testes ou arquivos executados.
+> O parâmetro `scope="session"` faz com que a fixture seja instanciada apenas uma vez durante toda a execução da suíte do Pytest, independentemente da quantidade de testes ou arquivos executados. É o escopo mais abrangente do Pytest, indicado para recursos pesados compartilhados globalmente.
 
 ### O ciclo fundamental do Desenvolvimento Dirigido por Testes (TDD) é composto por três etapas iterativas. Assinale a alternativa que indica a sequência correta desse ciclo e o significado de suas fases:
 
