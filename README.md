@@ -9,7 +9,7 @@ conteúdo, slides, mapas mentais, códigos, quizzes e libs vivem todos aqui dent
 
 - Node 22+ (no WSL: `wsl bash -ic "..."` se o node não estiver no PATH do Windows)
 
-## Comandos
+## Comandoss
 
 ```bash
 ./run.sh         # sobe o servidor de desenvolvimento (é o que você usa no dia a dia)
