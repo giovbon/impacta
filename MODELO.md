@@ -167,6 +167,9 @@ habilitado, o `configure-pages` falha com `Not Found`. Só então fazer push da 
 - **Cliente**: `src/components/quiz/client.js` confere, marca acertos/erros, abre dicas, mostra
   explicações, limpa e calcula a pontuação. **Não há envio, RA, planilha nem rede**; o gabarito fica
   em `data-correct`/`data-answers` no HTML porque o quiz é formativo.
+- **Rascunho**: as respostas são gravadas no `sessionStorage` (chave `quiz:<id>:<pathname>`, por
+  ids de questão/opção, então o shuffle não atrapalha) e repostas ao recarregar a aba. **Limpar**
+  apaga o rascunho; a correção não é restaurada. Falha de storage é ignorada (modo anônimo/cota).
 - **Download**: depois de conferir, o botão "Baixar resultado (.txt)" monta localmente um relatório
   com as questões erradas ou não respondidas (enunciado, resposta marcada, resposta correta,
   comentários das opções, dica e explicação) via `Blob` + `<a download>`; nada sai do navegador.

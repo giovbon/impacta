@@ -164,6 +164,8 @@ test("quiz: lê o arquivo do frontmatter e monta o HTML acessível", () => {
   assert.match(html, /type="checkbox"/)
   assert.match(html, /data-correct="true"/)
   assert.match(html, /class="quiz-option__status" hidden/)
+  assert.match(html, /data-question-tipo="single">Escolha 1 alternativa</)
+  assert.match(html, /data-question-tipo="multiple">Escolha 1 ou mais alternativas</)
   assert.match(html, /data-quiz-hint/)
   assert.match(html, /class="quiz-explanation"/)
   assert.match(html, /Ative o JavaScript para conferir as respostas/)
@@ -181,8 +183,11 @@ test("quiz: questão escrita vira input de texto com o gabarito", () => {
   assert.match(html, /Sua resposta/)
   assert.match(html, /A comparação ignora maiúsculas/)
   assert.doesNotMatch(html, /class="quiz-option"/)
+  assert.doesNotMatch(html, /quiz-question__tipo/)
   assert.match(html, /1 questão · resposta escrita/)
   assert.match(html, /data-quiz-download hidden/)
+  assert.match(html, /class="quiz-btn quiz-btn--download"/)
+  assert.match(html, /Baixar resultado \(\.txt\)/)
 })
 
 test("quiz: uma lista no frontmatter gera um quiz por arquivo", () => {

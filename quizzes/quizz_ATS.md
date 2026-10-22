@@ -106,10 +106,10 @@ Resposta: session
 3. **Stub**
 4. **Mock**
 
-( ) Objeto que possui uma implementação funcional simplificada (ex: banco de dados em memória).
-( ) Objeto passado apenas para preencher a assinatura de um método, mas que nunca é utilizado na lógica.
-( ) Objeto pré-programado com respostas fixas/controladas para responder a chamadas específicas.
-( ) Objeto utilizado para verificar interações, expectativas e a ordem de chamadas de métodos.
+- Objeto que possui uma implementação funcional simplificada (ex: banco de dados em memória).
+- Objeto passado apenas para preencher a assinatura de um método, mas que nunca é utilizado na lógica.
+- Objeto pré-programado com respostas fixas/controladas para responder a chamadas específicas.
+- Objeto utilizado para verificar interações, expectativas e a ordem de chamadas de métodos.
 
 Assinale a ordem correta do topo para o base:
 
@@ -158,3 +158,112 @@ driver.________("evidencia_falha.png")
 Resposta: save_screenshot | save_screenshot()
 
 > Em ambientes headless (sem tela visível), o recurso de *print screen* (`driver.save_screenshot()`) é fundamental para capturar evidências exatas de falhas ou comprovar a execução de tarefas para auditoria e monitoramento. O método `save_screenshot("nome_do_arquivo.png")` captura a renderização atual da página e a salva no caminho indicado, servindo como registro visual de auditoria ou depuração de erros.
+
+
+
+### O Behavior Driven Development (BDD) foi concebido por Dan North como uma evolução do TDD. Qual é a premissa central do BDD no alinhamento entre as equipes técnicas e de negócio?
+
+1. [x] Focar no comportamento esperado do sistema sob a perspectiva do usuário, utilizando linguagem simples e estruturada para facilitar a comunicação na reunião dos "Três Amigos" (PO, Dev e QA).
+    > O BDD aproxima negócio e desenvolvimento traduzindo requisitos em cenários executáveis.
+1. [ ] Substituir integralmente o TDD e os testes unitários, eliminando a necessidade de escrever código de teste em linguagens de programação.
+    > O BDD não substitui o TDD; ele é uma evolução focada no negócio, enquanto o TDD foca na qualidade técnica e de unidade.
+1. [ ] Exigir que clientes e gerentes de produto escrevam o código das funções de teste diretamente em Python ou Java.
+    > Partes interessadas do negócio utilizam a linguagem Gherkin, enquanto o vínculo técnico com o código é feito pelos desenvolvedores/QAs.
+1. [ ] Garantir que a cobertura de código seja calculada com base na quantidade de palavras-chave da documentação.
+
+> O BDD foca no comportamento do sistema usando linguagem natural estruturada (Gherkin). Ele resolve falhas de comunicação alinhando as perspectivas do Product Owner (PO), Desenvolvedor (Dev) e Analista de Qualidade (QA) antes de iniciar a codificação.
+
+### Na sintaxe Gherkin, a palavra-chave ___ é utilizada para especificar uma pré-condição necessária antes de executar a ação principal do cenário.
+
+Resposta: given
+
+> A gramática Gherkin utiliza `Given` (Dado que) para especificar pré-condições, `When` para ações do usuário e `Then` para asserções e resultados esperados.
+
+### No ecossistema do `pytest-bdd`, complete o decorador utilizado para vincular um passo de ação (`Quando eu somo 2 e 2`) de um arquivo `.feature` à sua respectiva função Python:
+
+```python
+@___("eu somo 2 e 2")
+def somar(estado):
+    estado["total"] = 2 + 2
+
+```
+
+> Corresponde ao comando de ação da linguagem Gherkin mapeado para a biblioteca em Python.
+
+Resposta: when | When | @when
+
+> O decorador `@when` faz a correspondência exata do texto da etapa "Quando" do arquivo Gherkin com a função Python que executa essa ação no `pytest-bdd`.
+
+
+### O GitHub Actions organiza automações através de eventos, workflows, jobs e steps. Sobre a arquitetura e ordem de execução desses elementos, assinale a opção correta:
+
+1. [x] Jobs rodam em paralelo por padrão em Runners isolados, enquanto os Steps de um mesmo Job são executados de forma estritamente sequencial.
+    > Jobs são independentes e rodam concorrentemente (a menos que haja `needs`), mas seus Steps internos rodam um após o outro.
+
+1. [ ] Todos os Jobs de um workflow rodam obrigatoriamente dentro do mesmo Runner sequencialmente.
+    > Cada Job recebe uma instância ou máquina virtual (Runner) diferente.
+
+1. [ ] Steps podem rodar em paralelo dentro de um mesmo Job para otimizar o tempo de compilação.
+    > Os Steps dentro de um Job sempre rodam em sequência.
+
+1. [ ] Os arquivos de workflow devem ser armazenados na raiz do projeto dentro da pasta `.github/actions/`.
+    > Os arquivos `.yml` de workflow devem obrigatoriamente ficar na pasta `.github/workflows/`.
+
+> No GitHub Actions, os workflows são ativados por eventos (como `push`). Os **Jobs** rodam concorrentemente por padrão em **Runners** separados. Dentro de cada Job, os **Steps** são executados um por um em sequência.
+
+
+### O papel da Action oficial ___ logo no primeiro passo (step) de um Job no GitHub Actions é o de copiar todo o código-fonte do repositório para o ambiente limpo e isolado do Runner.
+
+Resposta: actions/checkout | actions/checkout@v4
+
+
+> Por padrão, o Runner é iniciado totalmente vazio. A Action `actions/checkout` executa os comandos Git necessários para clocar o repositório na máquina virtual do Job.
+
+
+### Quais das seguintes opções representam gatilhos de eventos (`on:`) válidos para disparar um workflow no GitHub Actions?
+
+- [x] `push`: Disparado quando alterações de código são enviadas ao repositório.
+
+- [x] `pull_request`: Disparado quando uma solicitação de conversão de código é criada ou atualizada.
+
+- [x] `workflow_dispatch`: Permite a execução manual do workflow através do botão "Run workflow" na interface.
+
+- [ ] `git commit`: Disparado localmente na máquina do desenvolvedor antes de salvar a alteração.
+
+> O GitHub Actions reage a eventos ocorridos no servidor do GitHub, como `push`, `pull_request`, `workflow_dispatch` ou rotinas agendadas (`schedule`). 
+
+### Em automação de testes E2E com Selenium, o surgimento de testes oscilantes (*flaky tests*) ocorre com frequência devido a atrasos de rede ou renderizações dinâmicas. Por que o uso de `time.sleep()` é considerado uma má prática em relação às esperas inteligentes?
+
+1. [x] O `time.sleep()` faz uma pausa fixa e incondicional, enquanto esperas inteligentes usam *polling* e liberam a execução no exato instante em que o elemento fica pronto.
+    > Pausas fixas tornam a suíte desnecessariamente lenta ou falham se o tempo estipulado for insuficiente.
+
+1. [ ] O `time.sleep()` consome excessivamente o processador da máquina virtual do Runner por criar um loop infinito.
+1. [ ] O Selenium bloqueia a execução e lança exceção do tipo `DriverClosedException` ao identificar `time.sleep()`.
+1. [ ] Esperas inteligentes executam testes apenas em navegadores headless sem depender de componentes HTML.
+
+> O `time.sleep()` interrompe o script de forma engessada. Já esperas como a Espera Implícita e Explícita utilizam *polling* (sondagem em intervalos regulares) para continuar a execução no exato milissegundo em que a condição ou elemento se torna disponível.
+
+
+### No Tavern, qual é a finalidade da propriedade `strict: False` configurada no bloco de validação de resposta (`response`)?
+
+1. [x] Permitir que o teste passe validando apenas os campos informados no YAML, ignorando outras chaves adicionais retornadas na resposta JSON da API.
+    > Evita que o teste quebre caso a API retorne campos extras que não são o foco da validação no momento.
+
+
+1. [ ] Fazer com que o Tavern aceite códigos de status HTTP da faixa de erro 4xx e 5xx como sucesso.
+1. [ ] Desativar a checagem de certificados SSL em conexões HTTPS.
+1. [ ] Ignorar falhas de conexão de rede durante a execução dos testes no CI/CD.
+
+> Com `strict: False`, o Tavern verifica apenas se os pares de chave-valor declarados no arquivo YAML batem com o JSON da API, desconsiderando chaves sobressalentes.
+
+
+### A respeito da Espera Implícita (`implicitly_wait`) e da Espera Explícita (`WebDriverWait` com `Expected Conditions`), assinale a opção correta:
+
+1. [x] A espera implícita é configurada globalmente uma vez e faz o Selenium aguardar até X segundos por qualquer elemento; a explícita aguarda por condições específicas em elementos determinados.
+    > A implícita vale para toda a sessão; a explícita foca em eventos específicos como visibilidade ou estado clicável de um elemento.
+
+1. [ ] A espera implícita deve ser chamada antes de cada clique no botão, enquanto a espera explícita só funciona com a classe `By.ID`.
+1. [ ] Ambas as esperas pausam a execução pelo tempo total configurado, sem interromper o aguardo quando o elemento surge.
+1. [ ] A espera explícita é nativa do navegador Firefox, sendo incompatível com o ChromeDriver.
+
+> A Espera Implícita define um tempo limite global de sondagem para localização de elementos na página. A Espera Explícita exige o uso de `WebDriverWait` combinado com `Expected Conditions` (EC) para aguardar estados específicos de um elemento.

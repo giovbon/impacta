@@ -26,6 +26,38 @@ function lerAceitas(input) {
   }
 }
 
+/**
+ * Marcas de status em símbolos de texto (✔/✘/◐/!), não em emoji colorido:
+ * glifos de emoji (✅/❌) trazem a própria cor e ignoram o `color` do CSS.
+ * A marca é decorativa (`aria-hidden`); o texto ao lado é o que o leitor de
+ * tela anuncia.
+ */
+const SIMBOLO_MARCA = {
+  ok: "✔",
+  bad: "✘",
+  partial: "◐",
+  aviso: "!",
+}
+
+function escreverStatus(elemento, texto, tipo) {
+  if (!elemento) return
+
+  elemento.replaceChildren()
+
+  if (!texto) {
+    elemento.hidden = true
+    return
+  }
+
+  const marca = document.createElement("span")
+  marca.className = `quiz-mark quiz-mark--${tipo}`
+  marca.setAttribute("aria-hidden", "true")
+  marca.textContent = SIMBOLO_MARCA[tipo] ?? SIMBOLO_MARCA.aviso
+
+  elemento.append(marca, document.createTextNode(` ${texto}`))
+  elemento.hidden = false
+}
+
 function atualizarSelecionadas(pergunta) {
   for (const opcao of pergunta.querySelectorAll(".quiz-option")) {
     const input = opcao.querySelector(".quiz-option__input")
@@ -90,6 +122,102 @@ function limparQuiz(quiz, perguntas) {
 function mostrarDownload(quiz, visivel) {
   const botao = quiz.querySelector("[data-quiz-download]")
   if (botao) botao.hidden = !visivel
+}
+
+/* ───────────────────── rascunho no navegador ───────────────────── */
+
+/**
+ * Guarda as respostas no `sessionStorage` para sobreviver a um recarregamento
+ * acidental. A chave combina o id do quiz e o caminho da página, e o mapa usa
+ * os ids das questões/opções (não as posições), então o shuffle do build não
+ * quebra o rascunho. Nunca vai para a rede e nunca é obrigatório: qualquer
+ * falha de storage (modo anônimo, cota, storage desabilitado) é ignorada.
+ */
+const VERSAO_RASCUNHO = 1
+
+function chaveRascunho(quiz) {
+  const id = quiz.dataset.quiz || "quiz"
+  return `quiz:${id}:${window.location.pathname}`
+}
+
+function lerRespostas(quiz) {
+  const questoes = {}
+
+  for (const pergunta of quiz.querySelectorAll(".quiz-question")) {
+    const id = pergunta.dataset.questionId
+    if (!id) continue
+
+    const entrada = pergunta.querySelector(".quiz-answer__input")
+    if (entrada) {
+      questoes[id] = { texto: entrada.value }
+      continue
+    }
+
+    questoes[id] = {
+      opcoes: [...pergunta.querySelectorAll(".quiz-option")]
+        .filter((opcao) => opcao.querySelector(".quiz-option__input")?.checked)
+        .map((opcao) => opcao.dataset.optionId),
+    }
+  }
+
+  return { v: VERSAO_RASCUNHO, questoes }
+}
+
+function salvarRespostas(quiz) {
+  try {
+    sessionStorage.setItem(chaveRascunho(quiz), JSON.stringify(lerRespostas(quiz)))
+  } catch {
+    // sem persistência, o quiz continua funcionando normalmente
+  }
+}
+
+function apagarRespostas(quiz) {
+  try {
+    sessionStorage.removeItem(chaveRascunho(quiz))
+  } catch {
+    // idem
+  }
+}
+
+/** Repõe o rascunho sem restaurar correção: o aluno confere de novo. */
+function restaurarRespostas(quiz) {
+  let rascunho
+  try {
+    const bruto = sessionStorage.getItem(chaveRascunho(quiz))
+    if (!bruto) return false
+    rascunho = JSON.parse(bruto)
+  } catch {
+    return false
+  }
+
+  if (!rascunho || typeof rascunho !== "object") return false
+  if (rascunho.v !== VERSAO_RASCUNHO || !rascunho.questoes) return false
+
+  let restaurou = false
+
+  for (const pergunta of quiz.querySelectorAll(".quiz-question")) {
+    const id = pergunta.dataset.questionId
+    const salvo = id ? rascunho.questoes[id] : null
+    if (!salvo || typeof salvo !== "object") continue
+
+    if (salvo.texto !== undefined) {
+      const entrada = pergunta.querySelector(".quiz-answer__input")
+      if (entrada && typeof salvo.texto === "string") {
+        entrada.value = salvo.texto
+        if (salvo.texto) restaurou = true
+      }
+      continue
+    }
+
+    const marcadas = new Set(Array.isArray(salvo.opcoes) ? salvo.opcoes : [])
+    for (const opcao of pergunta.querySelectorAll(".quiz-option")) {
+      const input = opcao.querySelector(".quiz-option__input")
+      if (input) input.checked = marcadas.has(opcao.dataset.optionId)
+    }
+    if (marcadas.size > 0) restaurou = true
+  }
+
+  return restaurou
 }
 
 function esconderDicas(quiz) {
@@ -298,7 +426,7 @@ function montarRelatorio(quiz, perguntas) {
   const linhas = [
     `QUIZ — ${titulo}`,
     "=".repeat(72),
-    `Resultado: ${acertos} de ${total} ${total === 1 ? "questão correta" : "questões corretas"} (${percentual}%)`,
+    `Resultado: acertou ${acertos} de ${total} ${total === 1 ? "questão" : "questões"} (${percentual}%)`,
     `Data: ${new Date().toLocaleString("pt-BR")}`,
     `Página: ${window.location.href}`,
     "",
@@ -404,9 +532,9 @@ function corrigir(quiz, perguntas) {
         feedbackPergunta.classList.toggle("is-empty", !respondeu)
 
         const esperada = entrada.dataset.answerDisplay || aceitas[0] || ""
-        if (!respondeu) status.textContent = "⚠️ Digite uma resposta."
-        else if (acertou) status.textContent = "✅ Resposta correta."
-        else status.textContent = `❌ Resposta incorreta. Resposta esperada: ${esperada}`
+        if (!respondeu) escreverStatus(status, "Digite uma resposta.", "aviso")
+        else if (acertou) escreverStatus(status, "Resposta correta.", "ok")
+        else escreverStatus(status, `Resposta incorreta. Resposta esperada: ${esperada}`, "bad")
       }
 
       continue
@@ -444,11 +572,10 @@ function corrigir(quiz, perguntas) {
       // tela conseguem ouvir "correta"/"incorreta" ao navegar pelas opções.
       const status = opcao.querySelector(".quiz-option__status")
       if (status) {
-        if (correta && marcada) status.textContent = "correta"
+        if (correta && marcada) escreverStatus(status, "correta", "ok")
         else if (correta && !marcada && selecionadas.length > 0) {
-          status.textContent = "correta (não marcada)"
-        } else if (!correta && marcada) status.textContent = "incorreta"
-        status.hidden = status.textContent === ""
+          escreverStatus(status, "correta (não marcada)", "ok")
+        } else if (!correta && marcada) escreverStatus(status, "incorreta", "bad")
       }
 
       if (!correta && marcada) input.setAttribute("aria-invalid", "true")
@@ -465,10 +592,10 @@ function corrigir(quiz, perguntas) {
       feedbackPergunta.hidden = false
       feedbackPergunta.classList.toggle("is-empty", selecionadas.length === 0)
 
-      if (selecionadas.length === 0) status.textContent = "⚠️ Selecione uma resposta."
-      else if (acertou) status.textContent = "✅ Resposta correta."
-      else if (pontos > 0) status.textContent = "🔶 Resposta parcialmente correta."
-      else status.textContent = "❌ Resposta incorreta."
+      if (selecionadas.length === 0) escreverStatus(status, "Selecione uma resposta.", "aviso")
+      else if (acertou) escreverStatus(status, "Resposta correta.", "ok")
+      else if (pontos > 0) escreverStatus(status, "Resposta parcialmente correta.", "partial")
+      else escreverStatus(status, "Resposta incorreta.", "bad")
     }
   }
 
@@ -481,7 +608,7 @@ function corrigir(quiz, perguntas) {
   const percentual = total > 0 ? Math.round((somaPontos / total) * 100) : 0
 
   const resumo = document.createElement("strong")
-  resumo.textContent = `${acertos} de ${total} ${total === 1 ? "questão correta" : "questões corretas"}`
+  resumo.textContent = `acertou ${acertos} de ${total} ${total === 1 ? "questão" : "questões"}`
 
   const detalhe = document.createElement("span")
   detalhe.textContent = `${percentual}%`
@@ -513,6 +640,12 @@ function initQuizUnico(quiz) {
   const perguntas = [...quiz.querySelectorAll(".quiz-question")]
   if (perguntas.length === 0) return
 
+  // Antes de pendurar os listeners: repõe o rascunho salvo (recarregar a
+  // página não perde o que já foi respondido).
+  if (restaurarRespostas(quiz)) {
+    for (const pergunta of perguntas) atualizarSelecionadas(pergunta)
+  }
+
   for (const botao of quiz.querySelectorAll("[data-quiz-hint]")) {
     botao.addEventListener("click", () => mostrarDica(botao))
   }
@@ -527,6 +660,7 @@ function initQuizUnico(quiz) {
     atualizarSelecionadas(pergunta)
     esconderResultado(quiz)
     mostrarDownload(quiz, false)
+    salvarRespostas(quiz)
   }
 
   form.addEventListener("change", aoEditar)
@@ -544,6 +678,7 @@ function initQuizUnico(quiz) {
     form.reset()
     limparQuiz(quiz, perguntas)
     esconderDicas(quiz)
+    apagarRespostas(quiz)
   })
 
   const download = quiz.querySelector("[data-quiz-download]")

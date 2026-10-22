@@ -480,6 +480,15 @@ function renderPergunta(quiz, pergunta, indice) {
     ? `\n        <div class="quiz-explanation">${pergunta.explicacao}</div>`
     : ""
 
+  // Aviso por questão: distingue de forma discreta escolha única (1) de
+  // múltipla escolha (1 ou mais). Resposta escrita não precisa (já tem label).
+  const avisoTipo =
+    pergunta.tipo === "text"
+      ? ""
+      : `\n      <p class="quiz-question__tipo" data-question-tipo="${escapeAttr(pergunta.tipo)}">${
+          pergunta.tipo === "single" ? "Escolha 1 alternativa" : "Escolha 1 ou mais alternativas"
+        }</p>`
+
   const corpo = ehEscrita
     ? `      <div class="quiz-answer">
         <label class="quiz-answer__label" for="${escapeAttr(idResposta)}">Sua resposta</label>
@@ -492,7 +501,7 @@ ${opcoes}
 
   return `    <fieldset class="quiz-question" data-question-id="${escapeAttr(pergunta.id)}" data-question-type="${escapeAttr(pergunta.tipo)}" aria-labelledby="${escapeAttr(idPrompt)}">
       <legend class="quiz-sr-only">Questão ${indice + 1}</legend>
-      <div class="quiz-question__prompt" id="${escapeAttr(idPrompt)}">${pergunta.prompt}</div>
+      <div class="quiz-question__prompt" id="${escapeAttr(idPrompt)}">${pergunta.prompt}</div>${avisoTipo}
 ${dica}
 ${corpo}
       <div class="quiz-feedback" data-quiz-feedback hidden>
@@ -531,7 +540,7 @@ ${quiz.questions.map((pergunta, indice) => renderPergunta(quiz, pergunta, indice
     <div class="quiz__actions">
       <button type="submit" class="quiz-btn quiz-btn--primary">Conferir respostas</button>
       <button type="button" class="quiz-btn quiz-btn--ghost" data-quiz-reset>Limpar</button>
-      <button type="button" class="quiz-btn quiz-btn--ghost" data-quiz-download hidden>Baixar resultado (.txt)</button>
+      <button type="button" class="quiz-btn quiz-btn--download" data-quiz-download hidden>⬇️ Baixar resultado (.txt)</button>
     </div>
     <div class="quiz__result" data-quiz-result role="status" aria-live="polite" hidden></div>
   </form>

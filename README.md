@@ -131,6 +131,8 @@ Resposta: -c | --create
 - Depois de **Conferir respostas**, o botão **Baixar resultado (.txt)** gera um relatório local com
   as questões erradas ou não respondidas: enunciado, o que foi marcado, resposta correta,
   comentários das opções, dica e explicação. Nada é enviado pela rede.
+- As respostas ficam salvas no `sessionStorage` (chave por quiz + página) e são repostas ao
+  recarregar a aba; **Limpar** apaga o rascunho. A correção não é restaurada — é preciso conferir de novo.
 - O gabarito fica no HTML (`data-correct`/`data-answers`): é um recurso didático, não uma avaliação.
 - Se o arquivo não existir ou a sintaxe estiver inválida, o build avisa no console e a página mostra
   um cartão de erro em vez de quebrar.

@@ -52,6 +52,24 @@
   border-top: 0;
 }
 
+.quiz-question__tipo {
+  display: inline-block;
+  margin: var(--s2) 0 0;
+  padding: 0.1rem var(--s2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.quiz-question__tipo[data-question-tipo="multiple"] {
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+
 .quiz-question__prompt {
   font-size: var(--text-lg);
   font-weight: 600;
@@ -280,6 +298,29 @@
   display: none;
 }
 
+/* Marcas de acerto/erro: símbolos de texto (não emoji colorido) para que a
+   cor do CSS seja aplicada de fato — ❌/✅ são glifos coloridos e ignoram
+   `color`. */
+.quiz-mark {
+  font-weight: 700;
+}
+
+.quiz-mark--ok {
+  color: var(--ok);
+}
+
+.quiz-mark--bad {
+  color: var(--danger);
+}
+
+.quiz-mark--partial {
+  color: var(--accent);
+}
+
+.quiz-mark--aviso {
+  color: var(--muted);
+}
+
 .quiz-option.is-correct .quiz-option__status,
 .quiz-option.is-missed .quiz-option__status {
   color: var(--ok);
@@ -403,6 +444,19 @@
 .quiz-btn--ghost:hover {
   border-color: var(--border-strong);
   color: var(--text);
+}
+
+.quiz-btn--download {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 650;
+  box-shadow: 0 0 0 1px var(--accent), 0 2px 14px rgba(122, 162, 247, 0.18);
+}
+
+.quiz-btn--download:hover {
+  background: var(--accent);
+  color: #0b0c0e;
 }
 
 .quiz__result {
