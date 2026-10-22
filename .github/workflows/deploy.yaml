@@ -14,6 +14,9 @@ name: Deploy site-11ty to GitHub Pages
 # Pré-requisito: em Settings → Pages, o Source tem de ser "GitHub Actions".
 # Sem isso, o `configure-pages` falha com "Get Pages site failed ... Not Found".
 
+# `quizzes/**` PRECISA estar na lista: o build lê os quizzes (src/_lib/content.js,
+# src/components/quiz/render.js). Sem esse filtro, commits que só mexem em
+# quizzes/*.md (ex.: faf7bf1, 6d37b3f) não disparam deploy nenhum.
 on:
   push:
     branches: [main]
@@ -23,6 +26,7 @@ on:
       - "slides/**"
       - "mindmaps/**"
       - "codes/**"
+      - "quizzes/**"
       - "scripts/**"
       - "test/**"
       - "eleventy.config.js"
@@ -45,6 +49,9 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Watchdog: o build normal leva ~1 min. Se passar disso (fila travada,
+    # incidente do GitHub, download preso), falha em vez de ficar pendurado.
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -88,6 +95,10 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    # Sem isto, uma fila travada deixa o job "queued" indefinidamente segurando
+    # o grupo de concurrency `pages` (foi o que aconteceu na run 39795990277,
+    # durante o incidente "Actions Results" de 2026-10-22).
+    timeout-minutes: 10
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
