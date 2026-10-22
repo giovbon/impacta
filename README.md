@@ -1,4 +1,4 @@
-# site-11ty — site de materiais de aula
+# site-11ty — site de materiais de aulaa
 
 Abre a navegação com `[` (ou Ctrl+B); fecha com `Esc`. Não há botão de abrir na interface.
 
