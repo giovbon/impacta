@@ -21,16 +21,14 @@
   - Localizadores (ID, Name, Class, Tag, seletores CSS)
   - Esperas (explícitas e implícitas)
   - Padrão Page Objects (POM)
-- Pyautogui
-  - Automação de tarefas e interações GUI
 ## Testes de APIs
 ## BDD (Behavior-Driven Development)
 - Sintaxe e Linguagem Gherkin
 - Frameworks: `pytest-bdd` e `behave`
 - Construção de aplicação simples em Flask para testes de aceitação
-<!-- Testes de aceitação integrando Behave + Selenium -->>
-## Locust (Teste de carga)
-- Locust (Conceitos, métricas e automação de carga)
+<!-- Testes de aceitação integrando Behave + Selenium -->
+<!--## Locust (Teste de carga)
+- Locust (Conceitos, métricas e automação de carga)-->
 ## Github Actions
 - Conceitos de CI/CD
 - Criando pipelines com Github Actions
