@@ -290,7 +290,7 @@ Resposta: httpx
 
 > Enquanto testes funcionais buscam encontrar falhas na lógica de negócio, testes não-funcionais aferem requisitos como velocidade e suporte à carga (desempenho), facilidade de navegação (usabilidade) e comportamento em desastres (resiliência/falhas).
 
-### Na automação de testes de interface gráfica (E2E) com Selenium, um grande desafio é a presença de ___, caracterizados como um teste que apresenta resultados inconsistentes (passa/falha) no mesmo código, causado frequentemente por problemas de sincronismo, temporização e seletores instáveis.
+### Na automação de testes de interface gráfica (E2E) com Selenium, um grande desafio é a presença de ___ , caracterizados como um teste que apresenta resultados inconsistentes (passa/falha) no mesmo código, causado frequentemente por problemas de sincronismo, temporização e seletores instáveis.
 
 Restosta: Flaky Tests
 
