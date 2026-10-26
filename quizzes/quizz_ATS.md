@@ -36,9 +36,9 @@ shuffleAnswers: true
 
 1. [x] Porque os testes de sistema são mais lentos para executar, mais caros de manter, frágeis e alterações visuais de interface dificultam a identificação rápida da causa raiz de uma falha.
 	> Testes de unidade executam em milissegundos, são isolados e baratos de manter. Já os testes de sistema (E2E) exigem inicialização de ambiente completo, sendo mais lentos, custosos, frágeis a mudanças em componentes de interface e complexos para diagnosticar a causa raiz do erro.
-1. Porque testes de unidade são os únicos capazes de validar fluxos de interface com o usuário final e garantir cobertura total do sistema sem necessidade de mock.
-1. Porque testes de sistema não conseguem detectar bugs reais em ambiente de produção, servindo apenas para documentação técnica do projeto.
-1. Porque a execução de testes de unidade exige mais infraestrutura de servidores e bancos de dados do que os testes E2E.
+1. [ ] Porque testes de unidade são os únicos capazes de validar fluxos de interface com o usuário final e garantir cobertura total do sistema sem necessidade de mock.
+1. [ ] Porque testes de sistema não conseguem detectar bugs reais em ambiente de produção, servindo apenas para documentação técnica do projeto.
+1. [ ] Porque a execução de testes de unidade exige mais infraestrutura de servidores e bancos de dados do que os testes E2E.
 
 > A Pirâmide de Testes recomenda a distribuição proporcional porque os testes de unidade oferecem feedback rápido, baixo custo e facilidade no isolamento de defeitos. Em contrapartida, os testes de sistema/E2E, embora importantes para validar a aplicação de ponta a ponta, são significativamente mais lentos, caros e propensos a quebrar por pequenas alterações visuais na interface (flakiness).   
 
