@@ -292,7 +292,7 @@ Resposta: httpx
 
 ### Na automação de testes de interface gráfica (E2E) com Selenium, um grande desafio é a presença de ___ , caracterizados como um teste que apresenta resultados inconsistentes (passa/falha) no mesmo código, causado frequentemente por problemas de sincronismo, temporização e seletores instáveis.
 
-Restosta: Flaky Tests
+Resposta: Flaky Tests
 
 > Um *flaky test* é aquele que gera resultados imprevisíveis na mesma versão do sistema. As causas mais comuns envolvem atrasos na rede, animações de interface e escolhas ruins de locators.
 
