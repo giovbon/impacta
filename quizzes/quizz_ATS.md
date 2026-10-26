@@ -32,6 +32,16 @@ shuffleAnswers: true
 
 > A recomendação clássica da Pirâmide de Testes sugere focar a maior parte dos esforços na base com testes de unidade (~70%), seguidos por testes de integração/serviços (~20%) e uma camada menor de testes de sistema/ponta a ponta (~10%).
 
+### Por que a Pirâmide de Testes recomenda manter uma proporção reduzida de testes de sistema (ponta a ponta ou de interface) em comparação com os testes de unidade?
+
+1. [x] Porque os testes de sistema são mais lentos para executar, mais caros de manter, frágeis e alterações visuais de interface dificultam a identificação rápida da causa raiz de uma falha.
+	> Testes de unidade executam em milissegundos, são isolados e baratos de manter. Já os testes de sistema (E2E) exigem inicialização de ambiente completo, sendo mais lentos, custosos, frágeis a mudanças em componentes de interface e complexos para diagnosticar a causa raiz do erro.
+1. Porque testes de unidade são os únicos capazes de validar fluxos de interface com o usuário final e garantir cobertura total do sistema sem necessidade de mock.
+1. Porque testes de sistema não conseguem detectar bugs reais em ambiente de produção, servindo apenas para documentação técnica do projeto.
+1. Porque a execução de testes de unidade exige mais infraestrutura de servidores e bancos de dados do que os testes E2E.
+
+> A Pirâmide de Testes recomenda a distribuição proporcional porque os testes de unidade oferecem feedback rápido, baixo custo e facilidade no isolamento de defeitos. Em contrapartida, os testes de sistema/E2E, embora importantes para validar a aplicação de ponta a ponta, são significativamente mais lentos, caros e propensos a quebrar por pequenas alterações visuais na interface (flakiness).   
+
 ### Quais das seguintes afirmações sobre a garantia da qualidade e testes de software são VERDADEIRAS?
 
 - [x] O objetivo principal do teste não é provar que o software está perfeito, mas sim revelar defeitos ainda não encontrados.
@@ -62,6 +72,83 @@ Resposta: yield
 
 > No `pytest`, o `yield` pausa a execução da função de fixture para injetar a dependência no teste. Quando o teste termina, o Pytest retoma a execução imediatamente após o `yield` para executar o código de *teardown* (limpeza).
 
+### Um desenvolvedor criou o arquivo de teste test_calculadora.py contendo o seguinte código em Python:
+
+```python
+from function.py import soma
+
+def checar_soma_com_numeros_positivos():
+    assert soma(2, 3) == 5
+```
+Ao abrir o terminal na pasta do projeto e executar o comando pytest, o desenvolvedor não conseguiu ver o resultado do teste, o terminal cuspiu um erro. Com base nas regras de funcionamento do Pytest, por que o teste não foi executado?
+
+1. [x] Porque a função de teste foi nomeada como `checar_soma_com_numeros_positivos()` em vez de começar com o prefixo obrigatorio `test_`.
+	> O Pytest utiliza o princípio de convenção sobre configuração: para coletar e executar os testes automaticamente, ele exige que o arquivo comece com `test_` (ou termine com `_test.py`) e que as **funções de teste comecem estritamente com `test_**` (ex: `def test_soma_positivos():`).
+
+1. [ ] Porque a função `soma` está declarada no mesmo arquivo que o teste, o que causa um erro de sintaxe no carregador do Pytest.
+
+1. [ ] Porque o Pytest não aceita a instrução nativa `assert` do Python, exigindo a importação de `unittest` e o uso de `self.assertEqual()`.
+
+1. [ ] Porque arquivos de teste no Pytest obrigatoriamente precisam definir uma classe e herdar de `pytest.TestCase`.
+
+> **Nomes de Arquivo:** O Pytest procura arquivos que começam com `test_` (ex: `test_calculadora.py`) ou terminam com `_test.py`.
+
+### Durante a escrita de testes de unidade para um módulo de validação de dados de clientes, um desenvolvedor utilizou o gerenciador de contexto `with pytest.raises(...)` para garantir que exceções esperadas sejam lançadas ao receber dados incorretos.
+
+Analise o trecho de código abaixo:
+
+```python
+import pytest
+
+# Teste 1: Passar a string "vinte" no lugar de um número inteiro para a idade.
+def test_validar_idade_com_tipo_invalido():
+    with pytest.raises(Excecao_A):
+        validar_idade("vinte")
+
+# Teste 2: Passar uma idade com valor negativo (-5) onde um int é esperado.
+def test_validar_idade_com_valor_invalido():
+    with pytest.raises(Excecao_B):
+        validar_idade(-5)
+
+# Teste 3: Tentar acessar a chave "telefone" em um dicionário que contém apenas "nome" e "email".
+def test_buscar_campo_inexistente_no_usuario():
+    usuario = {"nome": "Carlos", "email": "carlos@email.com"}
+    with pytest.raises(Excecao_C):
+        obter_campo(usuario, "telefone")
+```
+
+De acordo com a convenção e o propósito das *built-in exceptions* do Python, quais exceções devem substituir `Excecao_A`, `Excecao_B` e `Excecao_C`, respectivamente, para que os testes passem de forma correta?
+
+1. [x] **Excecao_A:** `TypeError` | **Excecao_B:** `ValueError` | **Excecao_C:** `KeyError`
+    > **`TypeError`:** Disparada quando o tipo do dado é incompatível com a operação (enviar uma string `"vinte"` onde se exigia número). **`ValueError`:** Disparada quando o tipo do dado está correto (`int`), mas o valor informado é inválido para a regra de negócio (idade negativa `-5`). **`KeyError`:** Disparada ao tentar acessar uma chave inexistente em um dicionário.
+
+1. [ ] **Excecao_A:** `ValueError` | **Excecao_B:** `TypeError` | **Excecao_C:** `IndexError`
+    > `ValueError` é para valor inválido, não tipo. `IndexError` ocorre em sequências como listas e tuplas ao acessar um índice fora dos limites, não em dicionários.
+
+1. [ ] **Excecao_A:** `AttributeError` | **Excecao_B:** `ValueError` | **Excecao_C:** `FileNotFoundError`
+    > `AttributeError` ocorre ao tentar invocar um método ou propriedade inexistente em um objeto. `FileNotFoundError` ocorre na tentativa de manipular arquivos cujo caminho não existe.
+
+1. [ ] **Excecao_A:** `TypeError` | **Excecao_B:** `ZeroDivisionError` | **Excecao_C:** `KeyError`
+    > `ZeroDivisionError` é restrito a operações aritméticas de divisão por zero.
+    
+
+### Em testes de unidade com Pytest, a comparação direta de números de ponto flutuante (*floats*) como `0.1 + 0.2 == 0.3` resulta em falha devido a pequenos ruídos de arredondamento na memória da linguagem (que gera algo como `0.30000000000000004`).
+
+Para resolver esse problema, o Pytest disponibiliza um recurso auxiliar que aplica uma margem de tolerância flexível na verificação:
+
+```python
+import pytest
+
+def test_calculo_decimal():
+    # Valida a soma de decimais sem falhar por ruído de arredondamento
+    assert 0.1 + 0.2 == pytest.___
+
+```
+
+Resposta: approx(0.3)
+
+
+> Computadores apresentam limitações ao representar números decimais em binário. O método `pytest.approx()` resolve isso calculando a diferença entre os números e aceitando o resultado caso a variação seja insignificante.
 
 ### Complete a declaração da fixture no Pytest para que ela seja executada uma única vez para toda a sessão de testes, compartilhando o recurso entre todos os arquivos:
 
@@ -91,9 +178,7 @@ Resposta: session
 
 - [ ] Manter pequenos ciclos de repetição focados em uma única funcionalidade.
 
-
 - [x] Pular sistematicamente a fase de Refatoração, levando ao acúmulo de débito técnico no código.
-
 
 - [x] Criar testes excessivamente grandes e complexos que cobrem múltiplas regras de negócio ao mesmo tempo.
 
@@ -158,7 +243,6 @@ driver.________("evidencia_falha.png")
 Resposta: save_screenshot | save_screenshot()
 
 > Em ambientes headless (sem tela visível), o recurso de *print screen* (`driver.save_screenshot()`) é fundamental para capturar evidências exatas de falhas ou comprovar a execução de tarefas para auditoria e monitoramento. O método `save_screenshot("nome_do_arquivo.png")` captura a renderização atual da página e a salva no caminho indicado, servindo como registro visual de auditoria ou depuração de erros.
-
 
 
 ### O Behavior Driven Development (BDD) foi concebido por Dan North como uma evolução do TDD. Qual é a premissa central do BDD no alinhamento entre as equipes técnicas e de negócio?
@@ -243,7 +327,7 @@ Resposta: actions/checkout | actions/checkout@v4
 
 > O `time.sleep()` interrompe o script de forma engessada. Já esperas como a Espera Implícita e Explícita utilizam *polling* (sondagem em intervalos regulares) para continuar a execução no exato milissegundo em que a condição ou elemento se torna disponível.
 
-
+<!-- REMOVE AST -->
 ### No Tavern, qual é a finalidade da propriedade `strict: False` configurada no bloco de validação de resposta (`response`)?
 
 1. [x] Permitir que o teste passe validando apenas os campos informados no YAML, ignorando outras chaves adicionais retornadas na resposta JSON da API.
@@ -257,7 +341,7 @@ Resposta: actions/checkout | actions/checkout@v4
 > Com `strict: False`, o Tavern verifica apenas se os pares de chave-valor declarados no arquivo YAML batem com o JSON da API, desconsiderando chaves sobressalentes.
 
 
-### A respeito da Espera Implícita (`implicitly_wait`) e da Espera Explícita (`WebDriverWait` com `Expected Conditions`), assinale a opção correta:
+### A respeito da Espera Implícita (`implicitly_wait`) e da Espera Explícita (`WebDriverWait` com `Expected Conditions`) do Selenium, assinale a opção correta:
 
 1. [x] A espera implícita é configurada globalmente uma vez e faz o Selenium aguardar até X segundos por qualquer elemento; a explícita aguarda por condições específicas em elementos determinados.
     > A implícita vale para toda a sessão; a explícita foca em eventos específicos como visibilidade ou estado clicável de um elemento.
@@ -274,6 +358,7 @@ Resposta: raises | pytest.raises
 
 > Funcionamento: Utiliza-se o gerenciador de contexto `with pytest.raises(ExcecaoEsperada):` envolvendo o trecho de código sob teste. O `pytest.raises` captura a exceção especificada e faz o teste passar se ela for lançada.
 
+<!-- REMOVE AST -->
 ### Dentro de testes de API. enquanto a biblioteca `requests` trabalha de forma puramente síncrona, a biblioteca ___ foi desenvolvida para suportar requisições assíncronas (`async`/`await`) e HTTP/2. Isso permite testar serviços concorrentes de alta performance de maneira eficiente.
 
 Resposta: httpx
@@ -297,7 +382,7 @@ Resposta: Flaky Tests
 > Um *flaky test* é aquele que gera resultados imprevisíveis na mesma versão do sistema. As causas mais comuns envolvem atrasos na rede, animações de interface e escolhas ruins de locators.
 
 
-### Na escolha de estratégias para localizar elementos no DOM (Locators), quais são os dois fatores fundamentais que devem ser equilibrados para garantir a qualidade da automação?
+### Na escolha de estratégias para localizar elementos no DOM (Locators) no Selenium, quais são os dois fatores fundamentais que devem ser equilibrados para garantir a qualidade da automação?
 
 1. [x] Performance (velocidade de busca no motor do navegador) e Resiliência (capacidade de não quebrar diante de mudanças visuais/estruturais).
     > A seleção de seletores deve priorizar a rápida localização e a resistência a alterações no leiaute.
@@ -321,6 +406,16 @@ Resposta: conftest
 
 > O arquivo `conftest.py` é o ponto central de compartilhamento de fixtures e configurações no Pytest. Qualquer fixture declarada nele é descoberta automaticamente por todos os arquivos de teste do mesmo nível de diretório ou inferiores.
 
+### A Cobertura de Linha avalia apenas se cada instrução ou comando do código-fonte foi executado pelo menos uma vez durante a suíte de testes; já a Cobertura de ___ é uma métrica mais rigorosa, pois avalia se todas as possibilidades de tomada de decisão (como cada caminho verdadeiro e falso de uma estrutura condicional) foram exercitadas.
+
+Resposta: desvio
+
+> A Cobertura de Linha afere a passagem dos testes pelas linhas executáveis do código. Contudo, uma única execução pode passar por 100% das linhas ativando apenas a condição verdadeira de um `if`, deixando o fluxo condicional falso sem verificação. A Cobertura de Desvio exige testar ambos os desvios (`True` e `False`), sendo mais abrangente.
+
+
+### "O comando ___ atua como um formatador que transforma os dados de cobertura em um relatório visual e interativo, gerando automaticamente uma pasta chamada `htmlcov` no diretório do projeto, cujo arquivo principal é o `index.html`. Ao abrir esse arquivo no navegador, o código-fonte é apresentado colorido: as linhas em verde representam linhas executadas e cobertas pela suíte de testes, as linhas em vermelho indicam linhas não executadas (lacunas de testes) e as linhas em amarelo sinalizam desvios lógicos (branches) atingidos apenas parcialmente (exige o uso da flag `--cov-branch`)."
+
+Resposta: coverage html
 
 ### Em engenharia de software, a medição de cobertura de código (Code Coverage) ajuíza a porcentagem de linhas ou ramos exercitados pela suíte de testes. Por que uma cobertura de 100% de linhas (Statement Coverage) NÃO garante a ausência de defeitos na aplicação?
 
@@ -334,6 +429,7 @@ Resposta: conftest
 
 > A cobertura de linhas mede a execução, não a qualidade das asserções. Uma suíte de testes pode atingir 100% de cobertura sem ter um único comando `assert`, falhando em detectar defeitos comportamentais.
 
+<!--
 ### Avaliar a efetividade da suíte de testes através da inserção de pequenas alterações intencionais no código fonte de produção, verificando se os testes falham ao detectar a mudança é uma técnica chamada de teste de ___ .
 
 Resposta: mutação
@@ -343,6 +439,8 @@ Resposta: mutação
 Resposta: sobreviveu
 
 > O Teste de Mutação afere a qualidade dos próprios testes. Ele introduz defeitos propositais ("mutantes") no código de produção; se os testes continuarem passando (mutante sobreviveu), a suíte é fraca ou possui asserções incompletas naquele trecho.
+
+-->
 
 ### No contexto de automação de testes de sistema e interface gráfica (E2E) com Selenium, a utilização do padrão de projeto **Page Object Model (POM)** é amplamente recomendada. Qual é o propósito arquitetural desse padrão?
 
@@ -390,6 +488,7 @@ Resposta: sobreviveu
 
 > O Particionamento por Classes de Equivalência divide os dados de entrada em conjuntos válidos e inválidos. Espera-se que qualquer elemento de uma mesma classe gere o mesmo resultado, permitindo escolher apenas um representante por classe.
 
+<!--
 ### Seguem atividades típicas de Testes ___ : Inspeção de código-fonte, revisão por pares (Code Review) e análise automatizada por Linters (ex: Flake8, Pylint, SonarQube) sem executar a aplicação.
 
 Resposta: estáticos | estaticos | estático | estatico
@@ -406,6 +505,8 @@ Resposta: linters | Linters | linter
 
 > Os **Linters** inspecionam o código-fonte em busca de erros sintáticos, padrões de código inadequados, variáveis não utilizadas e falhas potenciais de segurança sem a necessidade de rodar o programa.
 
+-->
+
 ### O conjunto amplo de testes executado após alterações no código para garantir que funcionalidades antigas não foram danificadas, assegurando que novas alterações não reintroduziram defeitos antigos, são chamados de testes de ___.
 
 Resposta: regressão
@@ -417,6 +518,7 @@ Resposta: XPath | xpath
 
 > O CSS Selector não consegue subir na árvore do DOM (navegar para elementos pai) nem buscar elementos por texto contido, recursos suportados pelo XPath.
 
+<!--
 ### O Teste de Mutação injeta pequenas modificações sintáticas (mutantes) no código sob teste. Quando um mutante é gerado alterando um operador de `>=` para `>`, e a suíte de testes existente CONTINUA PASSANDO sem acusar erro, como esse mutante é classificado e o que esse resultado indica?
 
 1. [x] O mutante **Sobreviveu**, indicando que a suíte de testes possui uma deficiência ou brecha (falta de teste para o valor limite exato).
@@ -427,4 +529,6 @@ Resposta: XPath | xpath
 1. [ ] O teste de mutação falhou por problemas de sintaxe no interpretador Python.
 
 > Se a suíte de testes continua passando após a modificação do código de produção, o mutante **sobreviveu**. Isso revela um ponto cego na suíte de testes, mostrando que não existe asserção testando a condição limite específica.
+
+-->
 
