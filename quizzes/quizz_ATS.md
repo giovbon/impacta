@@ -212,7 +212,7 @@ Resposta: when | When | @when
 > No GitHub Actions, os workflows são ativados por eventos (como `push`). Os **Jobs** rodam concorrentemente por padrão em **Runners** separados. Dentro de cada Job, os **Steps** são executados um por um em sequência.
 
 
-### O papel da Action oficial ___ logo no primeiro passo (step) de um Job no GitHub Actions é o de copiar todo o código-fonte do repositório para o ambiente limpo e isolado do Runner.
+### A Action ___ tem o papel de copiar todo o código-fonte do repositório para o ambiente limpo e isolado do Runner, logo no primeiro passo (step) de um Job no GitHub Actions.
 
 Resposta: actions/checkout | actions/checkout@v4
 
@@ -267,3 +267,164 @@ Resposta: actions/checkout | actions/checkout@v4
 1. [ ] A espera explícita é nativa do navegador Firefox, sendo incompatível com o ChromeDriver.
 
 > A Espera Implícita define um tempo limite global de sondagem para localização de elementos na página. A Espera Explícita exige o uso de `WebDriverWait` combinado com `Expected Conditions` (EC) para aguardar estados específicos de um elemento.
+
+### Durante a automação de testes unitários com Pytest, é preciso validar se um método lança uma exceção adequada ao receber entradas inválidas. O método ___ atua como um gerenciador de contexto que verifica se o código executado dentro do bloco `with` dispara a exceção esperada. Caso a exceção ocorra, o teste é considerado bem-sucedido; caso contrário, o teste falha.
+
+Resposta: raises | pytest.raises
+
+> Funcionamento: Utiliza-se o gerenciador de contexto `with pytest.raises(ExcecaoEsperada):` envolvendo o trecho de código sob teste. O `pytest.raises` captura a exceção especificada e faz o teste passar se ela for lançada.
+
+### Dentro de testes de API. enquanto a biblioteca `requests` trabalha de forma puramente síncrona, a biblioteca ___ foi desenvolvida para suportar requisições assíncronas (`async`/`await`) e HTTP/2. Isso permite testar serviços concorrentes de alta performance de maneira eficiente.
+
+Resposta: httpx
+
+> Em arquiteturas síncronas, chamadas externas ou conexões ao banco travam a thread. Já nas assíncronas (`async`/`await`), economiza-se memória e suporta alto volume de requisições concorrentes.
+
+### Testes de desempenho, testes de usabilidade e testes de estresse/falha classificam-se em qual categoria de testes de software?
+
+1. [x] Testes de Requisitos Não-Funcionais.
+    > Avaliam atributos de qualidade do sistema, como velocidade, resiliência e facilidade de uso, e não regras de negócio específicas.
+1. [ ] Testes de Unidade Isolada.
+1. [ ] Testes de Mutação de Código.
+1. [ ] Testes Estáticos de Sintaxe.
+
+> Enquanto testes funcionais buscam encontrar falhas na lógica de negócio, testes não-funcionais aferem requisitos como velocidade e suporte à carga (desempenho), facilidade de navegação (usabilidade) e comportamento em desastres (resiliência/falhas).
+
+### Na automação de testes de interface gráfica (E2E) com Selenium, um grande desafio é a presença de ___, caracterizados como um teste que apresenta resultados inconsistentes (passa/falha) no mesmo código, causado frequentemente por problemas de sincronismo, temporização e seletores instáveis.
+
+Restosta: Flaky Tests
+
+> Um *flaky test* é aquele que gera resultados imprevisíveis na mesma versão do sistema. As causas mais comuns envolvem atrasos na rede, animações de interface e escolhas ruins de locators.
+
+
+### Na escolha de estratégias para localizar elementos no DOM (Locators), quais são os dois fatores fundamentais que devem ser equilibrados para garantir a qualidade da automação?
+
+1. [x] Performance (velocidade de busca no motor do navegador) e Resiliência (capacidade de não quebrar diante de mudanças visuais/estruturais).
+    > A seleção de seletores deve priorizar a rápida localização e a resistência a alterações no leiaute.
+1. [ ] Complexidade e Quantidade de linhas no código YAML.
+1. [ ] Criptografia do seletor e compatibilidade com bancos de dados relacionais.
+1. [ ] Tamanho da imagem da captura de tela e número de threads de CPU.
+
+> A escolha dos locators deve buscar máxima performance de busca do navegador e alta resiliênci, evitando que pequenas atualizações no CSS ou leiaute quebrem o teste.
+
+### Durante o desenvolvimento de suítes de teste unitário, a duplicação de código de teste para validar diferentes cenários de entrada e saída é considerada um anti-padrão. O recurso nativo do Pytest que resolve esse problema, permitindo a execução de uma mesma função de teste contra múltiplos conjuntos de dados, é o `@pytest.mark.` ___ (complete).
+
+Resposta: parametrize
+
+> Esse decorador injeta automaticamente cada tupla de dados como argumentos da função de teste, gerando um caso de teste individual para cada conjunto.
+
+> O decorador `@pytest.mark.parametrize` permite implementar testes orientados a dados (Data-Driven Testing), executando a função de teste de forma independente para cada combinação de parâmetros fornecida, sem interromper os demais cenários se um deles falhar.
+
+### Em projetos Python estruturados com o Pytest, o arquivo ___ `.py` contêm as fixtures globais para que fiquem disponíveis automaticamente para todos os arquivos de teste do diretório, sem a necessidade de importação explícita.
+
+Resposta: conftest
+
+> O arquivo `conftest.py` é o ponto central de compartilhamento de fixtures e configurações no Pytest. Qualquer fixture declarada nele é descoberta automaticamente por todos os arquivos de teste do mesmo nível de diretório ou inferiores.
+
+
+### Em engenharia de software, a medição de cobertura de código (Code Coverage) ajuíza a porcentagem de linhas ou ramos exercitados pela suíte de testes. Por que uma cobertura de 100% de linhas (Statement Coverage) NÃO garante a ausência de defeitos na aplicação?
+
+1. [x] Porque a cobertura de linhas indica apenas que o código foi executado, mas não garante que todas as combinações de condições lógicas foram testadas ou que as asserções do teste são suficientes.
+> Testar se uma linha rodou não significa que o valor de retorno foi validado de forma rigorosa ou que condições de borda foram cobertas.
+
+
+2. [ ] Porque a métrica de cobertura de código só é válida para linguagens compiladas como C e Java, sendo irrelevante para Python.
+3. [ ] Porque ferramentas de cobertura (como `pytest-cov`) calculam apenas linhas de comentário e assinaturas de funções.
+4. [ ] Porque atingir 100% de cobertura invalida os testes de integração do pipeline de CI/CD.
+
+> A cobertura de linhas mede a execução, não a qualidade das asserções. Uma suíte de testes pode atingir 100% de cobertura sem ter um único comando `assert`, falhando em detectar defeitos comportamentais.
+
+### Avaliar a efetividade da suíte de testes através da inserção de pequenas alterações intencionais no código fonte de produção, verificando se os testes falham ao detectar a mudança é uma técnica chamada de teste de ___ .
+
+Resposta: mutação
+
+### Nos testes de mutação, se os testes passarem após uma mutação no código de produção, dizemos que o mutante ___, indicando uma brecha na suíte de testes.
+
+Resposta: sobreviveu
+
+> O Teste de Mutação afere a qualidade dos próprios testes. Ele introduz defeitos propositais ("mutantes") no código de produção; se os testes continuarem passando (mutante sobreviveu), a suíte é fraca ou possui asserções incompletas naquele trecho.
+
+### No contexto de automação de testes de sistema e interface gráfica (E2E) com Selenium, a utilização do padrão de projeto **Page Object Model (POM)** é amplamente recomendada. Qual é o propósito arquitetural desse padrão?
+
+1. [x] Abstrair as páginas Web em classes Python onde os elementos de tela (locators) e as interações de usuário são encapsulados, separando os detalhes da interface da lógica do script de teste.
+> Facilita a manutenção: se o ID de um botão mudar no HTML, atualiza-se apenas a classe da página, sem quebrar os arquivos de teste.
+
+
+1. [ ] Converter chamadas de API REST escritas em YAML no Tavern diretamente para scripts do Selenium WebDriver.
+1. [ ] Substituir o uso do protocolo W3C WebDriver pela leitura direta do código-fonte do servidor.
+1. [ ] Garantir que todas as páginas da aplicação Web sejam testadas de forma síncrona sem o uso de navegadores.
+
+> O Page Object Model (POM) reduz a duplicação e melhora a manutenção dos testes E2E. Cada página da aplicação torna-se uma classe; as operações (clicar, preencher) viram métodos, isolando o teste contra alterações de leiaute ou seletores HTML.
+
+
+### Quais das seguintes opções representam benefícios diretos da adoção do padrão Page Object Model em projetos de automação E2E?
+
+* [x] Reutilização de código de interação com a interface gráfica em múltiplos testes.
+* [x] Facilidade de manutenção quando ocorrem alterações na estrutura HTML ou seletores dos elementos da página.
+* [x] Maior legibilidade dos scripts de teste, que passam a descrever ações de alto nível do usuário.
+* [ ] Eliminação da necessidade de utilizar ferramentas de integração contínua (CI/CD) como o GitHub Actions.
+
+> O POM melhora a reusabilidade, a legibilidade e a manutenibilidade das suítes de teste de interface, sem qualquer relação com a eliminação de esteiras de CI/CD.
+
+### Uma regra de negócio determina que um desconto é concedido apenas para compras com valor total entre R$ 100,00 e R$ 500,00 (inclusive). Ao aplicar a técnica de **Análise de Valor Limite (Boundary Value Analysis)**, quais valores devem ser selecionados para testar essa regra de forma otimizada?
+
+1. [x] R$ 99,99; R$ 100,00; R$ 100,01; R$ 499,99; R$ 500,00 e R$ 500,01.
+> Testa exatamente nas bordas (limite inferior e superior, imediatamente antes e imediatamente depois).
+
+1. [ ] R$ 0,00; R$ 250,00 e R$ 1000,00.
+> Seleciona apenas valores intermediários (particionamento de equivalência simples), ignorando os limites onde os erros costumam ocorrer.
+
+1. [ ] R$ 100,00 e R$ 500,00 exclusivamente.
+1. [ ] Qualquer valor aleatório gerado por uma biblioteca de testes de carga.
+
+> A Análise de Valor Limite foca nas fronteiras das classes de equivalência (imediatamente abaixo, no limite exato e imediatamente acima), pois é onde os desenvolvedores mais cometem enganos de operadores condicionais (ex: `<` em vez de `<=`).
+
+### A técnica de **Particionamento por Classes de Equivalência** visa reduzir o número total de casos de teste necessários. Qual é a premissa dessa técnica?
+
+1. [x] Dividir o domínio de entrada de dados em partes (classes) onde se presume que o sistema apresentará o mesmo comportamento para qualquer valor pertencente a essa mesma classe.
+> Se o sistema se comporta da mesma forma para todo o intervalo, basta testar um único representante daquela classe.
+
+1. [ ] Testar exaustivamente todas as combinações de números inteiros possíveis suportadas pela memória do computador.
+1. [ ] Executar o mesmo caso de teste várias vezes até que o banco de dados atinja a capacidade máxima.
+1. [ ] Validar apenas as entradas que causam exceções irrecuperáveis no sistema operacional.
+
+> O Particionamento por Classes de Equivalência divide os dados de entrada em conjuntos válidos e inválidos. Espera-se que qualquer elemento de uma mesma classe gere o mesmo resultado, permitindo escolher apenas um representante por classe.
+
+### Seguem atividades típicas de Testes ___ : Inspeção de código-fonte, revisão por pares (Code Review) e análise automatizada por Linters (ex: Flake8, Pylint, SonarQube) sem executar a aplicação.
+
+Resposta: estáticos | estaticos | estático | estatico
+
+> Esse tipo de teste examinam o código, documentação e arquitetura sem necessidade de colocar o sistema em execução.
+
+> Testes estáticos analisam artefatos (código, requisitos, diagramas) sem executar o programa, identificando falhas de sintaxe, más práticas, vulnerabilidades e desvios de padrão antes do tempo de execução (*runtime*).
+
+### Ferramentas automatizadas que analisam o código-fonte sem executá-lo para identificar violações de estilo, potenciais bugs e vulnerabilidades de segurança são conhecidas como analisadores estáticos ou ___.
+
+> Categoria de ferramentas que inspecionam o código em tempo de desenvolvimento (ex: Flake8, Pylint, ESLint).
+
+Resposta: linters | Linters | linter
+
+> Os **Linters** inspecionam o código-fonte em busca de erros sintáticos, padrões de código inadequados, variáveis não utilizadas e falhas potenciais de segurança sem a necessidade de rodar o programa.
+
+### O conjunto amplo de testes executado após alterações no código para garantir que funcionalidades antigas não foram danificadas, assegurando que novas alterações não reintroduziram defeitos antigos, são chamados de testes de ___.
+
+Resposta: regressão
+
+
+### Na automação de testes E2E com Selenium WebDriver, a escolha da estratégia de localização de elementos (Locators) afeta a velocidade e a resiliência dos scripts. CSS Selectors possuem melhor desempenho de busca no motor do navegador, mas o locator ___ possui maior poder expressivo, permitindo navegar em direção aos elementos pai (`parent`) e buscar por texto exato.
+
+Resposta: XPath | xpath
+
+> O CSS Selector não consegue subir na árvore do DOM (navegar para elementos pai) nem buscar elementos por texto contido, recursos suportados pelo XPath.
+
+### O Teste de Mutação injeta pequenas modificações sintáticas (mutantes) no código sob teste. Quando um mutante é gerado alterando um operador de `>=` para `>`, e a suíte de testes existente CONTINUA PASSANDO sem acusar erro, como esse mutante é classificado e o que esse resultado indica?
+
+1. [x] O mutante **Sobreviveu**, indicando que a suíte de testes possui uma deficiência ou brecha (falta de teste para o valor limite exato).
+	> Se o teste não falhou com a mudança no código de produção, significa que nenhum teste validou aquele ponto de borda.
+
+1. [ ] O mutante foi **Morto**, confirmando a alta eficácia e rigor da suíte de testes.
+1. [ ] O mutante é **Equivalente**, significando que o código mutado é mais rápido que o original.
+1. [ ] O teste de mutação falhou por problemas de sintaxe no interpretador Python.
+
+> Se a suíte de testes continua passando após a modificação do código de produção, o mutante **sobreviveu**. Isso revela um ponto cego na suíte de testes, mostrando que não existe asserção testando a condição limite específica.
+
