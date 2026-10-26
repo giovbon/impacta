@@ -28,3 +28,7 @@
 ## Github Actions
 - Conceitos de CI/CD (Integração e Entrega Contínua)
 - Criando pipelines com Github Actions (Automação da suíte em cada push/PR)
+
+<!--
+Sanity Test e Smoke Test e Teste de Contrato de API e Mutante Equivalente
+-->
