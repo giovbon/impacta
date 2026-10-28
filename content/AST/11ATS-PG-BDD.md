@@ -7,6 +7,7 @@ typst:
   name: "Exercício AST11"
 submission: 
   - "AST11"
+    "AST11 Manha"
 codes: "codes/bdd.md"
 ---
 
