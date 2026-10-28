@@ -93,6 +93,18 @@ Ao abrir o terminal na pasta do projeto e executar o comando pytest, o desenvolv
 
 > **Nomes de Arquivo:** O Pytest procura arquivos que começam com `test_` (ex: `test_calculadora.py`) ou terminam com `_test.py`.
 
+### Para um workflow funcionar ele deve estar na pasta (a partir da raiz do repo): `/___/workflows`
+
+Resposta: .github
+
+### No desenvolvimento moderno de software, por que a execução de testes automatizados é transferida da máquina local do desenvolvedor para um serviço como o GitHub Actions?
+1. [ ] A) Porque o GitHub Actions substitui a escrita dos testes em Python/Pytest, gerando os testes automaticamente a partir do histórico de commits.
+2. [x] B) Porque a qualidade do software não pode depender do ambiente ou da execução manual na máquina do desenvolvedor; o GitHub Actions automatiza essa validação ao disparar uma infraestrutura isolada (Runner) a cada push ou pull request.
+3. [ ] C) Porque os testes automatizados só conseguem acessar bancos de dados e APIs externas quando executados na nuvem do GitHub.
+4. [ ] D) Para reduzir a quantidade de código no repositório, transferindo os arquivos de teste para serem salvos na nuvem.Gabarito e Comentário:
+
+> No ambiente de desenvolvimento, a execução manual de testes no terminal do próprio desenvolvedor está sujeita a falhas humanas e variações de ambiente ("na minha máquina funciona"). O GitHub Actions garante que a suíte de testes seja executada de forma autônoma e padronizada em uma máquina virtual limpa (Runner) a cada alteração enviada ao repositório. 
+
 ### Durante a escrita de testes de unidade para um módulo de validação de dados de clientes, um desenvolvedor utilizou o gerenciador de contexto `with pytest.raises(...)` para garantir que exceções esperadas sejam lançadas ao receber dados incorretos.
 
 Analise o trecho de código abaixo:
@@ -160,6 +172,19 @@ def conexao_global():
 Resposta: session
 
 > O parâmetro `scope="session"` faz com que a fixture seja instanciada apenas uma vez durante toda a execução da suíte do Pytest, independentemente da quantidade de testes ou arquivos executados. É o escopo mais abrangente do Pytest, indicado para recursos pesados compartilhados globalmente.
+
+### A fixture ___ roda uma vez para cada teste. Se 10 testes chamarem a fixture com esse escopo (default), ela roda 10 vezes. Ideal para dados simples em memória.
+
+Resposta: function
+
+### Em relação às fixtures, complete abaixo com o parâmetro que permite que uma fixture execute múltiplas vezes com dados diferentes:
+
+```python
+@pytest.fixture( ___ =["mysql", "postgres", "sqlite"])
+def banco_dados(request):
+```
+
+Resposta: params
 
 ### O ciclo fundamental do Desenvolvimento Dirigido por Testes (TDD) é composto por três etapas iterativas. Assinale a alternativa que indica a sequência correta desse ciclo e o significado de suas fases:
 
@@ -257,6 +282,22 @@ Resposta: save_screenshot | save_screenshot()
 
 > O BDD foca no comportamento do sistema usando linguagem natural estruturada (Gherkin). Ele resolve falhas de comunicação alinhando as perspectivas do Product Owner (PO), Desenvolvedor (Dev) e Analista de Qualidade (QA) antes de iniciar a codificação.
 
+### O que caracteriza essencialmente a prática do Desenvolvimento Dirigido por Testes (TDD)?
+1. [ ] Criar o código de produção completo e, em seguida, escrever os testes automatizados para validar a implementação.
+1. [x] Escrever os testes unitários antes de implementar o código de produção correspondente.
+1. [ ] Testar manualmente a interface do usuário após cada grande entrega de software.
+1. [ ] Utilizar apenas testes de integração em vez de testes unitários.
+
+> O TDD (também conhecido como Test-First Development) baseia-se na inversão do fluxo tradicional: escreve-se o teste primeiro. O teste inicialmente falha, servindo como especificação para que se escreva o código de produção necessário para fazê-lo passar.
+
+### Qual é a conduta orientada pelo TDD ao identificar um bug no sistema?
+1. [ ] Alterar diretamente o código de produção até que o bug desapareça e depois subir para produção.
+1. [x] B) Escrever primeiro um teste que reproduza o bug (gerando um resultado Red), para só então corrigir o código e fazê-lo passar (Green).
+1. [ ] C) Excluir os testes da funcionalidade afetada para evitar falhas na esteira de compilação.
+1. [ ] D) Reescrever toda a suíte de testes do projeto antes de investigar o erro.
+
+> Escrever um teste que reproduz o erro antes de corrigi-lo assegura que a falha foi compreendida e funciona como uma proteção permanente para que o mesmo erro não volte a acontecer no futuro. 
+
 ### Na sintaxe Gherkin, a palavra-chave ___ é utilizada para especificar uma pré-condição necessária antes de executar a ação principal do cenário.
 
 Resposta: given
@@ -278,6 +319,45 @@ Resposta: when | When | @when
 
 > O decorador `@when` faz a correspondência exata do texto da etapa "Quando" do arquivo Gherkin com a função Python que executa essa ação no `pytest-bdd`.
 
+### Sobre o BDD, complete corretamente:
+
+```
+Feature: Checkout de produtos na loja virtual
+___ : o usuário está autenticado no sistema
+And: o usuário tem algum produto no carrinho
+When: o usuário clica no botão "Finalizar Compra"
+Then: a tela de pagamento deve ser exibida
+```
+
+Resposta: given
+
+### A biblioteca `pytest-bdd` utiliza o arquivo .___ para especificar e descrever os cenários de teste em sintaxe Gherkin.
+
+Resposta: feature
+
+> O arquivo com extensão `.feature` armazena a descrição do comportamento do sistema escrita em linguagem natural estruturada (Gherkin, utilizando palavras-chave como *Funcionalidade*, *Cenário*, *Dado*, *Quando* e *Então*). O `pytest-bdd` atua como um tradutor, lendo esse arquivo `.feature` e vinculando cada etapa do texto às funções de teste correspondentes no código Python.
+
+### O Selenium é focado em navegadores e encontra elementos no HTML (por ID, XPath, CSS), tornando a automação robusta mesmo se a janela for redimensionada. Já o ___ depende de coordenadas fixas de tela ou imagens capturadas, tornando o script vulnerável a alterações na resolução ou na posição das janelas.
+
+Resposta: PyAutoGUI
+
+### Em qual nível da Pirâmide de Testes o Selenium se posiciona predominantemente e qual é o tipo de teste construído por ele?
+
+1. [ ] A) Na base da pirâmide, onde executa testes unitários rápidos para pequenas partes isoladas de código.
+1. [ ] B) Na camada intermediária, criando testes de integração exclusivos para bancos de dados sem interface visual.
+1. [x] C) No topo da pirâmide, executando testes de sistema, de interface de usuário (UI) e ponta a ponta (E2E).
+1. [ ] D) Fora da pirâmide, pois ferramentas de automação de navegador servem apenas para extração de dados (web scraping) e não para testes de software.
+
+> O Selenium simula as ações de um usuário real no navegador. Na pirâmide de testes, essa abordagem é classificada no topo, compondo testes de sistema / E2E / UI que validam os fluxos completos da aplicação de ponta a ponta. 
+
+### Ao realizar uma ação em um site que abre uma nova aba no navegador, como o Selenium gerencia essa nova janela?
+
+1. [ ] A) O Selenium altera o foco automaticamente para a nova aba assim que ela é aberta pelo navegador.
+1. [x] B) O Selenium mantém o foco na aba inicial. Para interagir com a nova aba, é necessário obter a lista `driver.window_handles` e alterar o foco explicitamente através do comando `driver.switch_to.window()`.
+1. [ ] C) O Selenium lança uma exceção `TabNotAllowedException` e encerra a execução, pois não tem suporte a múltiplas janelas.
+1. [ ] D) A nova aba é fechada automaticamente pelo Selenium para evitar o consumo excessivo de memória RAM.
+
+> O Selenium só controla a aba em que foi iniciado. Para trabalhar em outra aba, é preciso capturar as identificações na lista `driver.window_handles` (onde o índice 0 é a primeira e 1 é a segunda) e trocar o foco com `driver.switch_to.window(...)`.
 
 ### O GitHub Actions organiza automações através de eventos, workflows, jobs e steps. Sobre a arquitetura e ordem de execução desses elementos, assinale a opção correta:
 
@@ -315,6 +395,14 @@ Resposta: actions/checkout | actions/checkout@v4
 - [ ] `git commit`: Disparado localmente na máquina do desenvolvedor antes de salvar a alteração.
 
 > O GitHub Actions reage a eventos ocorridos no servidor do GitHub, como `push`, `pull_request`, `workflow_dispatch` ou rotinas agendadas (`schedule`). 
+
+### Complete as lacunas sobre o funcionamento do GitHub Actions em um pipeline de testes: "Para evitar que a validação dependa do computador do desenvolvedor, o GitHub Actions disponibiliza uma máquina virtual limpa chamada ___. Quando ocorre um gatilho como o `push`, o workflow é disparado para configurar o ambiente e rodar os testes automaticamente."
+
+Resposta: runner
+
+### No contexto de DevOps, a Integração Contínua (CI) busca integrar alterações de código frequentemente no repositório compartilhado de forma segura. O ___ conecta os testes automatizados ao fluxo do Git (eventos de `push` ou `pull request`), garantindo a validação contínua e impedindo que código quebrado ou sem cobertura chegue aos ambientes finais.
+
+Resposta: GitHub Actions
 
 ### Em automação de testes E2E com Selenium, o surgimento de testes oscilantes (*flaky tests*) ocorre com frequência devido a atrasos de rede ou renderizações dinâmicas. Por que o uso de `time.sleep()` é considerado uma má prática em relação às esperas inteligentes?
 
@@ -532,3 +620,25 @@ Resposta: XPath | xpath
 
 -->
 
+### Para que o `pytest` reconheça e execute os cenários descritos em um arquivo `.feature`, de que forma o `pytest-bdd` realiza a ligação desse arquivo com o arquivo de teste Python (`test_*.py`)?**
+
+1. [ ] Importando diretamente a classe `Feature` via `from pytest_bdd import Feature` e instanciando o arquivo como um módulo Python.
+1. [x] Chamando a função `scenarios('caminho/do/arquivo.feature')` (ou utilizando o decorador `@scenario`) dentro do arquivo Python de teste.
+
+1. [ ] Renomeando o arquivo `.feature` para `.py` e utilizando a instrução `import` padrão do Python.
+1. [ ] Adicionando a tag `# pytest: load_feature` na primeira linha do arquivo `.feature`.
+
+
+> Para que a suíte do `pytest` descubra e execute os cenários descritos em Gherkin, o arquivo de teste Python (`test_*.py`) precisa apontar para o arquivo `.feature` correspondente. O `pytest-bdd` fornece a função `scenarios('arquivo.feature')` (ou o decorador individual `@scenario('arquivo.feature', 'Nome do Cenário')`), que faz a leitura do arquivo de texto, carrega seus cenários e os mapeia para as funções decoradas com `@given`, `@when` e `@then` no Python.
+
+### Sobre o `pytest-bdd`, preencha a lacuna:
+
+```python
+from pytest_bdd import _________, given, when, then
+
+# Comando do pytest-bdd utilizado para carregar o arquivo .feature
+# e vincular todos os seus cenários à execução do Pytest:
+_________('soma.feature')
+```
+
+Resposta: scenarios
