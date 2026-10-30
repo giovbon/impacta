@@ -1,5 +1,5 @@
 ---
-title: Revisão ATS
+title: ✅ Revisão ATS
 shuffleQuestions: true
 shuffleAnswers: true
 ---
@@ -72,7 +72,7 @@ Resposta: yield
 
 > No `pytest`, o `yield` pausa a execução da função de fixture para injetar a dependência no teste. Quando o teste termina, o Pytest retoma a execução imediatamente após o `yield` para executar o código de *teardown* (limpeza).
 
-### Um desenvolvedor criou o arquivo de teste test_calculadora.py contendo o seguinte código em Python:
+### Um desenvolvedor criou o arquivo de teste `test_calculadora.py` contendo o seguinte código em Python:
 
 ```python
 from function.py import soma
@@ -93,7 +93,7 @@ Ao abrir o terminal na pasta do projeto e executar o comando pytest, o desenvolv
 
 > **Nomes de Arquivo:** O Pytest procura arquivos que começam com `test_` (ex: `test_calculadora.py`) ou terminam com `_test.py`.
 
-### Para um workflow funcionar ele deve estar na pasta (a partir da raiz do repo): `/___/workflows`
+### Para um workflow do Github Actions funcionar ele deve estar na pasta (a partir da raiz do repo): `/___/workflows`
 
 Resposta: .github
 
@@ -162,6 +162,20 @@ Resposta: approx(0.3)
 
 > Computadores apresentam limitações ao representar números decimais em binário. O método `pytest.approx()` resolve isso calculando a diferença entre os números e aceitando o resultado caso a variação seja insignificante.
 
+### O modo ___ do Selenium executa o navegador e as automações em segundo plano. Ele consome menos memória, é mais rápido e não atrapalha o uso do computador, além de ser a escolha padrão para ambientes de linha de comando, como no Github Actions.
+
+Resposta: headless
+
+> Segue a forma de usar esse modo: 
+```py 
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+
+options = Options()
+options.add_argument("--headless=new")
+driver = webdriver.Chrome(options=options)
+```
+
 ### Complete a declaração da fixture no Pytest para que ela seja executada uma única vez para toda a sessão de testes, compartilhando o recurso entre todos os arquivos:
 
 ```python
@@ -173,7 +187,7 @@ Resposta: session
 
 > O parâmetro `scope="session"` faz com que a fixture seja instanciada apenas uma vez durante toda a execução da suíte do Pytest, independentemente da quantidade de testes ou arquivos executados. É o escopo mais abrangente do Pytest, indicado para recursos pesados compartilhados globalmente.
 
-### A fixture ___ roda uma vez para cada teste. Se 10 testes chamarem a fixture com esse escopo (default), ela roda 10 vezes. Ideal para dados simples em memória.
+### A fixture com escopo ___ roda uma vez para cada teste. Se 10 testes chamarem a fixture com esse escopo (default), ela roda 10 vezes. Ideal para dados simples em memória.
 
 Resposta: function
 
@@ -292,9 +306,9 @@ Resposta: save_screenshot | save_screenshot()
 
 ### Qual é a conduta orientada pelo TDD ao identificar um bug no sistema?
 1. [ ] Alterar diretamente o código de produção até que o bug desapareça e depois subir para produção.
-1. [x] B) Escrever primeiro um teste que reproduza o bug (gerando um resultado Red), para só então corrigir o código e fazê-lo passar (Green).
-1. [ ] C) Excluir os testes da funcionalidade afetada para evitar falhas na esteira de compilação.
-1. [ ] D) Reescrever toda a suíte de testes do projeto antes de investigar o erro.
+1. [x] Escrever primeiro um teste que reproduza o bug (gerando um resultado Red), para só então corrigir o código e fazê-lo passar (Green).
+1. [ ] Excluir os testes da funcionalidade afetada para evitar falhas na esteira de compilação.
+1. [ ] Reescrever toda a suíte de testes do projeto antes de investigar o erro.
 
 > Escrever um teste que reproduz o erro antes de corrigi-lo assegura que a falha foi compreendida e funciona como uma proteção permanente para que o mesmo erro não volte a acontecer no futuro. 
 
@@ -343,19 +357,19 @@ Resposta: PyAutoGUI
 
 ### Em qual nível da Pirâmide de Testes o Selenium se posiciona predominantemente e qual é o tipo de teste construído por ele?
 
-1. [ ] A) Na base da pirâmide, onde executa testes unitários rápidos para pequenas partes isoladas de código.
-1. [ ] B) Na camada intermediária, criando testes de integração exclusivos para bancos de dados sem interface visual.
-1. [x] C) No topo da pirâmide, executando testes de sistema, de interface de usuário (UI) e ponta a ponta (E2E).
-1. [ ] D) Fora da pirâmide, pois ferramentas de automação de navegador servem apenas para extração de dados (web scraping) e não para testes de software.
+1. [ ] Na base da pirâmide, onde executa testes unitários rápidos para pequenas partes isoladas de código.
+1. [ ] Na camada intermediária, criando testes de integração exclusivos para bancos de dados sem interface visual.
+1. [x] No topo da pirâmide, executando testes de sistema, de interface de usuário (UI) e ponta a ponta (E2E).
+1. [ ] Fora da pirâmide, pois ferramentas de automação de navegador servem apenas para extração de dados (web scraping) e não para testes de software.
 
 > O Selenium simula as ações de um usuário real no navegador. Na pirâmide de testes, essa abordagem é classificada no topo, compondo testes de sistema / E2E / UI que validam os fluxos completos da aplicação de ponta a ponta. 
 
 ### Ao realizar uma ação em um site que abre uma nova aba no navegador, como o Selenium gerencia essa nova janela?
 
-1. [ ] A) O Selenium altera o foco automaticamente para a nova aba assim que ela é aberta pelo navegador.
-1. [x] B) O Selenium mantém o foco na aba inicial. Para interagir com a nova aba, é necessário obter a lista `driver.window_handles` e alterar o foco explicitamente através do comando `driver.switch_to.window()`.
-1. [ ] C) O Selenium lança uma exceção `TabNotAllowedException` e encerra a execução, pois não tem suporte a múltiplas janelas.
-1. [ ] D) A nova aba é fechada automaticamente pelo Selenium para evitar o consumo excessivo de memória RAM.
+1. [ ] O Selenium altera o foco automaticamente para a nova aba assim que ela é aberta pelo navegador.
+1. [x] O Selenium mantém o foco na aba inicial. Para interagir com a nova aba, é necessário obter a lista `driver.window_handles` e alterar o foco explicitamente através do comando `driver.switch_to.window()`.
+1. [ ] O Selenium lança uma exceção `TabNotAllowedException` e encerra a execução, pois não tem suporte a múltiplas janelas.
+1. [ ] A nova aba é fechada automaticamente pelo Selenium para evitar o consumo excessivo de memória RAM.
 
 > O Selenium só controla a aba em que foi iniciado. Para trabalhar em outra aba, é preciso capturar as identificações na lista `driver.window_handles` (onde o índice 0 é a primeira e 1 é a segunda) e trocar o foco com `driver.switch_to.window(...)`.
 
@@ -415,7 +429,7 @@ Resposta: GitHub Actions
 
 > O `time.sleep()` interrompe o script de forma engessada. Já esperas como a Espera Implícita e Explícita utilizam *polling* (sondagem em intervalos regulares) para continuar a execução no exato milissegundo em que a condição ou elemento se torna disponível.
 
-<!-- REMOVE AST -->
+
 ### No Tavern, qual é a finalidade da propriedade `strict: False` configurada no bloco de validação de resposta (`response`)?
 
 1. [x] Permitir que o teste passe validando apenas os campos informados no YAML, ignorando outras chaves adicionais retornadas na resposta JSON da API.
@@ -446,7 +460,7 @@ Resposta: raises | pytest.raises
 
 > Funcionamento: Utiliza-se o gerenciador de contexto `with pytest.raises(ExcecaoEsperada):` envolvendo o trecho de código sob teste. O `pytest.raises` captura a exceção especificada e faz o teste passar se ela for lançada.
 
-<!-- REMOVE AST -->
+
 ### Dentro de testes de API. enquanto a biblioteca `requests` trabalha de forma puramente síncrona, a biblioteca ___ foi desenvolvida para suportar requisições assíncronas (`async`/`await`) e HTTP/2. Isso permite testar serviços concorrentes de alta performance de maneira eficiente.
 
 Resposta: httpx
@@ -517,19 +531,6 @@ Resposta: coverage html
 
 > A cobertura de linhas mede a execução, não a qualidade das asserções. Uma suíte de testes pode atingir 100% de cobertura sem ter um único comando `assert`, falhando em detectar defeitos comportamentais.
 
-<!--
-### Avaliar a efetividade da suíte de testes através da inserção de pequenas alterações intencionais no código fonte de produção, verificando se os testes falham ao detectar a mudança é uma técnica chamada de teste de ___ .
-
-Resposta: mutação
-
-### Nos testes de mutação, se os testes passarem após uma mutação no código de produção, dizemos que o mutante ___, indicando uma brecha na suíte de testes.
-
-Resposta: sobreviveu
-
-> O Teste de Mutação afere a qualidade dos próprios testes. Ele introduz defeitos propositais ("mutantes") no código de produção; se os testes continuarem passando (mutante sobreviveu), a suíte é fraca ou possui asserções incompletas naquele trecho.
-
--->
-
 ### No contexto de automação de testes de sistema e interface gráfica (E2E) com Selenium, a utilização do padrão de projeto **Page Object Model (POM)** é amplamente recomendada. Qual é o propósito arquitetural desse padrão?
 
 1. [x] Abstrair as páginas Web em classes Python onde os elementos de tela (locators) e as interações de usuário são encapsulados, separando os detalhes da interface da lógica do script de teste.
@@ -576,25 +577,6 @@ Resposta: sobreviveu
 
 > O Particionamento por Classes de Equivalência divide os dados de entrada em conjuntos válidos e inválidos. Espera-se que qualquer elemento de uma mesma classe gere o mesmo resultado, permitindo escolher apenas um representante por classe.
 
-<!--
-### Seguem atividades típicas de Testes ___ : Inspeção de código-fonte, revisão por pares (Code Review) e análise automatizada por Linters (ex: Flake8, Pylint, SonarQube) sem executar a aplicação.
-
-Resposta: estáticos | estaticos | estático | estatico
-
-> Esse tipo de teste examinam o código, documentação e arquitetura sem necessidade de colocar o sistema em execução.
-
-> Testes estáticos analisam artefatos (código, requisitos, diagramas) sem executar o programa, identificando falhas de sintaxe, más práticas, vulnerabilidades e desvios de padrão antes do tempo de execução (*runtime*).
-
-### Ferramentas automatizadas que analisam o código-fonte sem executá-lo para identificar violações de estilo, potenciais bugs e vulnerabilidades de segurança são conhecidas como analisadores estáticos ou ___.
-
-> Categoria de ferramentas que inspecionam o código em tempo de desenvolvimento (ex: Flake8, Pylint, ESLint).
-
-Resposta: linters | Linters | linter
-
-> Os **Linters** inspecionam o código-fonte em busca de erros sintáticos, padrões de código inadequados, variáveis não utilizadas e falhas potenciais de segurança sem a necessidade de rodar o programa.
-
--->
-
 ### O conjunto amplo de testes executado após alterações no código para garantir que funcionalidades antigas não foram danificadas, assegurando que novas alterações não reintroduziram defeitos antigos, são chamados de testes de ___.
 
 Resposta: regressão
@@ -606,19 +588,6 @@ Resposta: XPath | xpath
 
 > O CSS Selector não consegue subir na árvore do DOM (navegar para elementos pai) nem buscar elementos por texto contido, recursos suportados pelo XPath.
 
-<!--
-### O Teste de Mutação injeta pequenas modificações sintáticas (mutantes) no código sob teste. Quando um mutante é gerado alterando um operador de `>=` para `>`, e a suíte de testes existente CONTINUA PASSANDO sem acusar erro, como esse mutante é classificado e o que esse resultado indica?
-
-1. [x] O mutante **Sobreviveu**, indicando que a suíte de testes possui uma deficiência ou brecha (falta de teste para o valor limite exato).
-	> Se o teste não falhou com a mudança no código de produção, significa que nenhum teste validou aquele ponto de borda.
-
-1. [ ] O mutante foi **Morto**, confirmando a alta eficácia e rigor da suíte de testes.
-1. [ ] O mutante é **Equivalente**, significando que o código mutado é mais rápido que o original.
-1. [ ] O teste de mutação falhou por problemas de sintaxe no interpretador Python.
-
-> Se a suíte de testes continua passando após a modificação do código de produção, o mutante **sobreviveu**. Isso revela um ponto cego na suíte de testes, mostrando que não existe asserção testando a condição limite específica.
-
--->
 
 ### Para que o `pytest` reconheça e execute os cenários descritos em um arquivo `.feature`, de que forma o `pytest-bdd` realiza a ligação desse arquivo com o arquivo de teste Python (`test_*.py`)?**
 
@@ -642,3 +611,86 @@ _________('soma.feature')
 ```
 
 Resposta: scenarios
+
+### Sobre o dublê de testes *Dummy*, marque as afirmações VERDADEIRAS:
+ 
+- [x] Um objeto *Dummy* é passado como argumento em um método apenas para preencher a assinatura do parâmetro, mas nunca é efetivamente lido ou utilizado na lógica do teste.
+
+- [x] *Dummies* servem primordialmente para satisfazer o sistema de tipos do compilador ou interpretador.
+
+- [x] Ao testar a lógica de geração de um relatório que exige conexões e configurações de tema, um parâmetro de estilo não utilizado na verificação pode ser passado como `None` ou como um objeto/dicionário vazio atuando como *Dummy*.
+
+- [ ] Um Dummy é utilizado para simular a regra de negócio completa de um banco de dados em memória.
+    > Falso: Isso descreve um Fake
+
+- [ ] O objeto Dummy registra e armazena o histórico de quantas vezes seus métodos foram chamados para asserção posterior.
+    > Falso: Isso descreve um Spy
+
+### Sobre o dublê de testes *Fake*, marque as afirmações VERDADEIRAS:
+
+- [x] Um *Fake* possui uma implementação funcional mais simples e leve do que o componente de produção (ex: um banco de dados em memória utilizando dicionário/tabela hash ou SQLite em RAM).
+- [x] Diferente de *Stubs* e *Mocks*, que devolvem respostas fixas ou simuladas, o *Fake* realmente processa e armazena dados em um ambiente controlado.
+- [x] O uso de um *FakeStorageClient* que simula o upload e salvamento de arquivos na memória RAM em vez de salvar no serviço S3/Nuvem real é um exemplo típico desse dublê.
+- [ ] Um *Fake* é um objeto pré-programado sem qualquer lógica que apenas falha o teste se for invocado.
+    > Falso: O *Fake* possui lógica funcional interna simplificada
+- [ ] *Fakes* são usados apenas para preencher parâmetros de funções sem que nenhuma linha de código deles seja executada. 
+    > Falso: Isso é a definição de *Dummy*
+
+
+### Sobre o dublê de testes *Stub*, marque as afirmações VERDADEIRAS:
+
+- [x] A característica principal de um *Stub* é fornecer respostas pré-programadas e prontas para chamadas específicas efetuadas pelo SUT, sem conter lógica interna.
+- [x] O *Stub* é focado em testes baseados em estado (*state-based testing*), provendo as entradas indiretas necessárias para testar diferentes fluxos e ramificações condicionais de um código.
+- [x] Configurar um retorno fixo no formato JSON ao interceptar uma requisição de API externa para testar a reação do sistema é uma aplicação clássica de *Stub*.
+- [ ] O Stub é utilizado para validar a ordem exata em que os métodos de uma dependência foram invocados durante o teste.
+    > Falso: A verificação de interações e comportamento é papel do *Mock* ou *Spy*
+- [ ] Um Stub obrigatoriamente executa a implementação real de conexões com banco de dados de produção.
+    > Falso: Ele substitui a dependência por valores estáticos e simulados
+
+
+### Sobre o dublê de testes *Spy*, marque as afirmações VERDADEIRAS:
+
+* [x] O *Spy* atua como um observador: ele registra informações de execução, como o número de vezes que um método foi invocado, quais argumentos foram passados e a ordem das chamadas.
+* [x] O *Spy* permite que o desenvolvedor interrogue o objeto ao final do teste (ex: `assert_called_once_with(...)`) para verificar se o comportamento colateral ocorreu adequadamente.
+* [x] Substituir uma função de envio de e-mails por um *Spy* permite checar se o e-mail de confirmação foi disparado com o endereço do destinatário correto sem enviar o e-mail real.
+* [ ] Um *Spy* é um banco de dados temporário criado em memória para simular operações de CRUD.
+    > Falso: Isso descreve um *Fake*
+* [ ] A função do *Spy* é apenas passar argumentos nulos para preencher métodos que o interpretador exige.
+    > Falso: Isso descreve um *Dummy*
+
+### Sobre o dublê de testes *Mock*, marque as afirmações VERDADEIRAS:
+
+- [x] O *Mock* foca no teste de comportamento (*behavior-based testing*), assegurando que o SUT interaja com a dependência conforme as expectativas estabelecidas (métodos chamados, ordem e argumentos).
+- [x] Enquanto o *Stub* verifica o **estado de saída** do sistema, o *Mock* é projetado para verificar a **comunicação e o cumprimento de contratos/interações** entre os objetos.
+- [x] Em um fluxo de pagamento, um *Mock* pode ser programado para falhar o teste caso a verificação de prevenção à fraude não seja executada *antes* da chamada de cobrança do cartão.
+- [ ] O Mock substitui completamente a necessidade de escrever comandos de asserção ou verificação no teste.
+    > Falso: O teste interroga ou exige a verificação das expectativas do *Mock* para passar
+- [ ] Mocks e Stubs são termos exatamente idênticos, não existindo distinção conceitual na literatura de software.
+    > Falso: *Stubs* focam em prover estado/dados de entrada; *Mocks* focam em verificar comportamento e interações de saída
+
+### A Action `actions/`___ tem o papel de baixar a versão especificada da linguagem, instalá-la na máquina virtual do Runner e configurar as variáveis de ambiente necessárias para a execução do pipeline.
+
+Resposta: setup-python
+
+> A Action `actions/setup-python` garante a padronização do ambiente de execução, evitando divergências de versão entre a máquina do desenvolvedor e o servidor de Integração Contínua (CI). O parâmetro `python-version` define qual versão exata deve ser instalada.
+
+
+### Para reduzir o tempo de execução do Job e economizar recursos de CI/CD, a propriedade ___ (utilizada junto à Action `setup-python`) instrui o GitHub Actions a salvar as dependências baixadas na nuvem para que não precisem ser retransferidas a cada novo push.
+
+Resposta: cache: 'pip'
+
+> O uso de cache de dependências evita o download repetitivo de pacotes do PyPI (como Pytest, FastAPI e Selenium) a cada execução do pipeline, transformando instalações que levariam minutos em uma recuperação local de poucos segundos no Runner.
+
+
+### A palavra-chave ___ é utilizada em um Step para passar parâmetros, argumentos e configurações customizadas para dentro de uma Action reutilizável.
+
+Resposta: with
+
+> O bloco with atua como um conjunto de argumentos passados para uma função, permitindo personalizar o comportamento da Action (por exemplo, definindo a versão do software ou chave de acesso).
+
+
+### Enquanto a palavra-chave `uses` invoca uma Action pronta da comunidade ou do GitHub, a instrução ___ permite rodar scripts arbitrários de linha de comando no sistema operacional da máquina virtual.
+
+Resposta: run
+
+> A instrução run é utilizada dentro de um Step para executar comandos diretamente no terminal (Shell/Bash) do Runner, como a instalação de dependências via pip ou a invocação da suíte de testes.

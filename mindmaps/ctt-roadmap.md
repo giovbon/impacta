@@ -49,6 +49,11 @@
   - `git diff` `git blame` `git show`
 - `.gitignore`
 
+<!--
+Conventional commits: feat (nova funcionalidade), fix (correção), refactor, test, docs
+Semver: versionamento semântico
+-->
+
 
 ## Github Actions
 ### I
