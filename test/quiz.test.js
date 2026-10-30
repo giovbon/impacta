@@ -125,6 +125,66 @@ test("quiz: aceita frontmatter com BOM no começo", () => {
   assert.equal(comBom.questions.length, 1)
 })
 
+test("quiz: ignora questões dentro de comentários HTML", () => {
+  const fonte = [
+    "### Primeira?",
+    "",
+    "1. [x] A",
+    "1. [ ] B",
+    "",
+    "<!--",
+    "### Comentada?",
+    "",
+    "1. [x] A",
+    "1. [ ] B",
+    "-->",
+    "",
+    "### Segunda?",
+    "",
+    "Resposta: ok",
+    "",
+  ].join("\n")
+
+  const quiz = parseQuiz(fonte)
+
+  assert.equal(quiz.questions.length, 2)
+  assert.match(quiz.questions[0].prompt, /Primeira/)
+  assert.match(quiz.questions[1].prompt, /Segunda/)
+})
+
+test("quiz: remove comentários HTML inline de enunciado e opções", () => {
+  const [questao] = parseQuiz(
+    "### Qual <!-- anotação --> alternativa?\n\n1. [x] A <!-- correta -->\n1. [ ] B\n",
+  ).questions
+
+  assert.equal(questao.tipo, "single")
+  assert.match(questao.prompt, /Qual\s+alternativa\?/)
+  assert.doesNotMatch(questao.prompt, /anotação/)
+  assert.match(questao.options[0].texto, /^A\s*$/)
+})
+
+test("quiz: comentário de uma linha não engole a questão seguinte", () => {
+  const quiz = parseQuiz("<!-- REMOVE AST -->\n### Qual?\n\n1. [x] A\n1. [ ] B\n")
+
+  assert.equal(quiz.questions.length, 1)
+  assert.match(quiz.questions[0].prompt, /Qual\?/)
+})
+
+test("quiz: preserva <!-- --> dentro de bloco de código", () => {
+  const [questao] = parseQuiz(
+    "### Qual?\n\n```html\n<!-- conteúdo literal -->\n```\n\n1. [x] A\n1. [ ] B\n",
+  ).questions
+
+  assert.match(questao.prompt, /&lt;!-- conteúdo literal --&gt;/)
+})
+
+test("quiz: arquivo só com questões comentadas não tem questões", () => {
+  assert.throws(
+    () => parseQuiz("<!--\n### Comentada?\n\n1. [x] A\n1. [ ] B\n-->\n"),
+    /Nenhuma questão encontrada/,
+  )
+})
+
 test("quiz: rejeita escolha única com mais de uma correta", () => {
   assert.throws(
     () => parseQuiz("### Qual?\n\n1. [x] A\n1. [x] B\n"),

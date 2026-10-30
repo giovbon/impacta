@@ -4,7 +4,9 @@
  * O HTML já traz o gabarito em `data-correct`/`data-answers` (o quiz é
  * formativo, não uma avaliação). Este módulo cuida de marcar acertos/erros,
  * mostrar dicas, explicações, limpar, calcular a pontuação e gerar o `.txt`
- * com as questões erradas.
+ * com as questões erradas. Questões em branco não revelam o gabarito: a
+ * resposta correta, os comentários e a explicação só aparecem após uma
+ * tentativa.
  */
 
 /** Mesma normalização do build: caixa, crases e espaços repetidos não contam. */
@@ -98,6 +100,8 @@ function limparPergunta(pergunta) {
     feedbackPergunta.classList.remove("is-empty")
     const status = feedbackPergunta.querySelector(".quiz-feedback__status")
     if (status) status.textContent = ""
+    const explicacao = feedbackPergunta.querySelector(".quiz-explanation")
+    if (explicacao) explicacao.hidden = false
   }
 }
 
@@ -335,6 +339,7 @@ function nomeDoArquivo(quiz) {
 function descreverQuestao(pergunta, indice) {
   const numero = indice + 1
   const status = pergunta.dataset.quizStatus
+  const tentou = status !== "empty"
   const rotulo =
     status === "empty"
       ? "não respondida"
@@ -357,14 +362,10 @@ function descreverQuestao(pergunta, indice) {
   if (entrada) {
     const digitada = entrada.value.trim()
     const esperada = entrada.dataset.answerDisplay || lerAceitas(entrada)[0] || ""
-    linhas.push(
-      "Sua resposta:",
-      digitada ? indentar(digitada) : "  (em branco)",
-      "",
-      "Resposta correta:",
-      indentar(esperada),
-      "",
-    )
+    linhas.push("Sua resposta:", digitada ? indentar(digitada) : "  (em branco)", "")
+
+    // Sem tentativa, o relatório não entrega o gabarito.
+    if (tentou) linhas.push("Resposta correta:", indentar(esperada), "")
   } else {
     const opcoes = [...pergunta.querySelectorAll(".quiz-option")]
 
@@ -376,38 +377,44 @@ function descreverQuestao(pergunta, indice) {
     )
 
     linhas.push("Sua resposta:")
-    if (marcadas.length === 0) linhas.push("  (não respondida)")
-    for (const opcao of marcadas) {
-      linhas.push(`  - ${textoPlano(opcao.querySelector(".quiz-option__text"))}`)
-    }
+    if (!tentou) {
+      linhas.push("  (não respondida)", "")
+    } else {
+      for (const opcao of marcadas) {
+        linhas.push(`  - ${textoPlano(opcao.querySelector(".quiz-option__text"))}`)
+      }
 
-    linhas.push("", "Resposta correta:")
-    for (const opcao of corretas) {
-      linhas.push(`  - ${textoPlano(opcao.querySelector(".quiz-option__text"))}`)
-    }
-    linhas.push("")
-
-    const comentarios = opcoes
-      .map((opcao) => ({
-        texto: textoPlano(opcao.querySelector(".quiz-option__text")),
-        comentario: textoPlano(opcao.querySelector(".quiz-option__feedback")),
-      }))
-      .filter((item) => item.comentario)
-
-    if (comentarios.length > 0) {
-      linhas.push("Comentários das opções:")
-      for (const item of comentarios) {
-        linhas.push(`  - ${item.texto}: ${item.comentario}`)
+      linhas.push("", "Resposta correta:")
+      for (const opcao of corretas) {
+        linhas.push(`  - ${textoPlano(opcao.querySelector(".quiz-option__text"))}`)
       }
       linhas.push("")
+
+      const comentarios = opcoes
+        .map((opcao) => ({
+          texto: textoPlano(opcao.querySelector(".quiz-option__text")),
+          comentario: textoPlano(opcao.querySelector(".quiz-option__feedback")),
+        }))
+        .filter((item) => item.comentario)
+
+      if (comentarios.length > 0) {
+        linhas.push("Comentários das opções:")
+        for (const item of comentarios) {
+          linhas.push(`  - ${item.texto}: ${item.comentario}`)
+        }
+        linhas.push("")
+      }
     }
   }
 
   const dica = textoPlano(pergunta.querySelector(".quiz-hint"))
   if (dica) linhas.push("Dica:", indentar(dica), "")
 
-  const explicacao = textoPlano(pergunta.querySelector(".quiz-explanation"))
-  if (explicacao) linhas.push("Explicação:", indentar(explicacao), "")
+  // A explicação é a resolução: só entra no relatório depois de uma tentativa.
+  if (tentou) {
+    const explicacao = textoPlano(pergunta.querySelector(".quiz-explanation"))
+    if (explicacao) linhas.push("Explicação:", indentar(explicacao), "")
+  }
 
   return linhas
 }
@@ -531,6 +538,9 @@ function corrigir(quiz, perguntas) {
         feedbackPergunta.hidden = false
         feedbackPergunta.classList.toggle("is-empty", !respondeu)
 
+        const explicacao = feedbackPergunta.querySelector(".quiz-explanation")
+        if (explicacao) explicacao.hidden = !respondeu
+
         const esperada = entrada.dataset.answerDisplay || aceitas[0] || ""
         if (!respondeu) escreverStatus(status, "Digite uma resposta.", "aviso")
         else if (acertou) escreverStatus(status, "Resposta correta.", "ok")
@@ -543,19 +553,20 @@ function corrigir(quiz, perguntas) {
     const inputs = [...pergunta.querySelectorAll(".quiz-option__input")]
     const selecionadas = inputs.filter((input) => input.checked)
     const corretas = inputs.filter((input) => input.dataset.correct === "true")
+    const tentou = selecionadas.length > 0
     const acertou =
       selecionadas.length > 0 &&
       selecionadas.length === corretas.length &&
       selecionadas.every((input) => input.dataset.correct === "true")
     const pontos = calcularPontos(pergunta, inputs)
 
-    if (selecionadas.length > 0) respondidas += 1
+    if (tentou) respondidas += 1
     if (acertou) acertos += 1
     somaPontos += pontos
     pergunta.dataset.quizPoints = String(pontos)
 
     pergunta.dataset.quizStatus =
-      acertou ? "correct" : selecionadas.length === 0 ? "empty" : pontos > 0 ? "partial" : "wrong"
+      acertou ? "correct" : !tentou ? "empty" : pontos > 0 ? "partial" : "wrong"
 
     for (const input of inputs) {
       const opcao = input.closest(".quiz-option")
@@ -565,7 +576,7 @@ function corrigir(quiz, perguntas) {
       const marcada = input.checked
 
       if (correta && marcada) opcao.classList.add("is-correct")
-      else if (correta && !marcada && selecionadas.length > 0) opcao.classList.add("is-missed")
+      else if (correta && !marcada && tentou) opcao.classList.add("is-missed")
       else if (!correta && marcada) opcao.classList.add("is-incorrect")
 
       // O status é texto de verdade (não só cor/pseudo-elemento): leitores de
@@ -573,7 +584,7 @@ function corrigir(quiz, perguntas) {
       const status = opcao.querySelector(".quiz-option__status")
       if (status) {
         if (correta && marcada) escreverStatus(status, "correta", "ok")
-        else if (correta && !marcada && selecionadas.length > 0) {
+        else if (correta && !marcada && tentou) {
           escreverStatus(status, "correta (não marcada)", "ok")
         } else if (!correta && marcada) escreverStatus(status, "incorreta", "bad")
       }
@@ -581,18 +592,21 @@ function corrigir(quiz, perguntas) {
       if (!correta && marcada) input.setAttribute("aria-invalid", "true")
 
       // Comentários das opções aparecem só para o que foi marcado ou para a
-      // resposta correta (revelada depois de conferir).
+      // resposta correta, depois que a pessoa tentou responder.
       const feedback = opcao.querySelector(".quiz-option__feedback")
-      if (feedback && (marcada || correta)) feedback.hidden = false
+      if (feedback && tentou && (marcada || correta)) feedback.hidden = false
     }
 
     const feedbackPergunta = pergunta.querySelector("[data-quiz-feedback]")
     const status = feedbackPergunta?.querySelector(".quiz-feedback__status")
     if (feedbackPergunta && status) {
       feedbackPergunta.hidden = false
-      feedbackPergunta.classList.toggle("is-empty", selecionadas.length === 0)
+      feedbackPergunta.classList.toggle("is-empty", !tentou)
 
-      if (selecionadas.length === 0) escreverStatus(status, "Selecione uma resposta.", "aviso")
+      const explicacao = feedbackPergunta.querySelector(".quiz-explanation")
+      if (explicacao) explicacao.hidden = !tentou
+
+      if (!tentou) escreverStatus(status, "Selecione uma resposta.", "aviso")
       else if (acertou) escreverStatus(status, "Resposta correta.", "ok")
       else if (pontos > 0) escreverStatus(status, "Resposta parcialmente correta.", "partial")
       else escreverStatus(status, "Resposta incorreta.", "bad")

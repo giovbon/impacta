@@ -160,19 +160,23 @@ habilitado, o `configure-pages` falha com `Not Found`. Só então fazer push da 
   espaços repetidos ou crases —
   funciona para texto comum e para lacunas em blocos de código; blockquote antes das opções (ou do
   `Resposta:`) = dica, depois = explicação, indentado sob uma opção = comentário daquela opção. Enunciado, dica,
-  explicação e opções aceitam markdown completo (código e imagens). O frontmatter do quiz aceita
-  `title`, `shuffleQuestions` e `shuffleAnswers`.
+  explicação e opções aceitam markdown completo (código e imagens). Comentários HTML (`<!-- ... -->`)
+  são ignorados (fora de blocos de código), permitindo desativar uma questão sem apagá-la. O
+  frontmatter do quiz aceita `title`, `shuffleQuestions` e `shuffleAnswers`.
 - **Imagens**: referencie assets de `content/static/**` por `/static/...`; o componente aplica o
   prefixo do `BASE_URL` também no HTML do quiz.
 - **Cliente**: `src/components/quiz/client.js` confere, marca acertos/erros, abre dicas, mostra
   explicações, limpa e calcula a pontuação. **Não há envio, RA, planilha nem rede**; o gabarito fica
-  em `data-correct`/`data-answers` no HTML porque o quiz é formativo.
+  em `data-correct`/`data-answers` no HTML porque o quiz é formativo. Questões em branco mostram
+  apenas o aviso para responder: resposta correta, comentários e explicação só aparecem depois de
+  uma tentativa.
 - **Rascunho**: as respostas são gravadas no `sessionStorage` (chave `quiz:<id>:<pathname>`, por
   ids de questão/opção, então o shuffle não atrapalha) e repostas ao recarregar a aba. **Limpar**
   apaga o rascunho; a correção não é restaurada. Falha de storage é ignorada (modo anônimo/cota).
 - **Download**: depois de conferir, o botão "Baixar resultado (.txt)" monta localmente um relatório
   com as questões erradas ou não respondidas (enunciado, resposta marcada, resposta correta,
-  comentários das opções, dica e explicação) via `Blob` + `<a download>`; nada sai do navegador.
+  comentários das opções, dica e explicação) via `Blob` + `<a download>`; nada sai do navegador. Nas
+  não respondidas, o gabarito, os comentários e a explicação são omitidos.
 - **Erro de autoria**: arquivo ausente ou sintaxe inválida não quebra o build — o console avisa e a
   página mostra um cartão `.quiz--erro`.
 - `quizzes/` é fonte somente leitura, como `codes/` e `mindmaps/`, e entra nos watch targets.

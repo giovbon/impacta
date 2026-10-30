@@ -119,6 +119,68 @@ function shuffle(list, random) {
   return list
 }
 
+/**
+ * Comentários HTML (`<!-- ... -->`) são anotações de autoria: não viram
+ * questão, opção nem explicação. O corte ignora blocos de código, onde a
+ * sequência `<!-- ... -->` é texto literal do exemplo.
+ */
+function removerComentariosHtml(texto) {
+  const saida = []
+  let emCerco = false
+  let cerco = ""
+  let emComentario = false
+
+  for (const linha of String(texto ?? "").split(/\r?\n/)) {
+    if (emCerco) {
+      saida.push(linha)
+      const fechamento = linha.match(FENCE_RE)
+      if (fechamento && fechamento[1][0] === cerco[0] && fechamento[1].length >= cerco.length) {
+        emCerco = false
+      }
+      continue
+    }
+
+    if (!emComentario) {
+      const abertura = linha.match(FENCE_RE)
+      if (abertura) {
+        emCerco = true
+        cerco = abertura[1]
+        saida.push(linha)
+        continue
+      }
+    }
+
+    let restante = linha
+    let limpa = ""
+
+    while (restante) {
+      if (emComentario) {
+        const fim = restante.indexOf("-->")
+        if (fim === -1) {
+          restante = ""
+          break
+        }
+        restante = restante.slice(fim + 3)
+        emComentario = false
+      } else {
+        const inicio = restante.indexOf("<!--")
+        if (inicio === -1) {
+          limpa += restante
+          restante = ""
+          break
+        }
+        limpa += restante.slice(0, inicio)
+        restante = restante.slice(inicio + 4)
+        emComentario = true
+      }
+    }
+
+    saida.push(limpa)
+  }
+
+  return saida.join("\n")
+}
+
 function renderMarkdownBlock(lines) {
   const source = lines.join("\n").trim()
   return source ? prefixarUrls(markdown.render(source)) : ""
@@ -241,6 +303,7 @@ function finalizarPergunta(pergunta, indice, erros) {
 export function parseQuiz(texto, opcoes = {}) {
   // BOM no começo do arquivo impediria o gray-matter de reconhecer o `---`.
   const { data, content } = matter(String(texto ?? "").replace(/^\uFEFF/, ""))
+  const corpo = removerComentariosHtml(content)
   const erros = []
   const perguntas = []
 
@@ -256,7 +319,7 @@ export function parseQuiz(texto, opcoes = {}) {
     else pergunta.explicacao.push(linha)
   }
 
-  for (const linha of content.split(/\r?\n/)) {
+  for (const linha of corpo.split(/\r?\n/)) {
     if (emCerco) {
       alvoDaLinha(linha)
       const fechamento = linha.match(FENCE_RE)

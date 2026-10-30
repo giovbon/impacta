@@ -123,6 +123,8 @@ Resposta: -c | --create
   enunciado.
 - Blockquote **antes** das opções (ou do `Resposta:`) = dica; **depois** = explicação;
   **indentado sob uma opção** = comentário daquela opção.
+- Comentários HTML (`<!-- ... -->`) são ignorados: servem para desativar uma questão ou trecho
+  sem apagá-lo. Dentro de blocos de código eles continuam sendo texto literal.
 - `shuffleQuestions: true` e `shuffleAnswers: true` no frontmatter do quiz embaralham de forma
   determinística no build.
 - Enunciado, dica, explicação e opções aceitam **markdown completo**: blocos de código com realce e
@@ -130,7 +132,10 @@ Resposta: -c | --create
   prefixo do `BASE_URL` é aplicado automaticamente).
 - Depois de **Conferir respostas**, o botão **Baixar resultado (.txt)** gera um relatório local com
   as questões erradas ou não respondidas: enunciado, o que foi marcado, resposta correta,
-  comentários das opções, dica e explicação. Nada é enviado pela rede.
+  comentários das opções, dica e explicação. Nas questões **não respondidas**, o relatório não
+  inclui o gabarito, os comentários nem a explicação. Nada é enviado pela rede.
+- Ao conferir, questões **em branco** mostram apenas o aviso para responder; a resposta correta,
+  os comentários das opções e a explicação só aparecem depois que a pessoa tentou.
 - As respostas ficam salvas no `sessionStorage` (chave por quiz + página) e são repostas ao
   recarregar a aba; **Limpar** apaga o rascunho. A correção não é restaurada — é preciso conferir de novo.
 - O gabarito fica no HTML (`data-correct`/`data-answers`): é um recurso didático, não uma avaliação.
