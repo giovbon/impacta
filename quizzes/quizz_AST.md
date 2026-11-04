@@ -522,28 +522,6 @@ Resposta: sobreviveu
 
 > O Teste de Mutação afere a qualidade dos próprios testes. Ele introduz defeitos propositais ("mutantes") no código de produção; se os testes continuarem passando (mutante sobreviveu), a suíte é fraca ou possui asserções incompletas naquele trecho.
 
-### No contexto de automação de testes de sistema e interface gráfica (E2E) com Selenium, a utilização do padrão de projeto **Page Object Model (POM)** é amplamente recomendada. Qual é o propósito arquitetural desse padrão?
-
-1. [x] Abstrair as páginas Web em classes Python onde os elementos de tela (locators) e as interações de usuário são encapsulados, separando os detalhes da interface da lógica do script de teste.
-> Facilita a manutenção: se o ID de um botão mudar no HTML, atualiza-se apenas a classe da página, sem quebrar os arquivos de teste.
-
-
-1. [ ] Converter chamadas de API REST escritas em YAML no Tavern diretamente para scripts do Selenium WebDriver.
-1. [ ] Substituir o uso do protocolo W3C WebDriver pela leitura direta do código-fonte do servidor.
-1. [ ] Garantir que todas as páginas da aplicação Web sejam testadas de forma síncrona sem o uso de navegadores.
-
-> O Page Object Model (POM) reduz a duplicação e melhora a manutenção dos testes E2E. Cada página da aplicação torna-se uma classe; as operações (clicar, preencher) viram métodos, isolando o teste contra alterações de leiaute ou seletores HTML.
-
-
-### Quais das seguintes opções representam benefícios diretos da adoção do padrão Page Object Model em projetos de automação E2E?
-
-* [x] Reutilização de código de interação com a interface gráfica em múltiplos testes.
-* [x] Facilidade de manutenção quando ocorrem alterações na estrutura HTML ou seletores dos elementos da página.
-* [x] Maior legibilidade dos scripts de teste, que passam a descrever ações de alto nível do usuário.
-* [ ] Eliminação da necessidade de utilizar ferramentas de integração contínua (CI/CD) como o GitHub Actions.
-
-> O POM melhora a reusabilidade, a legibilidade e a manutenibilidade das suítes de teste de interface, sem qualquer relação com a eliminação de esteiras de CI/CD.
-
 ### Uma regra de negócio determina que um desconto é concedido apenas para compras com valor total entre R$ 100,00 e R$ 500,00 (inclusive). Ao aplicar a técnica de **Análise de Valor Limite (Boundary Value Analysis)**, quais valores devem ser selecionados para testar essa regra de forma otimizada?
 
 1. [x] R$ 99,99; R$ 100,00; R$ 100,01; R$ 499,99; R$ 500,00 e R$ 500,01.
