@@ -7,6 +7,7 @@ typst:
   name: "Exercício AST12"
 submission: 
   - "AST12"
+  - "AST12 Manha"
 codes: "codes/github-actions.md"
 ---
 
