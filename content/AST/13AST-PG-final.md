@@ -1,5 +1,5 @@
 ---
-title: Atividade Integrada
+title: Atividade Integrada AST
 order: 13
 typst: 
 - path: "typs/ATS/ATS13.typ"
