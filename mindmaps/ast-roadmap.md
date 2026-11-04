@@ -11,11 +11,12 @@
 ## TDD (Test-Driven Development)
 - Ciclo de desenvolvimento guiado por testes: Red, Green, Refactor
 - Padrão Arrange-Act-Assert
-## ⚠️ Linter (`flake8`)
+## Linter (`flake8`)
 - Análise estática, padrões de código (PEP8) e prevenção de erros
-## ⚠️ Testes de Mutação (`mutmut`)
+## Testes de Mutação (`mutmut`)
 - Injeção de mutantes e validação da qualidade da suíte de testes
 ## Selenium
+- ⚠️ Page Object Model (POM)
 - Localizadores (ID, CSS, XPath)
 - Esperas (explícitas e implícitas)
 - Padrão Page Object Model (POM)
