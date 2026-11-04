@@ -98,10 +98,10 @@ Ao abrir o terminal na pasta do projeto e executar o comando pytest, o desenvolv
 Resposta: .github
 
 ### No desenvolvimento moderno de software, por que a execução de testes automatizados é transferida da máquina local do desenvolvedor para um serviço como o GitHub Actions?
-1. [ ] A) Porque o GitHub Actions substitui a escrita dos testes em Python/Pytest, gerando os testes automaticamente a partir do histórico de commits.
-2. [x] B) Porque a qualidade do software não pode depender do ambiente ou da execução manual na máquina do desenvolvedor; o GitHub Actions automatiza essa validação ao disparar uma infraestrutura isolada (Runner) a cada push ou pull request.
-3. [ ] C) Porque os testes automatizados só conseguem acessar bancos de dados e APIs externas quando executados na nuvem do GitHub.
-4. [ ] D) Para reduzir a quantidade de código no repositório, transferindo os arquivos de teste para serem salvos na nuvem.Gabarito e Comentário:
+1. [ ] Porque o GitHub Actions substitui a escrita dos testes em Python/Pytest, gerando os testes automaticamente a partir do histórico de commits.
+2. [x] Porque a qualidade do software não pode depender do ambiente ou da execução manual na máquina do desenvolvedor; o GitHub Actions automatiza essa validação ao disparar uma infraestrutura isolada (Runner) a cada push ou pull request.
+3. [ ] Porque os testes automatizados só conseguem acessar bancos de dados e APIs externas quando executados na nuvem do GitHub.
+4. [ ] Para reduzir a quantidade de código no repositório, transferindo os arquivos de teste para serem salvos na nuvem.Gabarito e Comentário:
 
 > No ambiente de desenvolvimento, a execução manual de testes no terminal do próprio desenvolvedor está sujeita a falhas humanas e variações de ambiente ("na minha máquina funciona"). O GitHub Actions garante que a suíte de testes seja executada de forma autônoma e padronizada em uma máquina virtual limpa (Runner) a cada alteração enviada ao repositório. 
 
