@@ -32,3 +32,8 @@
 ## Github Actions
 - Conceitos de CI/CD
 - Criando pipelines com Github Actions
+
+<!--
+Smoke Test (Teste de Fumaça)
+POM
+-->
