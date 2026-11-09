@@ -92,33 +92,6 @@ function slugify(value) {
   )
 }
 
-function hashString(value) {
-  let hash = 2166136261
-  for (const char of String(value)) {
-    hash ^= char.codePointAt(0) ?? 0
-    hash = Math.imul(hash, 16777619)
-  }
-  return hash >>> 0
-}
-
-function mulberry32(seed) {
-  return () => {
-    seed |= 0
-    seed = (seed + 0x6d2b79f5) | 0
-    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed)
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
-  }
-}
-
-function shuffle(list, random) {
-  for (let index = list.length - 1; index > 0; index -= 1) {
-    const target = Math.floor(random() * (index + 1))
-    ;[list[index], list[target]] = [list[target], list[index]]
-  }
-  return list
-}
-
 /**
  * Comentários HTML (`<!-- ... -->`) são anotações de autoria: não viram
  * questão, opção nem explicação. O corte ignora blocos de código, onde a
@@ -452,13 +425,6 @@ export function parseQuiz(texto, opcoes = {}) {
   const shuffleQuestions = toBool(data.shuffleQuestions)
   const shuffleAnswers = toBool(data.shuffleAnswers)
 
-  if (shuffleQuestions) shuffle(perguntas, mulberry32(hashString(id)))
-  if (shuffleAnswers) {
-    perguntas.forEach((item, indice) => {
-      shuffle(item.options, mulberry32(hashString(`${id}:${indice}`)))
-    })
-  }
-
   return { id, title, questions: perguntas, shuffleQuestions, shuffleAnswers }
 }
 
@@ -592,7 +558,7 @@ function renderSecaoQuiz(quiz) {
   const tipos = new Set(quiz.questions.map((pergunta) => pergunta.tipo))
   const meta = `${total} ${total === 1 ? "questão" : "questões"} · ${listarTipos(tipos)}`
 
-  return `<section class="quiz" data-quiz="${escapeAttr(quiz.id)}" aria-labelledby="${escapeAttr(idTitulo)}">
+  return `<section class="quiz" data-quiz="${escapeAttr(quiz.id)}" data-shuffle-questions="${quiz.shuffleQuestions}" data-shuffle-answers="${quiz.shuffleAnswers}" aria-labelledby="${escapeAttr(idTitulo)}">
   <header class="quiz__header">
     <p class="quiz__kicker">Quiz</p>
     <h2 class="quiz__title" id="${escapeAttr(idTitulo)}">${escapeHtml(titulo)}</h2>

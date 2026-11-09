@@ -125,8 +125,9 @@ Resposta: -c | --create
   **indentado sob uma opção** = comentário daquela opção.
 - Comentários HTML (`<!-- ... -->`) são ignorados: servem para desativar uma questão ou trecho
   sem apagá-lo. Dentro de blocos de código eles continuam sendo texto literal.
-- `shuffleQuestions: true` e `shuffleAnswers: true` no frontmatter do quiz embaralham de forma
-  determinística no build.
+- `shuffleQuestions: true` e `shuffleAnswers: true` no frontmatter do quiz embaralham questões e
+  opções no navegador a cada carregamento da página. As respostas em andamento são restauradas por
+  ID, independentemente da nova ordem.
 - Enunciado, dica, explicação e opções aceitam **markdown completo**: blocos de código com realce e
   imagens. Imagens locais ficam em `content/static/**` e são referenciadas por `/static/...` (o
   prefixo do `BASE_URL` é aplicado automaticamente).

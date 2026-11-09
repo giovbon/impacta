@@ -105,7 +105,7 @@ test("quiz: rejeita mistura de Resposta e opções", () => {
   )
 })
 
-test("quiz: o mesmo arquivo com shuffle é determinístico", () => {
+test("quiz: opções com shuffle mantêm ordem-base para embaralhar no navegador", () => {
   const fonte =
     "---\nshuffleAnswers: true\n---\n### Qual?\n\n1. [x] A\n1. [ ] B\n1. [ ] C\n"
   const primeiro = parseQuiz(fonte, { id: "embaralhado" })
@@ -113,8 +113,13 @@ test("quiz: o mesmo arquivo com shuffle é determinístico", () => {
 
   assert.deepEqual(
     primeiro.questions[0].options.map((opcao) => opcao.texto),
-    segundo.questions[0].options.map((opcao) => opcao.texto),
+    ["A", "B", "C"],
   )
+  assert.deepEqual(
+    segundo.questions[0].options.map((opcao) => opcao.texto),
+    ["A", "B", "C"],
+  )
+  assert.equal(primeiro.shuffleAnswers, true)
   assert.equal(primeiro.questions[0].options.filter((opcao) => opcao.correta).length, 1)
 })
 
@@ -217,6 +222,7 @@ test("quiz: lê o arquivo do frontmatter e monta o HTML acessível", () => {
   const html = renderQuiz({ quiz: FIXTURE })
 
   assert.match(html, /<section class="quiz" data-quiz="quiz-valido"/)
+  assert.match(html, /data-shuffle-questions="false" data-shuffle-answers="false"/)
   assert.match(html, /class="quiz__title"/)
   assert.match(html, /Quiz de exemplo/)
   assert.equal((html.match(/class="quiz-question"/g) ?? []).length, 2)
@@ -231,6 +237,12 @@ test("quiz: lê o arquivo do frontmatter e monta o HTML acessível", () => {
   assert.match(html, /Ative o JavaScript para conferir as respostas/)
   assert.match(html, /<legend class="quiz-sr-only">Questão 1<\/legend>/)
   assert.doesNotMatch(html, /\saction=/, "quiz não envia nada")
+})
+
+test("quiz: configura embaralhamento por visita no HTML", () => {
+  const html = renderQuiz({ quiz: "quizzes/quizz_AST.md" })
+
+  assert.match(html, /data-shuffle-questions="true" data-shuffle-answers="true"/)
 })
 
 test("quiz: questão escrita vira input de texto com o gabarito", () => {

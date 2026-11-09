@@ -128,12 +128,44 @@ function mostrarDownload(quiz, visivel) {
   if (botao) botao.hidden = !visivel
 }
 
+function embaralhar(elementos) {
+  for (let indice = elementos.length - 1; indice > 0; indice -= 1) {
+    const alvo = Math.floor(Math.random() * (indice + 1))
+    ;[elementos[indice], elementos[alvo]] = [elementos[alvo], elementos[indice]]
+  }
+  return elementos
+}
+
+function embaralharQuestoes(quiz, perguntas) {
+  const formulario = quiz.querySelector("[data-quiz-form]")
+  if (!formulario || perguntas.length < 2) return
+
+  const fragmento = document.createDocumentFragment()
+  embaralhar(perguntas).forEach((pergunta, indice) => {
+    const legenda = pergunta.querySelector("legend")
+    if (legenda) legenda.textContent = `Questão ${indice + 1}`
+    fragmento.append(pergunta)
+  })
+  formulario.insertBefore(fragmento, formulario.querySelector(".quiz__actions"))
+}
+
+function embaralharOpcoes(perguntas) {
+  for (const pergunta of perguntas) {
+    const opcoes = pergunta.querySelector(".quiz-options")
+    if (!opcoes || opcoes.children.length < 2) continue
+
+    const fragmento = document.createDocumentFragment()
+    embaralhar([...opcoes.children]).forEach((opcao) => fragmento.append(opcao))
+    opcoes.append(fragmento)
+  }
+}
+
 /* ───────────────────── rascunho no navegador ───────────────────── */
 
 /**
  * Guarda as respostas no `sessionStorage` para sobreviver a um recarregamento
  * acidental. A chave combina o id do quiz e o caminho da página, e o mapa usa
- * os ids das questões/opções (não as posições), então o shuffle do build não
+ * os ids das questões/opções (não as posições), então o shuffle por visita não
  * quebra o rascunho. Nunca vai para a rede e nunca é obrigatório: qualquer
  * falha de storage (modo anônimo, cota, storage desabilitado) é ignorada.
  */
@@ -653,6 +685,13 @@ function initQuizUnico(quiz) {
 
   const perguntas = [...quiz.querySelectorAll(".quiz-question")]
   if (perguntas.length === 0) return
+
+  if (quiz.dataset.shuffleQuestions === "true") {
+    embaralharQuestoes(quiz, perguntas)
+  }
+  if (quiz.dataset.shuffleAnswers === "true") {
+    embaralharOpcoes(perguntas)
+  }
 
   // Antes de pendurar os listeners: repõe o rascunho salvo (recarregar a
   // página não perde o que já foi respondido).

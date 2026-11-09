@@ -281,8 +281,8 @@ Se o arquivo não existir, renderizar `<div class="code-explorer-error">Arquivo 
   (`- [x]`) = **múltipla escolha** (`checkbox`).
 - Blockquote **antes** das opções (ou do `Resposta:`) = dica; **depois** = explicação;
   **indentado sob uma opção** = comentário daquela opção.
-- Frontmatter do quiz: `title`, `shuffleQuestions` e `shuffleAnswers` (booleanos). O shuffle é
-  determinístico no build, para o HTML não mudar a cada rebuild.
+- Frontmatter do quiz: `title`, `shuffleQuestions` e `shuffleAnswers` (booleanos). Quando ativado,
+  o shuffle ocorre no navegador a cada carregamento da página, sem alterar a ordem do HTML gerado.
 
 **Validação no build**:
 

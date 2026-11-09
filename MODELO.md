@@ -162,7 +162,8 @@ habilitado, o `configure-pages` falha com `Not Found`. Só então fazer push da 
   `Resposta:`) = dica, depois = explicação, indentado sob uma opção = comentário daquela opção. Enunciado, dica,
   explicação e opções aceitam markdown completo (código e imagens). Comentários HTML (`<!-- ... -->`)
   são ignorados (fora de blocos de código), permitindo desativar uma questão sem apagá-la. O
-  frontmatter do quiz aceita `title`, `shuffleQuestions` e `shuffleAnswers`.
+  frontmatter do quiz aceita `title`, `shuffleQuestions` e `shuffleAnswers`; as opções ativadas
+  são embaralhadas no navegador a cada carregamento.
 - **Imagens**: referencie assets de `content/static/**` por `/static/...`; o componente aplica o
   prefixo do `BASE_URL` também no HTML do quiz.
 - **Cliente**: `src/components/quiz/client.js` confere, marca acertos/erros, abre dicas, mostra
@@ -171,8 +172,9 @@ habilitado, o `configure-pages` falha com `Not Found`. Só então fazer push da 
   apenas o aviso para responder: resposta correta, comentários e explicação só aparecem depois de
   uma tentativa.
 - **Rascunho**: as respostas são gravadas no `sessionStorage` (chave `quiz:<id>:<pathname>`, por
-  ids de questão/opção, então o shuffle não atrapalha) e repostas ao recarregar a aba. **Limpar**
-  apaga o rascunho; a correção não é restaurada. Falha de storage é ignorada (modo anônimo/cota).
+  ids de questão/opção, então o shuffle por carregamento não atrapalha) e repostas ao recarregar a
+  aba. **Limpar** apaga o rascunho; a correção não é restaurada. Falha de storage é ignorada (modo
+  anônimo/cota).
 - **Download**: depois de conferir, o botão "Baixar resultado (.txt)" monta localmente um relatório
   com as questões erradas ou não respondidas (enunciado, resposta marcada, resposta correta,
   comentários das opções, dica e explicação) via `Blob` + `<a download>`; nada sai do navegador. Nas
